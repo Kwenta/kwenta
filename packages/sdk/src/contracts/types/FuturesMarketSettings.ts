@@ -2,1489 +2,1108 @@
 /* tslint:disable */
 /* eslint-disable */
 import type {
-  BaseContract,
-  BigNumber,
-  BigNumberish,
-  BytesLike,
-  CallOverrides,
-  ContractTransaction,
-  Overrides,
-  PopulatedTransaction,
-  Signer,
-  utils,
-} from "ethers";
-import type {
-  FunctionFragment,
-  Result,
-  EventFragment,
-} from "@ethersproject/abi";
-import type { Listener, Provider } from "@ethersproject/providers";
-import type {
-  TypedEventFilter,
-  TypedEvent,
-  TypedListener,
-  OnEvent,
-} from "./common";
+	BaseContract,
+	BigNumber,
+	BigNumberish,
+	BytesLike,
+	CallOverrides,
+	ContractTransaction,
+	Overrides,
+	PopulatedTransaction,
+	Signer,
+	utils,
+} from 'ethers'
+import type { FunctionFragment, Result, EventFragment } from '@ethersproject/abi'
+import type { Listener, Provider } from '@ethersproject/providers'
+import type { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from './common'
 
 export interface FuturesMarketSettingsInterface extends utils.Interface {
-  functions: {
-    "acceptOwnership()": FunctionFragment;
-    "isResolverCached()": FunctionFragment;
-    "liquidationBufferRatio()": FunctionFragment;
-    "liquidationFeeRatio()": FunctionFragment;
-    "makerFee(bytes32)": FunctionFragment;
-    "makerFeeNextPrice(bytes32)": FunctionFragment;
-    "maxFundingRate(bytes32)": FunctionFragment;
-    "maxLeverage(bytes32)": FunctionFragment;
-    "maxMarketValueUSD(bytes32)": FunctionFragment;
-    "minInitialMargin()": FunctionFragment;
-    "minKeeperFee()": FunctionFragment;
-    "nextPriceConfirmWindow(bytes32)": FunctionFragment;
-    "nominateNewOwner(address)": FunctionFragment;
-    "nominatedOwner()": FunctionFragment;
-    "owner()": FunctionFragment;
-    "parameters(bytes32)": FunctionFragment;
-    "rebuildCache()": FunctionFragment;
-    "resolver()": FunctionFragment;
-    "resolverAddressesRequired()": FunctionFragment;
-    "setLiquidationBufferRatio(uint256)": FunctionFragment;
-    "setLiquidationFeeRatio(uint256)": FunctionFragment;
-    "setMakerFee(bytes32,uint256)": FunctionFragment;
-    "setMakerFeeNextPrice(bytes32,uint256)": FunctionFragment;
-    "setMaxFundingRate(bytes32,uint256)": FunctionFragment;
-    "setMaxLeverage(bytes32,uint256)": FunctionFragment;
-    "setMaxMarketValueUSD(bytes32,uint256)": FunctionFragment;
-    "setMinInitialMargin(uint256)": FunctionFragment;
-    "setMinKeeperFee(uint256)": FunctionFragment;
-    "setNextPriceConfirmWindow(bytes32,uint256)": FunctionFragment;
-    "setParameters(bytes32,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256)": FunctionFragment;
-    "setSkewScaleUSD(bytes32,uint256)": FunctionFragment;
-    "setTakerFee(bytes32,uint256)": FunctionFragment;
-    "setTakerFeeNextPrice(bytes32,uint256)": FunctionFragment;
-    "skewScaleUSD(bytes32)": FunctionFragment;
-    "takerFee(bytes32)": FunctionFragment;
-    "takerFeeNextPrice(bytes32)": FunctionFragment;
-  };
+	functions: {
+		'acceptOwnership()': FunctionFragment
+		'isResolverCached()': FunctionFragment
+		'liquidationBufferRatio()': FunctionFragment
+		'liquidationFeeRatio()': FunctionFragment
+		'makerFee(bytes32)': FunctionFragment
+		'makerFeeNextPrice(bytes32)': FunctionFragment
+		'maxFundingRate(bytes32)': FunctionFragment
+		'maxLeverage(bytes32)': FunctionFragment
+		'maxMarketValueUSD(bytes32)': FunctionFragment
+		'minInitialMargin()': FunctionFragment
+		'minKeeperFee()': FunctionFragment
+		'nextPriceConfirmWindow(bytes32)': FunctionFragment
+		'nominateNewOwner(address)': FunctionFragment
+		'nominatedOwner()': FunctionFragment
+		'owner()': FunctionFragment
+		'parameters(bytes32)': FunctionFragment
+		'rebuildCache()': FunctionFragment
+		'resolver()': FunctionFragment
+		'resolverAddressesRequired()': FunctionFragment
+		'setLiquidationBufferRatio(uint256)': FunctionFragment
+		'setLiquidationFeeRatio(uint256)': FunctionFragment
+		'setMakerFee(bytes32,uint256)': FunctionFragment
+		'setMakerFeeNextPrice(bytes32,uint256)': FunctionFragment
+		'setMaxFundingRate(bytes32,uint256)': FunctionFragment
+		'setMaxLeverage(bytes32,uint256)': FunctionFragment
+		'setMaxMarketValueUSD(bytes32,uint256)': FunctionFragment
+		'setMinInitialMargin(uint256)': FunctionFragment
+		'setMinKeeperFee(uint256)': FunctionFragment
+		'setNextPriceConfirmWindow(bytes32,uint256)': FunctionFragment
+		'setParameters(bytes32,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256)': FunctionFragment
+		'setSkewScaleUSD(bytes32,uint256)': FunctionFragment
+		'setTakerFee(bytes32,uint256)': FunctionFragment
+		'setTakerFeeNextPrice(bytes32,uint256)': FunctionFragment
+		'skewScaleUSD(bytes32)': FunctionFragment
+		'takerFee(bytes32)': FunctionFragment
+		'takerFeeNextPrice(bytes32)': FunctionFragment
+	}
 
-  getFunction(
-    nameOrSignatureOrTopic:
-      | "acceptOwnership"
-      | "isResolverCached"
-      | "liquidationBufferRatio"
-      | "liquidationFeeRatio"
-      | "makerFee"
-      | "makerFeeNextPrice"
-      | "maxFundingRate"
-      | "maxLeverage"
-      | "maxMarketValueUSD"
-      | "minInitialMargin"
-      | "minKeeperFee"
-      | "nextPriceConfirmWindow"
-      | "nominateNewOwner"
-      | "nominatedOwner"
-      | "owner"
-      | "parameters"
-      | "rebuildCache"
-      | "resolver"
-      | "resolverAddressesRequired"
-      | "setLiquidationBufferRatio"
-      | "setLiquidationFeeRatio"
-      | "setMakerFee"
-      | "setMakerFeeNextPrice"
-      | "setMaxFundingRate"
-      | "setMaxLeverage"
-      | "setMaxMarketValueUSD"
-      | "setMinInitialMargin"
-      | "setMinKeeperFee"
-      | "setNextPriceConfirmWindow"
-      | "setParameters"
-      | "setSkewScaleUSD"
-      | "setTakerFee"
-      | "setTakerFeeNextPrice"
-      | "skewScaleUSD"
-      | "takerFee"
-      | "takerFeeNextPrice"
-  ): FunctionFragment;
+	getFunction(
+		nameOrSignatureOrTopic:
+			| 'acceptOwnership'
+			| 'isResolverCached'
+			| 'liquidationBufferRatio'
+			| 'liquidationFeeRatio'
+			| 'makerFee'
+			| 'makerFeeNextPrice'
+			| 'maxFundingRate'
+			| 'maxLeverage'
+			| 'maxMarketValueUSD'
+			| 'minInitialMargin'
+			| 'minKeeperFee'
+			| 'nextPriceConfirmWindow'
+			| 'nominateNewOwner'
+			| 'nominatedOwner'
+			| 'owner'
+			| 'parameters'
+			| 'rebuildCache'
+			| 'resolver'
+			| 'resolverAddressesRequired'
+			| 'setLiquidationBufferRatio'
+			| 'setLiquidationFeeRatio'
+			| 'setMakerFee'
+			| 'setMakerFeeNextPrice'
+			| 'setMaxFundingRate'
+			| 'setMaxLeverage'
+			| 'setMaxMarketValueUSD'
+			| 'setMinInitialMargin'
+			| 'setMinKeeperFee'
+			| 'setNextPriceConfirmWindow'
+			| 'setParameters'
+			| 'setSkewScaleUSD'
+			| 'setTakerFee'
+			| 'setTakerFeeNextPrice'
+			| 'skewScaleUSD'
+			| 'takerFee'
+			| 'takerFeeNextPrice'
+	): FunctionFragment
 
-  encodeFunctionData(
-    functionFragment: "acceptOwnership",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "isResolverCached",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "liquidationBufferRatio",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "liquidationFeeRatio",
-    values?: undefined
-  ): string;
-  encodeFunctionData(functionFragment: "makerFee", values: [BytesLike]): string;
-  encodeFunctionData(
-    functionFragment: "makerFeeNextPrice",
-    values: [BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "maxFundingRate",
-    values: [BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "maxLeverage",
-    values: [BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "maxMarketValueUSD",
-    values: [BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "minInitialMargin",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "minKeeperFee",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "nextPriceConfirmWindow",
-    values: [BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "nominateNewOwner",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "nominatedOwner",
-    values?: undefined
-  ): string;
-  encodeFunctionData(functionFragment: "owner", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "parameters",
-    values: [BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "rebuildCache",
-    values?: undefined
-  ): string;
-  encodeFunctionData(functionFragment: "resolver", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "resolverAddressesRequired",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setLiquidationBufferRatio",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setLiquidationFeeRatio",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setMakerFee",
-    values: [BytesLike, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setMakerFeeNextPrice",
-    values: [BytesLike, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setMaxFundingRate",
-    values: [BytesLike, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setMaxLeverage",
-    values: [BytesLike, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setMaxMarketValueUSD",
-    values: [BytesLike, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setMinInitialMargin",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setMinKeeperFee",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setNextPriceConfirmWindow",
-    values: [BytesLike, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setParameters",
-    values: [
-      BytesLike,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish
-    ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setSkewScaleUSD",
-    values: [BytesLike, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setTakerFee",
-    values: [BytesLike, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setTakerFeeNextPrice",
-    values: [BytesLike, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "skewScaleUSD",
-    values: [BytesLike]
-  ): string;
-  encodeFunctionData(functionFragment: "takerFee", values: [BytesLike]): string;
-  encodeFunctionData(
-    functionFragment: "takerFeeNextPrice",
-    values: [BytesLike]
-  ): string;
+	encodeFunctionData(functionFragment: 'acceptOwnership', values?: undefined): string
+	encodeFunctionData(functionFragment: 'isResolverCached', values?: undefined): string
+	encodeFunctionData(functionFragment: 'liquidationBufferRatio', values?: undefined): string
+	encodeFunctionData(functionFragment: 'liquidationFeeRatio', values?: undefined): string
+	encodeFunctionData(functionFragment: 'makerFee', values: [BytesLike]): string
+	encodeFunctionData(functionFragment: 'makerFeeNextPrice', values: [BytesLike]): string
+	encodeFunctionData(functionFragment: 'maxFundingRate', values: [BytesLike]): string
+	encodeFunctionData(functionFragment: 'maxLeverage', values: [BytesLike]): string
+	encodeFunctionData(functionFragment: 'maxMarketValueUSD', values: [BytesLike]): string
+	encodeFunctionData(functionFragment: 'minInitialMargin', values?: undefined): string
+	encodeFunctionData(functionFragment: 'minKeeperFee', values?: undefined): string
+	encodeFunctionData(functionFragment: 'nextPriceConfirmWindow', values: [BytesLike]): string
+	encodeFunctionData(functionFragment: 'nominateNewOwner', values: [string]): string
+	encodeFunctionData(functionFragment: 'nominatedOwner', values?: undefined): string
+	encodeFunctionData(functionFragment: 'owner', values?: undefined): string
+	encodeFunctionData(functionFragment: 'parameters', values: [BytesLike]): string
+	encodeFunctionData(functionFragment: 'rebuildCache', values?: undefined): string
+	encodeFunctionData(functionFragment: 'resolver', values?: undefined): string
+	encodeFunctionData(functionFragment: 'resolverAddressesRequired', values?: undefined): string
+	encodeFunctionData(functionFragment: 'setLiquidationBufferRatio', values: [BigNumberish]): string
+	encodeFunctionData(functionFragment: 'setLiquidationFeeRatio', values: [BigNumberish]): string
+	encodeFunctionData(functionFragment: 'setMakerFee', values: [BytesLike, BigNumberish]): string
+	encodeFunctionData(
+		functionFragment: 'setMakerFeeNextPrice',
+		values: [BytesLike, BigNumberish]
+	): string
+	encodeFunctionData(
+		functionFragment: 'setMaxFundingRate',
+		values: [BytesLike, BigNumberish]
+	): string
+	encodeFunctionData(functionFragment: 'setMaxLeverage', values: [BytesLike, BigNumberish]): string
+	encodeFunctionData(
+		functionFragment: 'setMaxMarketValueUSD',
+		values: [BytesLike, BigNumberish]
+	): string
+	encodeFunctionData(functionFragment: 'setMinInitialMargin', values: [BigNumberish]): string
+	encodeFunctionData(functionFragment: 'setMinKeeperFee', values: [BigNumberish]): string
+	encodeFunctionData(
+		functionFragment: 'setNextPriceConfirmWindow',
+		values: [BytesLike, BigNumberish]
+	): string
+	encodeFunctionData(
+		functionFragment: 'setParameters',
+		values: [
+			BytesLike,
+			BigNumberish,
+			BigNumberish,
+			BigNumberish,
+			BigNumberish,
+			BigNumberish,
+			BigNumberish,
+			BigNumberish,
+			BigNumberish,
+			BigNumberish
+		]
+	): string
+	encodeFunctionData(functionFragment: 'setSkewScaleUSD', values: [BytesLike, BigNumberish]): string
+	encodeFunctionData(functionFragment: 'setTakerFee', values: [BytesLike, BigNumberish]): string
+	encodeFunctionData(
+		functionFragment: 'setTakerFeeNextPrice',
+		values: [BytesLike, BigNumberish]
+	): string
+	encodeFunctionData(functionFragment: 'skewScaleUSD', values: [BytesLike]): string
+	encodeFunctionData(functionFragment: 'takerFee', values: [BytesLike]): string
+	encodeFunctionData(functionFragment: 'takerFeeNextPrice', values: [BytesLike]): string
 
-  decodeFunctionResult(
-    functionFragment: "acceptOwnership",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "isResolverCached",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "liquidationBufferRatio",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "liquidationFeeRatio",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "makerFee", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "makerFeeNextPrice",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "maxFundingRate",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "maxLeverage",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "maxMarketValueUSD",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "minInitialMargin",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "minKeeperFee",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "nextPriceConfirmWindow",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "nominateNewOwner",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "nominatedOwner",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "parameters", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "rebuildCache",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "resolver", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "resolverAddressesRequired",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setLiquidationBufferRatio",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setLiquidationFeeRatio",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setMakerFee",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setMakerFeeNextPrice",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setMaxFundingRate",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setMaxLeverage",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setMaxMarketValueUSD",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setMinInitialMargin",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setMinKeeperFee",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setNextPriceConfirmWindow",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setParameters",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setSkewScaleUSD",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setTakerFee",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setTakerFeeNextPrice",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "skewScaleUSD",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "takerFee", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "takerFeeNextPrice",
-    data: BytesLike
-  ): Result;
+	decodeFunctionResult(functionFragment: 'acceptOwnership', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'isResolverCached', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'liquidationBufferRatio', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'liquidationFeeRatio', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'makerFee', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'makerFeeNextPrice', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'maxFundingRate', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'maxLeverage', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'maxMarketValueUSD', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'minInitialMargin', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'minKeeperFee', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'nextPriceConfirmWindow', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'nominateNewOwner', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'nominatedOwner', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'owner', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'parameters', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'rebuildCache', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'resolver', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'resolverAddressesRequired', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'setLiquidationBufferRatio', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'setLiquidationFeeRatio', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'setMakerFee', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'setMakerFeeNextPrice', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'setMaxFundingRate', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'setMaxLeverage', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'setMaxMarketValueUSD', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'setMinInitialMargin', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'setMinKeeperFee', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'setNextPriceConfirmWindow', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'setParameters', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'setSkewScaleUSD', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'setTakerFee', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'setTakerFeeNextPrice', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'skewScaleUSD', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'takerFee', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'takerFeeNextPrice', data: BytesLike): Result
 
-  events: {
-    "CacheUpdated(bytes32,address)": EventFragment;
-    "LiquidationBufferRatioUpdated(uint256)": EventFragment;
-    "LiquidationFeeRatioUpdated(uint256)": EventFragment;
-    "MinInitialMarginUpdated(uint256)": EventFragment;
-    "MinKeeperFeeUpdated(uint256)": EventFragment;
-    "OwnerChanged(address,address)": EventFragment;
-    "OwnerNominated(address)": EventFragment;
-    "ParameterUpdated(bytes32,bytes32,uint256)": EventFragment;
-  };
+	events: {
+		'CacheUpdated(bytes32,address)': EventFragment
+		'LiquidationBufferRatioUpdated(uint256)': EventFragment
+		'LiquidationFeeRatioUpdated(uint256)': EventFragment
+		'MinInitialMarginUpdated(uint256)': EventFragment
+		'MinKeeperFeeUpdated(uint256)': EventFragment
+		'OwnerChanged(address,address)': EventFragment
+		'OwnerNominated(address)': EventFragment
+		'ParameterUpdated(bytes32,bytes32,uint256)': EventFragment
+	}
 
-  getEvent(nameOrSignatureOrTopic: "CacheUpdated"): EventFragment;
-  getEvent(
-    nameOrSignatureOrTopic: "LiquidationBufferRatioUpdated"
-  ): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "LiquidationFeeRatioUpdated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "MinInitialMarginUpdated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "MinKeeperFeeUpdated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "OwnerChanged"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "OwnerNominated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "ParameterUpdated"): EventFragment;
+	getEvent(nameOrSignatureOrTopic: 'CacheUpdated'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'LiquidationBufferRatioUpdated'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'LiquidationFeeRatioUpdated'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'MinInitialMarginUpdated'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'MinKeeperFeeUpdated'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'OwnerChanged'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'OwnerNominated'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'ParameterUpdated'): EventFragment
 }
 
 export interface CacheUpdatedEventObject {
-  name: string;
-  destination: string;
+	name: string
+	destination: string
 }
-export type CacheUpdatedEvent = TypedEvent<
-  [string, string],
-  CacheUpdatedEventObject
->;
+export type CacheUpdatedEvent = TypedEvent<[string, string], CacheUpdatedEventObject>
 
-export type CacheUpdatedEventFilter = TypedEventFilter<CacheUpdatedEvent>;
+export type CacheUpdatedEventFilter = TypedEventFilter<CacheUpdatedEvent>
 
 export interface LiquidationBufferRatioUpdatedEventObject {
-  bps: BigNumber;
+	bps: BigNumber
 }
 export type LiquidationBufferRatioUpdatedEvent = TypedEvent<
-  [BigNumber],
-  LiquidationBufferRatioUpdatedEventObject
->;
+	[BigNumber],
+	LiquidationBufferRatioUpdatedEventObject
+>
 
 export type LiquidationBufferRatioUpdatedEventFilter =
-  TypedEventFilter<LiquidationBufferRatioUpdatedEvent>;
+	TypedEventFilter<LiquidationBufferRatioUpdatedEvent>
 
 export interface LiquidationFeeRatioUpdatedEventObject {
-  bps: BigNumber;
+	bps: BigNumber
 }
 export type LiquidationFeeRatioUpdatedEvent = TypedEvent<
-  [BigNumber],
-  LiquidationFeeRatioUpdatedEventObject
->;
+	[BigNumber],
+	LiquidationFeeRatioUpdatedEventObject
+>
 
 export type LiquidationFeeRatioUpdatedEventFilter =
-  TypedEventFilter<LiquidationFeeRatioUpdatedEvent>;
+	TypedEventFilter<LiquidationFeeRatioUpdatedEvent>
 
 export interface MinInitialMarginUpdatedEventObject {
-  minMargin: BigNumber;
+	minMargin: BigNumber
 }
 export type MinInitialMarginUpdatedEvent = TypedEvent<
-  [BigNumber],
-  MinInitialMarginUpdatedEventObject
->;
+	[BigNumber],
+	MinInitialMarginUpdatedEventObject
+>
 
-export type MinInitialMarginUpdatedEventFilter =
-  TypedEventFilter<MinInitialMarginUpdatedEvent>;
+export type MinInitialMarginUpdatedEventFilter = TypedEventFilter<MinInitialMarginUpdatedEvent>
 
 export interface MinKeeperFeeUpdatedEventObject {
-  sUSD: BigNumber;
+	sUSD: BigNumber
 }
-export type MinKeeperFeeUpdatedEvent = TypedEvent<
-  [BigNumber],
-  MinKeeperFeeUpdatedEventObject
->;
+export type MinKeeperFeeUpdatedEvent = TypedEvent<[BigNumber], MinKeeperFeeUpdatedEventObject>
 
-export type MinKeeperFeeUpdatedEventFilter =
-  TypedEventFilter<MinKeeperFeeUpdatedEvent>;
+export type MinKeeperFeeUpdatedEventFilter = TypedEventFilter<MinKeeperFeeUpdatedEvent>
 
 export interface OwnerChangedEventObject {
-  oldOwner: string;
-  newOwner: string;
+	oldOwner: string
+	newOwner: string
 }
-export type OwnerChangedEvent = TypedEvent<
-  [string, string],
-  OwnerChangedEventObject
->;
+export type OwnerChangedEvent = TypedEvent<[string, string], OwnerChangedEventObject>
 
-export type OwnerChangedEventFilter = TypedEventFilter<OwnerChangedEvent>;
+export type OwnerChangedEventFilter = TypedEventFilter<OwnerChangedEvent>
 
 export interface OwnerNominatedEventObject {
-  newOwner: string;
+	newOwner: string
 }
-export type OwnerNominatedEvent = TypedEvent<
-  [string],
-  OwnerNominatedEventObject
->;
+export type OwnerNominatedEvent = TypedEvent<[string], OwnerNominatedEventObject>
 
-export type OwnerNominatedEventFilter = TypedEventFilter<OwnerNominatedEvent>;
+export type OwnerNominatedEventFilter = TypedEventFilter<OwnerNominatedEvent>
 
 export interface ParameterUpdatedEventObject {
-  marketKey: string;
-  parameter: string;
-  value: BigNumber;
+	marketKey: string
+	parameter: string
+	value: BigNumber
 }
 export type ParameterUpdatedEvent = TypedEvent<
-  [string, string, BigNumber],
-  ParameterUpdatedEventObject
->;
+	[string, string, BigNumber],
+	ParameterUpdatedEventObject
+>
 
-export type ParameterUpdatedEventFilter =
-  TypedEventFilter<ParameterUpdatedEvent>;
+export type ParameterUpdatedEventFilter = TypedEventFilter<ParameterUpdatedEvent>
 
 export interface FuturesMarketSettings extends BaseContract {
-  connect(signerOrProvider: Signer | Provider | string): this;
-  attach(addressOrName: string): this;
-  deployed(): Promise<this>;
-
-  interface: FuturesMarketSettingsInterface;
-
-  queryFilter<TEvent extends TypedEvent>(
-    event: TypedEventFilter<TEvent>,
-    fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined
-  ): Promise<Array<TEvent>>;
-
-  listeners<TEvent extends TypedEvent>(
-    eventFilter?: TypedEventFilter<TEvent>
-  ): Array<TypedListener<TEvent>>;
-  listeners(eventName?: string): Array<Listener>;
-  removeAllListeners<TEvent extends TypedEvent>(
-    eventFilter: TypedEventFilter<TEvent>
-  ): this;
-  removeAllListeners(eventName?: string): this;
-  off: OnEvent<this>;
-  on: OnEvent<this>;
-  once: OnEvent<this>;
-  removeListener: OnEvent<this>;
-
-  functions: {
-    acceptOwnership(
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    isResolverCached(overrides?: CallOverrides): Promise<[boolean]>;
-
-    liquidationBufferRatio(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    liquidationFeeRatio(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    makerFee(
-      _marketKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    makerFeeNextPrice(
-      _marketKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    maxFundingRate(
-      _marketKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    maxLeverage(
-      _marketKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    maxMarketValueUSD(
-      _marketKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    minInitialMargin(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    minKeeperFee(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    nextPriceConfirmWindow(
-      _marketKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    nominateNewOwner(
-      _owner: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    nominatedOwner(overrides?: CallOverrides): Promise<[string]>;
-
-    owner(overrides?: CallOverrides): Promise<[string]>;
-
-    parameters(
-      _marketKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<
-      [
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber
-      ] & {
-        takerFee: BigNumber;
-        makerFee: BigNumber;
-        takerFeeNextPrice: BigNumber;
-        makerFeeNextPrice: BigNumber;
-        nextPriceConfirmWindow: BigNumber;
-        maxLeverage: BigNumber;
-        maxMarketValueUSD: BigNumber;
-        maxFundingRate: BigNumber;
-        skewScaleUSD: BigNumber;
-      }
-    >;
-
-    rebuildCache(
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    resolver(overrides?: CallOverrides): Promise<[string]>;
-
-    resolverAddressesRequired(
-      overrides?: CallOverrides
-    ): Promise<[string[]] & { addresses: string[] }>;
-
-    setLiquidationBufferRatio(
-      _ratio: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    setLiquidationFeeRatio(
-      _ratio: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    setMakerFee(
-      _marketKey: BytesLike,
-      _makerFee: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    setMakerFeeNextPrice(
-      _marketKey: BytesLike,
-      _makerFeeNextPrice: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    setMaxFundingRate(
-      _marketKey: BytesLike,
-      _maxFundingRate: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    setMaxLeverage(
-      _marketKey: BytesLike,
-      _maxLeverage: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    setMaxMarketValueUSD(
-      _marketKey: BytesLike,
-      _maxMarketValueUSD: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    setMinInitialMargin(
-      _minMargin: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    setMinKeeperFee(
-      _sUSD: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    setNextPriceConfirmWindow(
-      _marketKey: BytesLike,
-      _nextPriceConfirmWindow: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    setParameters(
-      _marketKey: BytesLike,
-      _takerFee: BigNumberish,
-      _makerFee: BigNumberish,
-      _takerFeeNextPrice: BigNumberish,
-      _makerFeeNextPrice: BigNumberish,
-      _nextPriceConfirmWindow: BigNumberish,
-      _maxLeverage: BigNumberish,
-      _maxMarketValueUSD: BigNumberish,
-      _maxFundingRate: BigNumberish,
-      _skewScaleUSD: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    setSkewScaleUSD(
-      _marketKey: BytesLike,
-      _skewScaleUSD: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    setTakerFee(
-      _marketKey: BytesLike,
-      _takerFee: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    setTakerFeeNextPrice(
-      _marketKey: BytesLike,
-      _takerFeeNextPrice: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    skewScaleUSD(
-      _marketKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    takerFee(
-      _marketKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    takerFeeNextPrice(
-      _marketKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-  };
-
-  acceptOwnership(
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  isResolverCached(overrides?: CallOverrides): Promise<boolean>;
-
-  liquidationBufferRatio(overrides?: CallOverrides): Promise<BigNumber>;
-
-  liquidationFeeRatio(overrides?: CallOverrides): Promise<BigNumber>;
-
-  makerFee(
-    _marketKey: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  makerFeeNextPrice(
-    _marketKey: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  maxFundingRate(
-    _marketKey: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  maxLeverage(
-    _marketKey: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  maxMarketValueUSD(
-    _marketKey: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  minInitialMargin(overrides?: CallOverrides): Promise<BigNumber>;
-
-  minKeeperFee(overrides?: CallOverrides): Promise<BigNumber>;
-
-  nextPriceConfirmWindow(
-    _marketKey: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  nominateNewOwner(
-    _owner: string,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  nominatedOwner(overrides?: CallOverrides): Promise<string>;
-
-  owner(overrides?: CallOverrides): Promise<string>;
-
-  parameters(
-    _marketKey: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<
-    [
-      BigNumber,
-      BigNumber,
-      BigNumber,
-      BigNumber,
-      BigNumber,
-      BigNumber,
-      BigNumber,
-      BigNumber,
-      BigNumber
-    ] & {
-      takerFee: BigNumber;
-      makerFee: BigNumber;
-      takerFeeNextPrice: BigNumber;
-      makerFeeNextPrice: BigNumber;
-      nextPriceConfirmWindow: BigNumber;
-      maxLeverage: BigNumber;
-      maxMarketValueUSD: BigNumber;
-      maxFundingRate: BigNumber;
-      skewScaleUSD: BigNumber;
-    }
-  >;
-
-  rebuildCache(
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  resolver(overrides?: CallOverrides): Promise<string>;
-
-  resolverAddressesRequired(overrides?: CallOverrides): Promise<string[]>;
-
-  setLiquidationBufferRatio(
-    _ratio: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  setLiquidationFeeRatio(
-    _ratio: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  setMakerFee(
-    _marketKey: BytesLike,
-    _makerFee: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  setMakerFeeNextPrice(
-    _marketKey: BytesLike,
-    _makerFeeNextPrice: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  setMaxFundingRate(
-    _marketKey: BytesLike,
-    _maxFundingRate: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  setMaxLeverage(
-    _marketKey: BytesLike,
-    _maxLeverage: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  setMaxMarketValueUSD(
-    _marketKey: BytesLike,
-    _maxMarketValueUSD: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  setMinInitialMargin(
-    _minMargin: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  setMinKeeperFee(
-    _sUSD: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  setNextPriceConfirmWindow(
-    _marketKey: BytesLike,
-    _nextPriceConfirmWindow: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  setParameters(
-    _marketKey: BytesLike,
-    _takerFee: BigNumberish,
-    _makerFee: BigNumberish,
-    _takerFeeNextPrice: BigNumberish,
-    _makerFeeNextPrice: BigNumberish,
-    _nextPriceConfirmWindow: BigNumberish,
-    _maxLeverage: BigNumberish,
-    _maxMarketValueUSD: BigNumberish,
-    _maxFundingRate: BigNumberish,
-    _skewScaleUSD: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  setSkewScaleUSD(
-    _marketKey: BytesLike,
-    _skewScaleUSD: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  setTakerFee(
-    _marketKey: BytesLike,
-    _takerFee: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  setTakerFeeNextPrice(
-    _marketKey: BytesLike,
-    _takerFeeNextPrice: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  skewScaleUSD(
-    _marketKey: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  takerFee(
-    _marketKey: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  takerFeeNextPrice(
-    _marketKey: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  callStatic: {
-    acceptOwnership(overrides?: CallOverrides): Promise<void>;
-
-    isResolverCached(overrides?: CallOverrides): Promise<boolean>;
-
-    liquidationBufferRatio(overrides?: CallOverrides): Promise<BigNumber>;
-
-    liquidationFeeRatio(overrides?: CallOverrides): Promise<BigNumber>;
-
-    makerFee(
-      _marketKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    makerFeeNextPrice(
-      _marketKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    maxFundingRate(
-      _marketKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    maxLeverage(
-      _marketKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    maxMarketValueUSD(
-      _marketKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    minInitialMargin(overrides?: CallOverrides): Promise<BigNumber>;
-
-    minKeeperFee(overrides?: CallOverrides): Promise<BigNumber>;
-
-    nextPriceConfirmWindow(
-      _marketKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    nominateNewOwner(_owner: string, overrides?: CallOverrides): Promise<void>;
-
-    nominatedOwner(overrides?: CallOverrides): Promise<string>;
-
-    owner(overrides?: CallOverrides): Promise<string>;
-
-    parameters(
-      _marketKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<
-      [
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber
-      ] & {
-        takerFee: BigNumber;
-        makerFee: BigNumber;
-        takerFeeNextPrice: BigNumber;
-        makerFeeNextPrice: BigNumber;
-        nextPriceConfirmWindow: BigNumber;
-        maxLeverage: BigNumber;
-        maxMarketValueUSD: BigNumber;
-        maxFundingRate: BigNumber;
-        skewScaleUSD: BigNumber;
-      }
-    >;
-
-    rebuildCache(overrides?: CallOverrides): Promise<void>;
-
-    resolver(overrides?: CallOverrides): Promise<string>;
-
-    resolverAddressesRequired(overrides?: CallOverrides): Promise<string[]>;
-
-    setLiquidationBufferRatio(
-      _ratio: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setLiquidationFeeRatio(
-      _ratio: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setMakerFee(
-      _marketKey: BytesLike,
-      _makerFee: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setMakerFeeNextPrice(
-      _marketKey: BytesLike,
-      _makerFeeNextPrice: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setMaxFundingRate(
-      _marketKey: BytesLike,
-      _maxFundingRate: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setMaxLeverage(
-      _marketKey: BytesLike,
-      _maxLeverage: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setMaxMarketValueUSD(
-      _marketKey: BytesLike,
-      _maxMarketValueUSD: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setMinInitialMargin(
-      _minMargin: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setMinKeeperFee(
-      _sUSD: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setNextPriceConfirmWindow(
-      _marketKey: BytesLike,
-      _nextPriceConfirmWindow: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setParameters(
-      _marketKey: BytesLike,
-      _takerFee: BigNumberish,
-      _makerFee: BigNumberish,
-      _takerFeeNextPrice: BigNumberish,
-      _makerFeeNextPrice: BigNumberish,
-      _nextPriceConfirmWindow: BigNumberish,
-      _maxLeverage: BigNumberish,
-      _maxMarketValueUSD: BigNumberish,
-      _maxFundingRate: BigNumberish,
-      _skewScaleUSD: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setSkewScaleUSD(
-      _marketKey: BytesLike,
-      _skewScaleUSD: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setTakerFee(
-      _marketKey: BytesLike,
-      _takerFee: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setTakerFeeNextPrice(
-      _marketKey: BytesLike,
-      _takerFeeNextPrice: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    skewScaleUSD(
-      _marketKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    takerFee(
-      _marketKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    takerFeeNextPrice(
-      _marketKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-  };
-
-  filters: {
-    "CacheUpdated(bytes32,address)"(
-      name?: null,
-      destination?: null
-    ): CacheUpdatedEventFilter;
-    CacheUpdated(name?: null, destination?: null): CacheUpdatedEventFilter;
-
-    "LiquidationBufferRatioUpdated(uint256)"(
-      bps?: null
-    ): LiquidationBufferRatioUpdatedEventFilter;
-    LiquidationBufferRatioUpdated(
-      bps?: null
-    ): LiquidationBufferRatioUpdatedEventFilter;
-
-    "LiquidationFeeRatioUpdated(uint256)"(
-      bps?: null
-    ): LiquidationFeeRatioUpdatedEventFilter;
-    LiquidationFeeRatioUpdated(
-      bps?: null
-    ): LiquidationFeeRatioUpdatedEventFilter;
-
-    "MinInitialMarginUpdated(uint256)"(
-      minMargin?: null
-    ): MinInitialMarginUpdatedEventFilter;
-    MinInitialMarginUpdated(
-      minMargin?: null
-    ): MinInitialMarginUpdatedEventFilter;
-
-    "MinKeeperFeeUpdated(uint256)"(sUSD?: null): MinKeeperFeeUpdatedEventFilter;
-    MinKeeperFeeUpdated(sUSD?: null): MinKeeperFeeUpdatedEventFilter;
-
-    "OwnerChanged(address,address)"(
-      oldOwner?: null,
-      newOwner?: null
-    ): OwnerChangedEventFilter;
-    OwnerChanged(oldOwner?: null, newOwner?: null): OwnerChangedEventFilter;
-
-    "OwnerNominated(address)"(newOwner?: null): OwnerNominatedEventFilter;
-    OwnerNominated(newOwner?: null): OwnerNominatedEventFilter;
-
-    "ParameterUpdated(bytes32,bytes32,uint256)"(
-      marketKey?: BytesLike | null,
-      parameter?: BytesLike | null,
-      value?: null
-    ): ParameterUpdatedEventFilter;
-    ParameterUpdated(
-      marketKey?: BytesLike | null,
-      parameter?: BytesLike | null,
-      value?: null
-    ): ParameterUpdatedEventFilter;
-  };
-
-  estimateGas: {
-    acceptOwnership(
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    isResolverCached(overrides?: CallOverrides): Promise<BigNumber>;
-
-    liquidationBufferRatio(overrides?: CallOverrides): Promise<BigNumber>;
-
-    liquidationFeeRatio(overrides?: CallOverrides): Promise<BigNumber>;
-
-    makerFee(
-      _marketKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    makerFeeNextPrice(
-      _marketKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    maxFundingRate(
-      _marketKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    maxLeverage(
-      _marketKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    maxMarketValueUSD(
-      _marketKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    minInitialMargin(overrides?: CallOverrides): Promise<BigNumber>;
-
-    minKeeperFee(overrides?: CallOverrides): Promise<BigNumber>;
-
-    nextPriceConfirmWindow(
-      _marketKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    nominateNewOwner(
-      _owner: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    nominatedOwner(overrides?: CallOverrides): Promise<BigNumber>;
-
-    owner(overrides?: CallOverrides): Promise<BigNumber>;
-
-    parameters(
-      _marketKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    rebuildCache(overrides?: Overrides & { from?: string }): Promise<BigNumber>;
-
-    resolver(overrides?: CallOverrides): Promise<BigNumber>;
-
-    resolverAddressesRequired(overrides?: CallOverrides): Promise<BigNumber>;
-
-    setLiquidationBufferRatio(
-      _ratio: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    setLiquidationFeeRatio(
-      _ratio: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    setMakerFee(
-      _marketKey: BytesLike,
-      _makerFee: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    setMakerFeeNextPrice(
-      _marketKey: BytesLike,
-      _makerFeeNextPrice: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    setMaxFundingRate(
-      _marketKey: BytesLike,
-      _maxFundingRate: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    setMaxLeverage(
-      _marketKey: BytesLike,
-      _maxLeverage: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    setMaxMarketValueUSD(
-      _marketKey: BytesLike,
-      _maxMarketValueUSD: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    setMinInitialMargin(
-      _minMargin: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    setMinKeeperFee(
-      _sUSD: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    setNextPriceConfirmWindow(
-      _marketKey: BytesLike,
-      _nextPriceConfirmWindow: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    setParameters(
-      _marketKey: BytesLike,
-      _takerFee: BigNumberish,
-      _makerFee: BigNumberish,
-      _takerFeeNextPrice: BigNumberish,
-      _makerFeeNextPrice: BigNumberish,
-      _nextPriceConfirmWindow: BigNumberish,
-      _maxLeverage: BigNumberish,
-      _maxMarketValueUSD: BigNumberish,
-      _maxFundingRate: BigNumberish,
-      _skewScaleUSD: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    setSkewScaleUSD(
-      _marketKey: BytesLike,
-      _skewScaleUSD: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    setTakerFee(
-      _marketKey: BytesLike,
-      _takerFee: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    setTakerFeeNextPrice(
-      _marketKey: BytesLike,
-      _takerFeeNextPrice: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    skewScaleUSD(
-      _marketKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    takerFee(
-      _marketKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    takerFeeNextPrice(
-      _marketKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-  };
-
-  populateTransaction: {
-    acceptOwnership(
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    isResolverCached(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    liquidationBufferRatio(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    liquidationFeeRatio(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    makerFee(
-      _marketKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    makerFeeNextPrice(
-      _marketKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    maxFundingRate(
-      _marketKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    maxLeverage(
-      _marketKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    maxMarketValueUSD(
-      _marketKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    minInitialMargin(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    minKeeperFee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    nextPriceConfirmWindow(
-      _marketKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    nominateNewOwner(
-      _owner: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    nominatedOwner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    parameters(
-      _marketKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    rebuildCache(
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    resolver(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    resolverAddressesRequired(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    setLiquidationBufferRatio(
-      _ratio: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    setLiquidationFeeRatio(
-      _ratio: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    setMakerFee(
-      _marketKey: BytesLike,
-      _makerFee: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    setMakerFeeNextPrice(
-      _marketKey: BytesLike,
-      _makerFeeNextPrice: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    setMaxFundingRate(
-      _marketKey: BytesLike,
-      _maxFundingRate: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    setMaxLeverage(
-      _marketKey: BytesLike,
-      _maxLeverage: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    setMaxMarketValueUSD(
-      _marketKey: BytesLike,
-      _maxMarketValueUSD: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    setMinInitialMargin(
-      _minMargin: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    setMinKeeperFee(
-      _sUSD: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    setNextPriceConfirmWindow(
-      _marketKey: BytesLike,
-      _nextPriceConfirmWindow: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    setParameters(
-      _marketKey: BytesLike,
-      _takerFee: BigNumberish,
-      _makerFee: BigNumberish,
-      _takerFeeNextPrice: BigNumberish,
-      _makerFeeNextPrice: BigNumberish,
-      _nextPriceConfirmWindow: BigNumberish,
-      _maxLeverage: BigNumberish,
-      _maxMarketValueUSD: BigNumberish,
-      _maxFundingRate: BigNumberish,
-      _skewScaleUSD: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    setSkewScaleUSD(
-      _marketKey: BytesLike,
-      _skewScaleUSD: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    setTakerFee(
-      _marketKey: BytesLike,
-      _takerFee: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    setTakerFeeNextPrice(
-      _marketKey: BytesLike,
-      _takerFeeNextPrice: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    skewScaleUSD(
-      _marketKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    takerFee(
-      _marketKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    takerFeeNextPrice(
-      _marketKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-  };
+	connect(signerOrProvider: Signer | Provider | string): this
+	attach(addressOrName: string): this
+	deployed(): Promise<this>
+
+	interface: FuturesMarketSettingsInterface
+
+	queryFilter<TEvent extends TypedEvent>(
+		event: TypedEventFilter<TEvent>,
+		fromBlockOrBlockhash?: string | number | undefined,
+		toBlock?: string | number | undefined
+	): Promise<Array<TEvent>>
+
+	listeners<TEvent extends TypedEvent>(
+		eventFilter?: TypedEventFilter<TEvent>
+	): Array<TypedListener<TEvent>>
+	listeners(eventName?: string): Array<Listener>
+	removeAllListeners<TEvent extends TypedEvent>(eventFilter: TypedEventFilter<TEvent>): this
+	removeAllListeners(eventName?: string): this
+	off: OnEvent<this>
+	on: OnEvent<this>
+	once: OnEvent<this>
+	removeListener: OnEvent<this>
+
+	functions: {
+		acceptOwnership(overrides?: Overrides & { from?: string }): Promise<ContractTransaction>
+
+		isResolverCached(overrides?: CallOverrides): Promise<[boolean]>
+
+		liquidationBufferRatio(overrides?: CallOverrides): Promise<[BigNumber]>
+
+		liquidationFeeRatio(overrides?: CallOverrides): Promise<[BigNumber]>
+
+		makerFee(_marketKey: BytesLike, overrides?: CallOverrides): Promise<[BigNumber]>
+
+		makerFeeNextPrice(_marketKey: BytesLike, overrides?: CallOverrides): Promise<[BigNumber]>
+
+		maxFundingRate(_marketKey: BytesLike, overrides?: CallOverrides): Promise<[BigNumber]>
+
+		maxLeverage(_marketKey: BytesLike, overrides?: CallOverrides): Promise<[BigNumber]>
+
+		maxMarketValueUSD(_marketKey: BytesLike, overrides?: CallOverrides): Promise<[BigNumber]>
+
+		minInitialMargin(overrides?: CallOverrides): Promise<[BigNumber]>
+
+		minKeeperFee(overrides?: CallOverrides): Promise<[BigNumber]>
+
+		nextPriceConfirmWindow(_marketKey: BytesLike, overrides?: CallOverrides): Promise<[BigNumber]>
+
+		nominateNewOwner(
+			_owner: string,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
+
+		nominatedOwner(overrides?: CallOverrides): Promise<[string]>
+
+		owner(overrides?: CallOverrides): Promise<[string]>
+
+		parameters(
+			_marketKey: BytesLike,
+			overrides?: CallOverrides
+		): Promise<
+			[
+				BigNumber,
+				BigNumber,
+				BigNumber,
+				BigNumber,
+				BigNumber,
+				BigNumber,
+				BigNumber,
+				BigNumber,
+				BigNumber
+			] & {
+				takerFee: BigNumber
+				makerFee: BigNumber
+				takerFeeNextPrice: BigNumber
+				makerFeeNextPrice: BigNumber
+				nextPriceConfirmWindow: BigNumber
+				maxLeverage: BigNumber
+				maxMarketValueUSD: BigNumber
+				maxFundingRate: BigNumber
+				skewScaleUSD: BigNumber
+			}
+		>
+
+		rebuildCache(overrides?: Overrides & { from?: string }): Promise<ContractTransaction>
+
+		resolver(overrides?: CallOverrides): Promise<[string]>
+
+		resolverAddressesRequired(
+			overrides?: CallOverrides
+		): Promise<[string[]] & { addresses: string[] }>
+
+		setLiquidationBufferRatio(
+			_ratio: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
+
+		setLiquidationFeeRatio(
+			_ratio: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
+
+		setMakerFee(
+			_marketKey: BytesLike,
+			_makerFee: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
+
+		setMakerFeeNextPrice(
+			_marketKey: BytesLike,
+			_makerFeeNextPrice: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
+
+		setMaxFundingRate(
+			_marketKey: BytesLike,
+			_maxFundingRate: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
+
+		setMaxLeverage(
+			_marketKey: BytesLike,
+			_maxLeverage: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
+
+		setMaxMarketValueUSD(
+			_marketKey: BytesLike,
+			_maxMarketValueUSD: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
+
+		setMinInitialMargin(
+			_minMargin: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
+
+		setMinKeeperFee(
+			_sUSD: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
+
+		setNextPriceConfirmWindow(
+			_marketKey: BytesLike,
+			_nextPriceConfirmWindow: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
+
+		setParameters(
+			_marketKey: BytesLike,
+			_takerFee: BigNumberish,
+			_makerFee: BigNumberish,
+			_takerFeeNextPrice: BigNumberish,
+			_makerFeeNextPrice: BigNumberish,
+			_nextPriceConfirmWindow: BigNumberish,
+			_maxLeverage: BigNumberish,
+			_maxMarketValueUSD: BigNumberish,
+			_maxFundingRate: BigNumberish,
+			_skewScaleUSD: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
+
+		setSkewScaleUSD(
+			_marketKey: BytesLike,
+			_skewScaleUSD: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
+
+		setTakerFee(
+			_marketKey: BytesLike,
+			_takerFee: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
+
+		setTakerFeeNextPrice(
+			_marketKey: BytesLike,
+			_takerFeeNextPrice: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
+
+		skewScaleUSD(_marketKey: BytesLike, overrides?: CallOverrides): Promise<[BigNumber]>
+
+		takerFee(_marketKey: BytesLike, overrides?: CallOverrides): Promise<[BigNumber]>
+
+		takerFeeNextPrice(_marketKey: BytesLike, overrides?: CallOverrides): Promise<[BigNumber]>
+	}
+
+	acceptOwnership(overrides?: Overrides & { from?: string }): Promise<ContractTransaction>
+
+	isResolverCached(overrides?: CallOverrides): Promise<boolean>
+
+	liquidationBufferRatio(overrides?: CallOverrides): Promise<BigNumber>
+
+	liquidationFeeRatio(overrides?: CallOverrides): Promise<BigNumber>
+
+	makerFee(_marketKey: BytesLike, overrides?: CallOverrides): Promise<BigNumber>
+
+	makerFeeNextPrice(_marketKey: BytesLike, overrides?: CallOverrides): Promise<BigNumber>
+
+	maxFundingRate(_marketKey: BytesLike, overrides?: CallOverrides): Promise<BigNumber>
+
+	maxLeverage(_marketKey: BytesLike, overrides?: CallOverrides): Promise<BigNumber>
+
+	maxMarketValueUSD(_marketKey: BytesLike, overrides?: CallOverrides): Promise<BigNumber>
+
+	minInitialMargin(overrides?: CallOverrides): Promise<BigNumber>
+
+	minKeeperFee(overrides?: CallOverrides): Promise<BigNumber>
+
+	nextPriceConfirmWindow(_marketKey: BytesLike, overrides?: CallOverrides): Promise<BigNumber>
+
+	nominateNewOwner(
+		_owner: string,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
+
+	nominatedOwner(overrides?: CallOverrides): Promise<string>
+
+	owner(overrides?: CallOverrides): Promise<string>
+
+	parameters(
+		_marketKey: BytesLike,
+		overrides?: CallOverrides
+	): Promise<
+		[
+			BigNumber,
+			BigNumber,
+			BigNumber,
+			BigNumber,
+			BigNumber,
+			BigNumber,
+			BigNumber,
+			BigNumber,
+			BigNumber
+		] & {
+			takerFee: BigNumber
+			makerFee: BigNumber
+			takerFeeNextPrice: BigNumber
+			makerFeeNextPrice: BigNumber
+			nextPriceConfirmWindow: BigNumber
+			maxLeverage: BigNumber
+			maxMarketValueUSD: BigNumber
+			maxFundingRate: BigNumber
+			skewScaleUSD: BigNumber
+		}
+	>
+
+	rebuildCache(overrides?: Overrides & { from?: string }): Promise<ContractTransaction>
+
+	resolver(overrides?: CallOverrides): Promise<string>
+
+	resolverAddressesRequired(overrides?: CallOverrides): Promise<string[]>
+
+	setLiquidationBufferRatio(
+		_ratio: BigNumberish,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
+
+	setLiquidationFeeRatio(
+		_ratio: BigNumberish,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
+
+	setMakerFee(
+		_marketKey: BytesLike,
+		_makerFee: BigNumberish,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
+
+	setMakerFeeNextPrice(
+		_marketKey: BytesLike,
+		_makerFeeNextPrice: BigNumberish,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
+
+	setMaxFundingRate(
+		_marketKey: BytesLike,
+		_maxFundingRate: BigNumberish,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
+
+	setMaxLeverage(
+		_marketKey: BytesLike,
+		_maxLeverage: BigNumberish,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
+
+	setMaxMarketValueUSD(
+		_marketKey: BytesLike,
+		_maxMarketValueUSD: BigNumberish,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
+
+	setMinInitialMargin(
+		_minMargin: BigNumberish,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
+
+	setMinKeeperFee(
+		_sUSD: BigNumberish,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
+
+	setNextPriceConfirmWindow(
+		_marketKey: BytesLike,
+		_nextPriceConfirmWindow: BigNumberish,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
+
+	setParameters(
+		_marketKey: BytesLike,
+		_takerFee: BigNumberish,
+		_makerFee: BigNumberish,
+		_takerFeeNextPrice: BigNumberish,
+		_makerFeeNextPrice: BigNumberish,
+		_nextPriceConfirmWindow: BigNumberish,
+		_maxLeverage: BigNumberish,
+		_maxMarketValueUSD: BigNumberish,
+		_maxFundingRate: BigNumberish,
+		_skewScaleUSD: BigNumberish,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
+
+	setSkewScaleUSD(
+		_marketKey: BytesLike,
+		_skewScaleUSD: BigNumberish,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
+
+	setTakerFee(
+		_marketKey: BytesLike,
+		_takerFee: BigNumberish,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
+
+	setTakerFeeNextPrice(
+		_marketKey: BytesLike,
+		_takerFeeNextPrice: BigNumberish,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
+
+	skewScaleUSD(_marketKey: BytesLike, overrides?: CallOverrides): Promise<BigNumber>
+
+	takerFee(_marketKey: BytesLike, overrides?: CallOverrides): Promise<BigNumber>
+
+	takerFeeNextPrice(_marketKey: BytesLike, overrides?: CallOverrides): Promise<BigNumber>
+
+	callStatic: {
+		acceptOwnership(overrides?: CallOverrides): Promise<void>
+
+		isResolverCached(overrides?: CallOverrides): Promise<boolean>
+
+		liquidationBufferRatio(overrides?: CallOverrides): Promise<BigNumber>
+
+		liquidationFeeRatio(overrides?: CallOverrides): Promise<BigNumber>
+
+		makerFee(_marketKey: BytesLike, overrides?: CallOverrides): Promise<BigNumber>
+
+		makerFeeNextPrice(_marketKey: BytesLike, overrides?: CallOverrides): Promise<BigNumber>
+
+		maxFundingRate(_marketKey: BytesLike, overrides?: CallOverrides): Promise<BigNumber>
+
+		maxLeverage(_marketKey: BytesLike, overrides?: CallOverrides): Promise<BigNumber>
+
+		maxMarketValueUSD(_marketKey: BytesLike, overrides?: CallOverrides): Promise<BigNumber>
+
+		minInitialMargin(overrides?: CallOverrides): Promise<BigNumber>
+
+		minKeeperFee(overrides?: CallOverrides): Promise<BigNumber>
+
+		nextPriceConfirmWindow(_marketKey: BytesLike, overrides?: CallOverrides): Promise<BigNumber>
+
+		nominateNewOwner(_owner: string, overrides?: CallOverrides): Promise<void>
+
+		nominatedOwner(overrides?: CallOverrides): Promise<string>
+
+		owner(overrides?: CallOverrides): Promise<string>
+
+		parameters(
+			_marketKey: BytesLike,
+			overrides?: CallOverrides
+		): Promise<
+			[
+				BigNumber,
+				BigNumber,
+				BigNumber,
+				BigNumber,
+				BigNumber,
+				BigNumber,
+				BigNumber,
+				BigNumber,
+				BigNumber
+			] & {
+				takerFee: BigNumber
+				makerFee: BigNumber
+				takerFeeNextPrice: BigNumber
+				makerFeeNextPrice: BigNumber
+				nextPriceConfirmWindow: BigNumber
+				maxLeverage: BigNumber
+				maxMarketValueUSD: BigNumber
+				maxFundingRate: BigNumber
+				skewScaleUSD: BigNumber
+			}
+		>
+
+		rebuildCache(overrides?: CallOverrides): Promise<void>
+
+		resolver(overrides?: CallOverrides): Promise<string>
+
+		resolverAddressesRequired(overrides?: CallOverrides): Promise<string[]>
+
+		setLiquidationBufferRatio(_ratio: BigNumberish, overrides?: CallOverrides): Promise<void>
+
+		setLiquidationFeeRatio(_ratio: BigNumberish, overrides?: CallOverrides): Promise<void>
+
+		setMakerFee(
+			_marketKey: BytesLike,
+			_makerFee: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<void>
+
+		setMakerFeeNextPrice(
+			_marketKey: BytesLike,
+			_makerFeeNextPrice: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<void>
+
+		setMaxFundingRate(
+			_marketKey: BytesLike,
+			_maxFundingRate: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<void>
+
+		setMaxLeverage(
+			_marketKey: BytesLike,
+			_maxLeverage: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<void>
+
+		setMaxMarketValueUSD(
+			_marketKey: BytesLike,
+			_maxMarketValueUSD: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<void>
+
+		setMinInitialMargin(_minMargin: BigNumberish, overrides?: CallOverrides): Promise<void>
+
+		setMinKeeperFee(_sUSD: BigNumberish, overrides?: CallOverrides): Promise<void>
+
+		setNextPriceConfirmWindow(
+			_marketKey: BytesLike,
+			_nextPriceConfirmWindow: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<void>
+
+		setParameters(
+			_marketKey: BytesLike,
+			_takerFee: BigNumberish,
+			_makerFee: BigNumberish,
+			_takerFeeNextPrice: BigNumberish,
+			_makerFeeNextPrice: BigNumberish,
+			_nextPriceConfirmWindow: BigNumberish,
+			_maxLeverage: BigNumberish,
+			_maxMarketValueUSD: BigNumberish,
+			_maxFundingRate: BigNumberish,
+			_skewScaleUSD: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<void>
+
+		setSkewScaleUSD(
+			_marketKey: BytesLike,
+			_skewScaleUSD: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<void>
+
+		setTakerFee(
+			_marketKey: BytesLike,
+			_takerFee: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<void>
+
+		setTakerFeeNextPrice(
+			_marketKey: BytesLike,
+			_takerFeeNextPrice: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<void>
+
+		skewScaleUSD(_marketKey: BytesLike, overrides?: CallOverrides): Promise<BigNumber>
+
+		takerFee(_marketKey: BytesLike, overrides?: CallOverrides): Promise<BigNumber>
+
+		takerFeeNextPrice(_marketKey: BytesLike, overrides?: CallOverrides): Promise<BigNumber>
+	}
+
+	filters: {
+		'CacheUpdated(bytes32,address)'(name?: null, destination?: null): CacheUpdatedEventFilter
+		CacheUpdated(name?: null, destination?: null): CacheUpdatedEventFilter
+
+		'LiquidationBufferRatioUpdated(uint256)'(bps?: null): LiquidationBufferRatioUpdatedEventFilter
+		LiquidationBufferRatioUpdated(bps?: null): LiquidationBufferRatioUpdatedEventFilter
+
+		'LiquidationFeeRatioUpdated(uint256)'(bps?: null): LiquidationFeeRatioUpdatedEventFilter
+		LiquidationFeeRatioUpdated(bps?: null): LiquidationFeeRatioUpdatedEventFilter
+
+		'MinInitialMarginUpdated(uint256)'(minMargin?: null): MinInitialMarginUpdatedEventFilter
+		MinInitialMarginUpdated(minMargin?: null): MinInitialMarginUpdatedEventFilter
+
+		'MinKeeperFeeUpdated(uint256)'(sUSD?: null): MinKeeperFeeUpdatedEventFilter
+		MinKeeperFeeUpdated(sUSD?: null): MinKeeperFeeUpdatedEventFilter
+
+		'OwnerChanged(address,address)'(oldOwner?: null, newOwner?: null): OwnerChangedEventFilter
+		OwnerChanged(oldOwner?: null, newOwner?: null): OwnerChangedEventFilter
+
+		'OwnerNominated(address)'(newOwner?: null): OwnerNominatedEventFilter
+		OwnerNominated(newOwner?: null): OwnerNominatedEventFilter
+
+		'ParameterUpdated(bytes32,bytes32,uint256)'(
+			marketKey?: BytesLike | null,
+			parameter?: BytesLike | null,
+			value?: null
+		): ParameterUpdatedEventFilter
+		ParameterUpdated(
+			marketKey?: BytesLike | null,
+			parameter?: BytesLike | null,
+			value?: null
+		): ParameterUpdatedEventFilter
+	}
+
+	estimateGas: {
+		acceptOwnership(overrides?: Overrides & { from?: string }): Promise<BigNumber>
+
+		isResolverCached(overrides?: CallOverrides): Promise<BigNumber>
+
+		liquidationBufferRatio(overrides?: CallOverrides): Promise<BigNumber>
+
+		liquidationFeeRatio(overrides?: CallOverrides): Promise<BigNumber>
+
+		makerFee(_marketKey: BytesLike, overrides?: CallOverrides): Promise<BigNumber>
+
+		makerFeeNextPrice(_marketKey: BytesLike, overrides?: CallOverrides): Promise<BigNumber>
+
+		maxFundingRate(_marketKey: BytesLike, overrides?: CallOverrides): Promise<BigNumber>
+
+		maxLeverage(_marketKey: BytesLike, overrides?: CallOverrides): Promise<BigNumber>
+
+		maxMarketValueUSD(_marketKey: BytesLike, overrides?: CallOverrides): Promise<BigNumber>
+
+		minInitialMargin(overrides?: CallOverrides): Promise<BigNumber>
+
+		minKeeperFee(overrides?: CallOverrides): Promise<BigNumber>
+
+		nextPriceConfirmWindow(_marketKey: BytesLike, overrides?: CallOverrides): Promise<BigNumber>
+
+		nominateNewOwner(_owner: string, overrides?: Overrides & { from?: string }): Promise<BigNumber>
+
+		nominatedOwner(overrides?: CallOverrides): Promise<BigNumber>
+
+		owner(overrides?: CallOverrides): Promise<BigNumber>
+
+		parameters(_marketKey: BytesLike, overrides?: CallOverrides): Promise<BigNumber>
+
+		rebuildCache(overrides?: Overrides & { from?: string }): Promise<BigNumber>
+
+		resolver(overrides?: CallOverrides): Promise<BigNumber>
+
+		resolverAddressesRequired(overrides?: CallOverrides): Promise<BigNumber>
+
+		setLiquidationBufferRatio(
+			_ratio: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<BigNumber>
+
+		setLiquidationFeeRatio(
+			_ratio: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<BigNumber>
+
+		setMakerFee(
+			_marketKey: BytesLike,
+			_makerFee: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<BigNumber>
+
+		setMakerFeeNextPrice(
+			_marketKey: BytesLike,
+			_makerFeeNextPrice: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<BigNumber>
+
+		setMaxFundingRate(
+			_marketKey: BytesLike,
+			_maxFundingRate: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<BigNumber>
+
+		setMaxLeverage(
+			_marketKey: BytesLike,
+			_maxLeverage: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<BigNumber>
+
+		setMaxMarketValueUSD(
+			_marketKey: BytesLike,
+			_maxMarketValueUSD: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<BigNumber>
+
+		setMinInitialMargin(
+			_minMargin: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<BigNumber>
+
+		setMinKeeperFee(
+			_sUSD: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<BigNumber>
+
+		setNextPriceConfirmWindow(
+			_marketKey: BytesLike,
+			_nextPriceConfirmWindow: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<BigNumber>
+
+		setParameters(
+			_marketKey: BytesLike,
+			_takerFee: BigNumberish,
+			_makerFee: BigNumberish,
+			_takerFeeNextPrice: BigNumberish,
+			_makerFeeNextPrice: BigNumberish,
+			_nextPriceConfirmWindow: BigNumberish,
+			_maxLeverage: BigNumberish,
+			_maxMarketValueUSD: BigNumberish,
+			_maxFundingRate: BigNumberish,
+			_skewScaleUSD: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<BigNumber>
+
+		setSkewScaleUSD(
+			_marketKey: BytesLike,
+			_skewScaleUSD: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<BigNumber>
+
+		setTakerFee(
+			_marketKey: BytesLike,
+			_takerFee: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<BigNumber>
+
+		setTakerFeeNextPrice(
+			_marketKey: BytesLike,
+			_takerFeeNextPrice: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<BigNumber>
+
+		skewScaleUSD(_marketKey: BytesLike, overrides?: CallOverrides): Promise<BigNumber>
+
+		takerFee(_marketKey: BytesLike, overrides?: CallOverrides): Promise<BigNumber>
+
+		takerFeeNextPrice(_marketKey: BytesLike, overrides?: CallOverrides): Promise<BigNumber>
+	}
+
+	populateTransaction: {
+		acceptOwnership(overrides?: Overrides & { from?: string }): Promise<PopulatedTransaction>
+
+		isResolverCached(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		liquidationBufferRatio(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		liquidationFeeRatio(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		makerFee(_marketKey: BytesLike, overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		makerFeeNextPrice(
+			_marketKey: BytesLike,
+			overrides?: CallOverrides
+		): Promise<PopulatedTransaction>
+
+		maxFundingRate(_marketKey: BytesLike, overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		maxLeverage(_marketKey: BytesLike, overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		maxMarketValueUSD(
+			_marketKey: BytesLike,
+			overrides?: CallOverrides
+		): Promise<PopulatedTransaction>
+
+		minInitialMargin(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		minKeeperFee(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		nextPriceConfirmWindow(
+			_marketKey: BytesLike,
+			overrides?: CallOverrides
+		): Promise<PopulatedTransaction>
+
+		nominateNewOwner(
+			_owner: string,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		nominatedOwner(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		owner(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		parameters(_marketKey: BytesLike, overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		rebuildCache(overrides?: Overrides & { from?: string }): Promise<PopulatedTransaction>
+
+		resolver(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		resolverAddressesRequired(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		setLiquidationBufferRatio(
+			_ratio: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		setLiquidationFeeRatio(
+			_ratio: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		setMakerFee(
+			_marketKey: BytesLike,
+			_makerFee: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		setMakerFeeNextPrice(
+			_marketKey: BytesLike,
+			_makerFeeNextPrice: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		setMaxFundingRate(
+			_marketKey: BytesLike,
+			_maxFundingRate: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		setMaxLeverage(
+			_marketKey: BytesLike,
+			_maxLeverage: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		setMaxMarketValueUSD(
+			_marketKey: BytesLike,
+			_maxMarketValueUSD: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		setMinInitialMargin(
+			_minMargin: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		setMinKeeperFee(
+			_sUSD: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		setNextPriceConfirmWindow(
+			_marketKey: BytesLike,
+			_nextPriceConfirmWindow: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		setParameters(
+			_marketKey: BytesLike,
+			_takerFee: BigNumberish,
+			_makerFee: BigNumberish,
+			_takerFeeNextPrice: BigNumberish,
+			_makerFeeNextPrice: BigNumberish,
+			_nextPriceConfirmWindow: BigNumberish,
+			_maxLeverage: BigNumberish,
+			_maxMarketValueUSD: BigNumberish,
+			_maxFundingRate: BigNumberish,
+			_skewScaleUSD: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		setSkewScaleUSD(
+			_marketKey: BytesLike,
+			_skewScaleUSD: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		setTakerFee(
+			_marketKey: BytesLike,
+			_takerFee: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		setTakerFeeNextPrice(
+			_marketKey: BytesLike,
+			_takerFeeNextPrice: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		skewScaleUSD(_marketKey: BytesLike, overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		takerFee(_marketKey: BytesLike, overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		takerFeeNextPrice(
+			_marketKey: BytesLike,
+			overrides?: CallOverrides
+		): Promise<PopulatedTransaction>
+	}
 }

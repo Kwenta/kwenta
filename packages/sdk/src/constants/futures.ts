@@ -46,7 +46,7 @@ export const PERPS_V3_SUBGRAPH_URLS: Record<number, string> = {
 
 export const KWENTA_PYTH_SERVER = 'https://price.kwenta.io'
 
-export const PUBLIC_PYTH_SERVER = 'https://xc-mainnet.pyth.network'
+export const PUBLIC_PYTH_SERVER = 'https://hermes.pyth.network'
 
 export const SL_TP_MAX_SIZE = weiFromWei(ethers.constants.MaxInt256)
 

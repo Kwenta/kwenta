@@ -2,224 +2,218 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import { Contract, Signer, utils } from "ethers";
-import type { Provider } from "@ethersproject/providers";
-import type {
-  DappMaintenance,
-  DappMaintenanceInterface,
-} from "../DappMaintenance";
+import { Contract, Signer, utils } from 'ethers'
+import type { Provider } from '@ethersproject/providers'
+import type { DappMaintenance, DappMaintenanceInterface } from '../DappMaintenance'
 
 const _abi = [
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "_owner",
-        type: "address",
-      },
-    ],
-    payable: false,
-    stateMutability: "nonpayable",
-    type: "constructor",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: "address",
-        name: "oldOwner",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "address",
-        name: "newOwner",
-        type: "address",
-      },
-    ],
-    name: "OwnerChanged",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: "address",
-        name: "newOwner",
-        type: "address",
-      },
-    ],
-    name: "OwnerNominated",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: "bool",
-        name: "isPaused",
-        type: "bool",
-      },
-    ],
-    name: "SXMaintenance",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: "bool",
-        name: "isPaused",
-        type: "bool",
-      },
-    ],
-    name: "StakingMaintenance",
-    type: "event",
-  },
-  {
-    constant: false,
-    inputs: [],
-    name: "acceptOwnership",
-    outputs: [],
-    payable: false,
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    constant: true,
-    inputs: [],
-    name: "isPausedSX",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
-    payable: false,
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    constant: true,
-    inputs: [],
-    name: "isPausedStaking",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
-    payable: false,
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    constant: false,
-    inputs: [
-      {
-        internalType: "address",
-        name: "_owner",
-        type: "address",
-      },
-    ],
-    name: "nominateNewOwner",
-    outputs: [],
-    payable: false,
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    constant: true,
-    inputs: [],
-    name: "nominatedOwner",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
-    payable: false,
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    constant: true,
-    inputs: [],
-    name: "owner",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
-    payable: false,
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    constant: false,
-    inputs: [
-      {
-        internalType: "bool",
-        name: "isPaused",
-        type: "bool",
-      },
-    ],
-    name: "setMaintenanceModeAll",
-    outputs: [],
-    payable: false,
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    constant: false,
-    inputs: [
-      {
-        internalType: "bool",
-        name: "isPaused",
-        type: "bool",
-      },
-    ],
-    name: "setMaintenanceModeSX",
-    outputs: [],
-    payable: false,
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    constant: false,
-    inputs: [
-      {
-        internalType: "bool",
-        name: "isPaused",
-        type: "bool",
-      },
-    ],
-    name: "setMaintenanceModeStaking",
-    outputs: [],
-    payable: false,
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-] as const;
+	{
+		inputs: [
+			{
+				internalType: 'address',
+				name: '_owner',
+				type: 'address',
+			},
+		],
+		payable: false,
+		stateMutability: 'nonpayable',
+		type: 'constructor',
+	},
+	{
+		anonymous: false,
+		inputs: [
+			{
+				indexed: false,
+				internalType: 'address',
+				name: 'oldOwner',
+				type: 'address',
+			},
+			{
+				indexed: false,
+				internalType: 'address',
+				name: 'newOwner',
+				type: 'address',
+			},
+		],
+		name: 'OwnerChanged',
+		type: 'event',
+	},
+	{
+		anonymous: false,
+		inputs: [
+			{
+				indexed: false,
+				internalType: 'address',
+				name: 'newOwner',
+				type: 'address',
+			},
+		],
+		name: 'OwnerNominated',
+		type: 'event',
+	},
+	{
+		anonymous: false,
+		inputs: [
+			{
+				indexed: false,
+				internalType: 'bool',
+				name: 'isPaused',
+				type: 'bool',
+			},
+		],
+		name: 'SXMaintenance',
+		type: 'event',
+	},
+	{
+		anonymous: false,
+		inputs: [
+			{
+				indexed: false,
+				internalType: 'bool',
+				name: 'isPaused',
+				type: 'bool',
+			},
+		],
+		name: 'StakingMaintenance',
+		type: 'event',
+	},
+	{
+		constant: false,
+		inputs: [],
+		name: 'acceptOwnership',
+		outputs: [],
+		payable: false,
+		stateMutability: 'nonpayable',
+		type: 'function',
+	},
+	{
+		constant: true,
+		inputs: [],
+		name: 'isPausedSX',
+		outputs: [
+			{
+				internalType: 'bool',
+				name: '',
+				type: 'bool',
+			},
+		],
+		payable: false,
+		stateMutability: 'view',
+		type: 'function',
+	},
+	{
+		constant: true,
+		inputs: [],
+		name: 'isPausedStaking',
+		outputs: [
+			{
+				internalType: 'bool',
+				name: '',
+				type: 'bool',
+			},
+		],
+		payable: false,
+		stateMutability: 'view',
+		type: 'function',
+	},
+	{
+		constant: false,
+		inputs: [
+			{
+				internalType: 'address',
+				name: '_owner',
+				type: 'address',
+			},
+		],
+		name: 'nominateNewOwner',
+		outputs: [],
+		payable: false,
+		stateMutability: 'nonpayable',
+		type: 'function',
+	},
+	{
+		constant: true,
+		inputs: [],
+		name: 'nominatedOwner',
+		outputs: [
+			{
+				internalType: 'address',
+				name: '',
+				type: 'address',
+			},
+		],
+		payable: false,
+		stateMutability: 'view',
+		type: 'function',
+	},
+	{
+		constant: true,
+		inputs: [],
+		name: 'owner',
+		outputs: [
+			{
+				internalType: 'address',
+				name: '',
+				type: 'address',
+			},
+		],
+		payable: false,
+		stateMutability: 'view',
+		type: 'function',
+	},
+	{
+		constant: false,
+		inputs: [
+			{
+				internalType: 'bool',
+				name: 'isPaused',
+				type: 'bool',
+			},
+		],
+		name: 'setMaintenanceModeAll',
+		outputs: [],
+		payable: false,
+		stateMutability: 'nonpayable',
+		type: 'function',
+	},
+	{
+		constant: false,
+		inputs: [
+			{
+				internalType: 'bool',
+				name: 'isPaused',
+				type: 'bool',
+			},
+		],
+		name: 'setMaintenanceModeSX',
+		outputs: [],
+		payable: false,
+		stateMutability: 'nonpayable',
+		type: 'function',
+	},
+	{
+		constant: false,
+		inputs: [
+			{
+				internalType: 'bool',
+				name: 'isPaused',
+				type: 'bool',
+			},
+		],
+		name: 'setMaintenanceModeStaking',
+		outputs: [],
+		payable: false,
+		stateMutability: 'nonpayable',
+		type: 'function',
+	},
+] as const
 
 export class DappMaintenance__factory {
-  static readonly abi = _abi;
-  static createInterface(): DappMaintenanceInterface {
-    return new utils.Interface(_abi) as DappMaintenanceInterface;
-  }
-  static connect(
-    address: string,
-    signerOrProvider: Signer | Provider
-  ): DappMaintenance {
-    return new Contract(address, _abi, signerOrProvider) as DappMaintenance;
-  }
+	static readonly abi = _abi
+	static createInterface(): DappMaintenanceInterface {
+		return new utils.Interface(_abi) as DappMaintenanceInterface
+	}
+	static connect(address: string, signerOrProvider: Signer | Provider): DappMaintenance {
+		return new Contract(address, _abi, signerOrProvider) as DappMaintenance
+	}
 }

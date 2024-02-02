@@ -2,1632 +2,1221 @@
 /* tslint:disable */
 /* eslint-disable */
 import type {
-  BaseContract,
-  BigNumber,
-  BigNumberish,
-  BytesLike,
-  CallOverrides,
-  ContractTransaction,
-  Overrides,
-  PopulatedTransaction,
-  Signer,
-  utils,
-} from "ethers";
-import type {
-  FunctionFragment,
-  Result,
-  EventFragment,
-} from "@ethersproject/abi";
-import type { Listener, Provider } from "@ethersproject/providers";
-import type {
-  TypedEventFilter,
-  TypedEvent,
-  TypedListener,
-  OnEvent,
-} from "./common";
+	BaseContract,
+	BigNumber,
+	BigNumberish,
+	BytesLike,
+	CallOverrides,
+	ContractTransaction,
+	Overrides,
+	PopulatedTransaction,
+	Signer,
+	utils,
+} from 'ethers'
+import type { FunctionFragment, Result, EventFragment } from '@ethersproject/abi'
+import type { Listener, Provider } from '@ethersproject/providers'
+import type { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from './common'
 
 export declare namespace IDirectIntegrationManager {
-  export type ParameterIntegrationSettingsStruct = {
-    currencyKey: BytesLike;
-    dexPriceAggregator: string;
-    atomicEquivalentForDexPricing: string;
-    atomicExchangeFeeRate: BigNumberish;
-    atomicTwapWindow: BigNumberish;
-    atomicMaxVolumePerBlock: BigNumberish;
-    atomicVolatilityConsiderationWindow: BigNumberish;
-    atomicVolatilityUpdateThreshold: BigNumberish;
-    exchangeFeeRate: BigNumberish;
-    exchangeMaxDynamicFee: BigNumberish;
-    exchangeDynamicFeeRounds: BigNumberish;
-    exchangeDynamicFeeThreshold: BigNumberish;
-    exchangeDynamicFeeWeightDecay: BigNumberish;
-  };
+	export type ParameterIntegrationSettingsStruct = {
+		currencyKey: BytesLike
+		dexPriceAggregator: string
+		atomicEquivalentForDexPricing: string
+		atomicExchangeFeeRate: BigNumberish
+		atomicTwapWindow: BigNumberish
+		atomicMaxVolumePerBlock: BigNumberish
+		atomicVolatilityConsiderationWindow: BigNumberish
+		atomicVolatilityUpdateThreshold: BigNumberish
+		exchangeFeeRate: BigNumberish
+		exchangeMaxDynamicFee: BigNumberish
+		exchangeDynamicFeeRounds: BigNumberish
+		exchangeDynamicFeeThreshold: BigNumberish
+		exchangeDynamicFeeWeightDecay: BigNumberish
+	}
 
-  export type ParameterIntegrationSettingsStructOutput = [
-    string,
-    string,
-    string,
-    BigNumber,
-    BigNumber,
-    BigNumber,
-    BigNumber,
-    BigNumber,
-    BigNumber,
-    BigNumber,
-    BigNumber,
-    BigNumber,
-    BigNumber
-  ] & {
-    currencyKey: string;
-    dexPriceAggregator: string;
-    atomicEquivalentForDexPricing: string;
-    atomicExchangeFeeRate: BigNumber;
-    atomicTwapWindow: BigNumber;
-    atomicMaxVolumePerBlock: BigNumber;
-    atomicVolatilityConsiderationWindow: BigNumber;
-    atomicVolatilityUpdateThreshold: BigNumber;
-    exchangeFeeRate: BigNumber;
-    exchangeMaxDynamicFee: BigNumber;
-    exchangeDynamicFeeRounds: BigNumber;
-    exchangeDynamicFeeThreshold: BigNumber;
-    exchangeDynamicFeeWeightDecay: BigNumber;
-  };
+	export type ParameterIntegrationSettingsStructOutput = [
+		string,
+		string,
+		string,
+		BigNumber,
+		BigNumber,
+		BigNumber,
+		BigNumber,
+		BigNumber,
+		BigNumber,
+		BigNumber,
+		BigNumber,
+		BigNumber,
+		BigNumber
+	] & {
+		currencyKey: string
+		dexPriceAggregator: string
+		atomicEquivalentForDexPricing: string
+		atomicExchangeFeeRate: BigNumber
+		atomicTwapWindow: BigNumber
+		atomicMaxVolumePerBlock: BigNumber
+		atomicVolatilityConsiderationWindow: BigNumber
+		atomicVolatilityUpdateThreshold: BigNumber
+		exchangeFeeRate: BigNumber
+		exchangeMaxDynamicFee: BigNumber
+		exchangeDynamicFeeRounds: BigNumber
+		exchangeDynamicFeeThreshold: BigNumber
+		exchangeDynamicFeeWeightDecay: BigNumber
+	}
 }
 
 export interface ExchangeRatesInterface extends utils.Interface {
-  functions: {
-    "CONTRACT_NAME()": FunctionFragment;
-    "acceptOwnership()": FunctionFragment;
-    "addAggregator(bytes32,address)": FunctionFragment;
-    "aggregatorKeys(uint256)": FunctionFragment;
-    "aggregatorWarningFlags()": FunctionFragment;
-    "aggregators(bytes32)": FunctionFragment;
-    "anyRateIsInvalid(bytes32[])": FunctionFragment;
-    "anyRateIsInvalidAtRound(bytes32[],uint256[])": FunctionFragment;
-    "currenciesUsingAggregator(address)": FunctionFragment;
-    "currencyKeyDecimals(bytes32)": FunctionFragment;
-    "effectiveAtomicValueAndRates(bytes32,uint256,bytes32)": FunctionFragment;
-    "effectiveValue(bytes32,uint256,bytes32)": FunctionFragment;
-    "effectiveValueAndRates(bytes32,uint256,bytes32)": FunctionFragment;
-    "effectiveValueAndRatesAtRound(bytes32,uint256,bytes32,uint256,uint256)": FunctionFragment;
-    "getCurrentRoundId(bytes32)": FunctionFragment;
-    "getLastRoundIdBeforeElapsedSecs(bytes32,uint256,uint256,uint256)": FunctionFragment;
-    "isResolverCached()": FunctionFragment;
-    "lastRateUpdateTimes(bytes32)": FunctionFragment;
-    "lastRateUpdateTimesForCurrencies(bytes32[])": FunctionFragment;
-    "nominateNewOwner(address)": FunctionFragment;
-    "nominatedOwner()": FunctionFragment;
-    "owner()": FunctionFragment;
-    "rateAndInvalid(bytes32)": FunctionFragment;
-    "rateAndTimestampAtRound(bytes32,uint256)": FunctionFragment;
-    "rateAndUpdatedTime(bytes32)": FunctionFragment;
-    "rateForCurrency(bytes32)": FunctionFragment;
-    "rateIsFlagged(bytes32)": FunctionFragment;
-    "rateIsInvalid(bytes32)": FunctionFragment;
-    "rateIsStale(bytes32)": FunctionFragment;
-    "rateStalePeriod()": FunctionFragment;
-    "rateWithSafetyChecks(bytes32)": FunctionFragment;
-    "ratesAndInvalidForCurrencies(bytes32[])": FunctionFragment;
-    "ratesAndUpdatedTimeForCurrencyLastNRounds(bytes32,uint256,uint256)": FunctionFragment;
-    "ratesForCurrencies(bytes32[])": FunctionFragment;
-    "rebuildCache()": FunctionFragment;
-    "removeAggregator(bytes32)": FunctionFragment;
-    "resolver()": FunctionFragment;
-    "resolverAddressesRequired()": FunctionFragment;
-    "synthTooVolatileForAtomicExchange(bytes32)": FunctionFragment;
-    "synthTooVolatileForAtomicExchange((bytes32,address,address,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))": FunctionFragment;
-  };
+	functions: {
+		'CONTRACT_NAME()': FunctionFragment
+		'acceptOwnership()': FunctionFragment
+		'addAggregator(bytes32,address)': FunctionFragment
+		'aggregatorKeys(uint256)': FunctionFragment
+		'aggregatorWarningFlags()': FunctionFragment
+		'aggregators(bytes32)': FunctionFragment
+		'anyRateIsInvalid(bytes32[])': FunctionFragment
+		'anyRateIsInvalidAtRound(bytes32[],uint256[])': FunctionFragment
+		'currenciesUsingAggregator(address)': FunctionFragment
+		'currencyKeyDecimals(bytes32)': FunctionFragment
+		'effectiveAtomicValueAndRates(bytes32,uint256,bytes32)': FunctionFragment
+		'effectiveValue(bytes32,uint256,bytes32)': FunctionFragment
+		'effectiveValueAndRates(bytes32,uint256,bytes32)': FunctionFragment
+		'effectiveValueAndRatesAtRound(bytes32,uint256,bytes32,uint256,uint256)': FunctionFragment
+		'getCurrentRoundId(bytes32)': FunctionFragment
+		'getLastRoundIdBeforeElapsedSecs(bytes32,uint256,uint256,uint256)': FunctionFragment
+		'isResolverCached()': FunctionFragment
+		'lastRateUpdateTimes(bytes32)': FunctionFragment
+		'lastRateUpdateTimesForCurrencies(bytes32[])': FunctionFragment
+		'nominateNewOwner(address)': FunctionFragment
+		'nominatedOwner()': FunctionFragment
+		'owner()': FunctionFragment
+		'rateAndInvalid(bytes32)': FunctionFragment
+		'rateAndTimestampAtRound(bytes32,uint256)': FunctionFragment
+		'rateAndUpdatedTime(bytes32)': FunctionFragment
+		'rateForCurrency(bytes32)': FunctionFragment
+		'rateIsFlagged(bytes32)': FunctionFragment
+		'rateIsInvalid(bytes32)': FunctionFragment
+		'rateIsStale(bytes32)': FunctionFragment
+		'rateStalePeriod()': FunctionFragment
+		'rateWithSafetyChecks(bytes32)': FunctionFragment
+		'ratesAndInvalidForCurrencies(bytes32[])': FunctionFragment
+		'ratesAndUpdatedTimeForCurrencyLastNRounds(bytes32,uint256,uint256)': FunctionFragment
+		'ratesForCurrencies(bytes32[])': FunctionFragment
+		'rebuildCache()': FunctionFragment
+		'removeAggregator(bytes32)': FunctionFragment
+		'resolver()': FunctionFragment
+		'resolverAddressesRequired()': FunctionFragment
+		'synthTooVolatileForAtomicExchange(bytes32)': FunctionFragment
+		'synthTooVolatileForAtomicExchange((bytes32,address,address,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))': FunctionFragment
+	}
 
-  getFunction(
-    nameOrSignatureOrTopic:
-      | "CONTRACT_NAME"
-      | "acceptOwnership"
-      | "addAggregator"
-      | "aggregatorKeys"
-      | "aggregatorWarningFlags"
-      | "aggregators"
-      | "anyRateIsInvalid"
-      | "anyRateIsInvalidAtRound"
-      | "currenciesUsingAggregator"
-      | "currencyKeyDecimals"
-      | "effectiveAtomicValueAndRates"
-      | "effectiveValue"
-      | "effectiveValueAndRates"
-      | "effectiveValueAndRatesAtRound"
-      | "getCurrentRoundId"
-      | "getLastRoundIdBeforeElapsedSecs"
-      | "isResolverCached"
-      | "lastRateUpdateTimes"
-      | "lastRateUpdateTimesForCurrencies"
-      | "nominateNewOwner"
-      | "nominatedOwner"
-      | "owner"
-      | "rateAndInvalid"
-      | "rateAndTimestampAtRound"
-      | "rateAndUpdatedTime"
-      | "rateForCurrency"
-      | "rateIsFlagged"
-      | "rateIsInvalid"
-      | "rateIsStale"
-      | "rateStalePeriod"
-      | "rateWithSafetyChecks"
-      | "ratesAndInvalidForCurrencies"
-      | "ratesAndUpdatedTimeForCurrencyLastNRounds"
-      | "ratesForCurrencies"
-      | "rebuildCache"
-      | "removeAggregator"
-      | "resolver"
-      | "resolverAddressesRequired"
-      | "synthTooVolatileForAtomicExchange(bytes32)"
-      | "synthTooVolatileForAtomicExchange((bytes32,address,address,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))"
-  ): FunctionFragment;
+	getFunction(
+		nameOrSignatureOrTopic:
+			| 'CONTRACT_NAME'
+			| 'acceptOwnership'
+			| 'addAggregator'
+			| 'aggregatorKeys'
+			| 'aggregatorWarningFlags'
+			| 'aggregators'
+			| 'anyRateIsInvalid'
+			| 'anyRateIsInvalidAtRound'
+			| 'currenciesUsingAggregator'
+			| 'currencyKeyDecimals'
+			| 'effectiveAtomicValueAndRates'
+			| 'effectiveValue'
+			| 'effectiveValueAndRates'
+			| 'effectiveValueAndRatesAtRound'
+			| 'getCurrentRoundId'
+			| 'getLastRoundIdBeforeElapsedSecs'
+			| 'isResolverCached'
+			| 'lastRateUpdateTimes'
+			| 'lastRateUpdateTimesForCurrencies'
+			| 'nominateNewOwner'
+			| 'nominatedOwner'
+			| 'owner'
+			| 'rateAndInvalid'
+			| 'rateAndTimestampAtRound'
+			| 'rateAndUpdatedTime'
+			| 'rateForCurrency'
+			| 'rateIsFlagged'
+			| 'rateIsInvalid'
+			| 'rateIsStale'
+			| 'rateStalePeriod'
+			| 'rateWithSafetyChecks'
+			| 'ratesAndInvalidForCurrencies'
+			| 'ratesAndUpdatedTimeForCurrencyLastNRounds'
+			| 'ratesForCurrencies'
+			| 'rebuildCache'
+			| 'removeAggregator'
+			| 'resolver'
+			| 'resolverAddressesRequired'
+			| 'synthTooVolatileForAtomicExchange(bytes32)'
+			| 'synthTooVolatileForAtomicExchange((bytes32,address,address,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))'
+	): FunctionFragment
 
-  encodeFunctionData(
-    functionFragment: "CONTRACT_NAME",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "acceptOwnership",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "addAggregator",
-    values: [BytesLike, string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "aggregatorKeys",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "aggregatorWarningFlags",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "aggregators",
-    values: [BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "anyRateIsInvalid",
-    values: [BytesLike[]]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "anyRateIsInvalidAtRound",
-    values: [BytesLike[], BigNumberish[]]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "currenciesUsingAggregator",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "currencyKeyDecimals",
-    values: [BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "effectiveAtomicValueAndRates",
-    values: [BytesLike, BigNumberish, BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "effectiveValue",
-    values: [BytesLike, BigNumberish, BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "effectiveValueAndRates",
-    values: [BytesLike, BigNumberish, BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "effectiveValueAndRatesAtRound",
-    values: [BytesLike, BigNumberish, BytesLike, BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getCurrentRoundId",
-    values: [BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getLastRoundIdBeforeElapsedSecs",
-    values: [BytesLike, BigNumberish, BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "isResolverCached",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "lastRateUpdateTimes",
-    values: [BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "lastRateUpdateTimesForCurrencies",
-    values: [BytesLike[]]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "nominateNewOwner",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "nominatedOwner",
-    values?: undefined
-  ): string;
-  encodeFunctionData(functionFragment: "owner", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "rateAndInvalid",
-    values: [BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "rateAndTimestampAtRound",
-    values: [BytesLike, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "rateAndUpdatedTime",
-    values: [BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "rateForCurrency",
-    values: [BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "rateIsFlagged",
-    values: [BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "rateIsInvalid",
-    values: [BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "rateIsStale",
-    values: [BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "rateStalePeriod",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "rateWithSafetyChecks",
-    values: [BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "ratesAndInvalidForCurrencies",
-    values: [BytesLike[]]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "ratesAndUpdatedTimeForCurrencyLastNRounds",
-    values: [BytesLike, BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "ratesForCurrencies",
-    values: [BytesLike[]]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "rebuildCache",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "removeAggregator",
-    values: [BytesLike]
-  ): string;
-  encodeFunctionData(functionFragment: "resolver", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "resolverAddressesRequired",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "synthTooVolatileForAtomicExchange(bytes32)",
-    values: [BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "synthTooVolatileForAtomicExchange((bytes32,address,address,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))",
-    values: [IDirectIntegrationManager.ParameterIntegrationSettingsStruct]
-  ): string;
+	encodeFunctionData(functionFragment: 'CONTRACT_NAME', values?: undefined): string
+	encodeFunctionData(functionFragment: 'acceptOwnership', values?: undefined): string
+	encodeFunctionData(functionFragment: 'addAggregator', values: [BytesLike, string]): string
+	encodeFunctionData(functionFragment: 'aggregatorKeys', values: [BigNumberish]): string
+	encodeFunctionData(functionFragment: 'aggregatorWarningFlags', values?: undefined): string
+	encodeFunctionData(functionFragment: 'aggregators', values: [BytesLike]): string
+	encodeFunctionData(functionFragment: 'anyRateIsInvalid', values: [BytesLike[]]): string
+	encodeFunctionData(
+		functionFragment: 'anyRateIsInvalidAtRound',
+		values: [BytesLike[], BigNumberish[]]
+	): string
+	encodeFunctionData(functionFragment: 'currenciesUsingAggregator', values: [string]): string
+	encodeFunctionData(functionFragment: 'currencyKeyDecimals', values: [BytesLike]): string
+	encodeFunctionData(
+		functionFragment: 'effectiveAtomicValueAndRates',
+		values: [BytesLike, BigNumberish, BytesLike]
+	): string
+	encodeFunctionData(
+		functionFragment: 'effectiveValue',
+		values: [BytesLike, BigNumberish, BytesLike]
+	): string
+	encodeFunctionData(
+		functionFragment: 'effectiveValueAndRates',
+		values: [BytesLike, BigNumberish, BytesLike]
+	): string
+	encodeFunctionData(
+		functionFragment: 'effectiveValueAndRatesAtRound',
+		values: [BytesLike, BigNumberish, BytesLike, BigNumberish, BigNumberish]
+	): string
+	encodeFunctionData(functionFragment: 'getCurrentRoundId', values: [BytesLike]): string
+	encodeFunctionData(
+		functionFragment: 'getLastRoundIdBeforeElapsedSecs',
+		values: [BytesLike, BigNumberish, BigNumberish, BigNumberish]
+	): string
+	encodeFunctionData(functionFragment: 'isResolverCached', values?: undefined): string
+	encodeFunctionData(functionFragment: 'lastRateUpdateTimes', values: [BytesLike]): string
+	encodeFunctionData(
+		functionFragment: 'lastRateUpdateTimesForCurrencies',
+		values: [BytesLike[]]
+	): string
+	encodeFunctionData(functionFragment: 'nominateNewOwner', values: [string]): string
+	encodeFunctionData(functionFragment: 'nominatedOwner', values?: undefined): string
+	encodeFunctionData(functionFragment: 'owner', values?: undefined): string
+	encodeFunctionData(functionFragment: 'rateAndInvalid', values: [BytesLike]): string
+	encodeFunctionData(
+		functionFragment: 'rateAndTimestampAtRound',
+		values: [BytesLike, BigNumberish]
+	): string
+	encodeFunctionData(functionFragment: 'rateAndUpdatedTime', values: [BytesLike]): string
+	encodeFunctionData(functionFragment: 'rateForCurrency', values: [BytesLike]): string
+	encodeFunctionData(functionFragment: 'rateIsFlagged', values: [BytesLike]): string
+	encodeFunctionData(functionFragment: 'rateIsInvalid', values: [BytesLike]): string
+	encodeFunctionData(functionFragment: 'rateIsStale', values: [BytesLike]): string
+	encodeFunctionData(functionFragment: 'rateStalePeriod', values?: undefined): string
+	encodeFunctionData(functionFragment: 'rateWithSafetyChecks', values: [BytesLike]): string
+	encodeFunctionData(
+		functionFragment: 'ratesAndInvalidForCurrencies',
+		values: [BytesLike[]]
+	): string
+	encodeFunctionData(
+		functionFragment: 'ratesAndUpdatedTimeForCurrencyLastNRounds',
+		values: [BytesLike, BigNumberish, BigNumberish]
+	): string
+	encodeFunctionData(functionFragment: 'ratesForCurrencies', values: [BytesLike[]]): string
+	encodeFunctionData(functionFragment: 'rebuildCache', values?: undefined): string
+	encodeFunctionData(functionFragment: 'removeAggregator', values: [BytesLike]): string
+	encodeFunctionData(functionFragment: 'resolver', values?: undefined): string
+	encodeFunctionData(functionFragment: 'resolverAddressesRequired', values?: undefined): string
+	encodeFunctionData(
+		functionFragment: 'synthTooVolatileForAtomicExchange(bytes32)',
+		values: [BytesLike]
+	): string
+	encodeFunctionData(
+		functionFragment: 'synthTooVolatileForAtomicExchange((bytes32,address,address,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))',
+		values: [IDirectIntegrationManager.ParameterIntegrationSettingsStruct]
+	): string
 
-  decodeFunctionResult(
-    functionFragment: "CONTRACT_NAME",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "acceptOwnership",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "addAggregator",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "aggregatorKeys",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "aggregatorWarningFlags",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "aggregators",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "anyRateIsInvalid",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "anyRateIsInvalidAtRound",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "currenciesUsingAggregator",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "currencyKeyDecimals",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "effectiveAtomicValueAndRates",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "effectiveValue",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "effectiveValueAndRates",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "effectiveValueAndRatesAtRound",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getCurrentRoundId",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getLastRoundIdBeforeElapsedSecs",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "isResolverCached",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "lastRateUpdateTimes",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "lastRateUpdateTimesForCurrencies",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "nominateNewOwner",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "nominatedOwner",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "rateAndInvalid",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "rateAndTimestampAtRound",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "rateAndUpdatedTime",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "rateForCurrency",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "rateIsFlagged",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "rateIsInvalid",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "rateIsStale",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "rateStalePeriod",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "rateWithSafetyChecks",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "ratesAndInvalidForCurrencies",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "ratesAndUpdatedTimeForCurrencyLastNRounds",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "ratesForCurrencies",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "rebuildCache",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "removeAggregator",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "resolver", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "resolverAddressesRequired",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "synthTooVolatileForAtomicExchange(bytes32)",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "synthTooVolatileForAtomicExchange((bytes32,address,address,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))",
-    data: BytesLike
-  ): Result;
+	decodeFunctionResult(functionFragment: 'CONTRACT_NAME', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'acceptOwnership', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'addAggregator', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'aggregatorKeys', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'aggregatorWarningFlags', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'aggregators', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'anyRateIsInvalid', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'anyRateIsInvalidAtRound', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'currenciesUsingAggregator', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'currencyKeyDecimals', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'effectiveAtomicValueAndRates', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'effectiveValue', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'effectiveValueAndRates', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'effectiveValueAndRatesAtRound', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'getCurrentRoundId', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'getLastRoundIdBeforeElapsedSecs', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'isResolverCached', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'lastRateUpdateTimes', data: BytesLike): Result
+	decodeFunctionResult(
+		functionFragment: 'lastRateUpdateTimesForCurrencies',
+		data: BytesLike
+	): Result
+	decodeFunctionResult(functionFragment: 'nominateNewOwner', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'nominatedOwner', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'owner', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'rateAndInvalid', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'rateAndTimestampAtRound', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'rateAndUpdatedTime', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'rateForCurrency', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'rateIsFlagged', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'rateIsInvalid', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'rateIsStale', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'rateStalePeriod', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'rateWithSafetyChecks', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'ratesAndInvalidForCurrencies', data: BytesLike): Result
+	decodeFunctionResult(
+		functionFragment: 'ratesAndUpdatedTimeForCurrencyLastNRounds',
+		data: BytesLike
+	): Result
+	decodeFunctionResult(functionFragment: 'ratesForCurrencies', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'rebuildCache', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'removeAggregator', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'resolver', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'resolverAddressesRequired', data: BytesLike): Result
+	decodeFunctionResult(
+		functionFragment: 'synthTooVolatileForAtomicExchange(bytes32)',
+		data: BytesLike
+	): Result
+	decodeFunctionResult(
+		functionFragment: 'synthTooVolatileForAtomicExchange((bytes32,address,address,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))',
+		data: BytesLike
+	): Result
 
-  events: {
-    "AggregatorAdded(bytes32,address)": EventFragment;
-    "AggregatorRemoved(bytes32,address)": EventFragment;
-    "CacheUpdated(bytes32,address)": EventFragment;
-    "OwnerChanged(address,address)": EventFragment;
-    "OwnerNominated(address)": EventFragment;
-  };
+	events: {
+		'AggregatorAdded(bytes32,address)': EventFragment
+		'AggregatorRemoved(bytes32,address)': EventFragment
+		'CacheUpdated(bytes32,address)': EventFragment
+		'OwnerChanged(address,address)': EventFragment
+		'OwnerNominated(address)': EventFragment
+	}
 
-  getEvent(nameOrSignatureOrTopic: "AggregatorAdded"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "AggregatorRemoved"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "CacheUpdated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "OwnerChanged"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "OwnerNominated"): EventFragment;
+	getEvent(nameOrSignatureOrTopic: 'AggregatorAdded'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'AggregatorRemoved'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'CacheUpdated'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'OwnerChanged'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'OwnerNominated'): EventFragment
 }
 
 export interface AggregatorAddedEventObject {
-  currencyKey: string;
-  aggregator: string;
+	currencyKey: string
+	aggregator: string
 }
-export type AggregatorAddedEvent = TypedEvent<
-  [string, string],
-  AggregatorAddedEventObject
->;
+export type AggregatorAddedEvent = TypedEvent<[string, string], AggregatorAddedEventObject>
 
-export type AggregatorAddedEventFilter = TypedEventFilter<AggregatorAddedEvent>;
+export type AggregatorAddedEventFilter = TypedEventFilter<AggregatorAddedEvent>
 
 export interface AggregatorRemovedEventObject {
-  currencyKey: string;
-  aggregator: string;
+	currencyKey: string
+	aggregator: string
 }
-export type AggregatorRemovedEvent = TypedEvent<
-  [string, string],
-  AggregatorRemovedEventObject
->;
+export type AggregatorRemovedEvent = TypedEvent<[string, string], AggregatorRemovedEventObject>
 
-export type AggregatorRemovedEventFilter =
-  TypedEventFilter<AggregatorRemovedEvent>;
+export type AggregatorRemovedEventFilter = TypedEventFilter<AggregatorRemovedEvent>
 
 export interface CacheUpdatedEventObject {
-  name: string;
-  destination: string;
+	name: string
+	destination: string
 }
-export type CacheUpdatedEvent = TypedEvent<
-  [string, string],
-  CacheUpdatedEventObject
->;
+export type CacheUpdatedEvent = TypedEvent<[string, string], CacheUpdatedEventObject>
 
-export type CacheUpdatedEventFilter = TypedEventFilter<CacheUpdatedEvent>;
+export type CacheUpdatedEventFilter = TypedEventFilter<CacheUpdatedEvent>
 
 export interface OwnerChangedEventObject {
-  oldOwner: string;
-  newOwner: string;
+	oldOwner: string
+	newOwner: string
 }
-export type OwnerChangedEvent = TypedEvent<
-  [string, string],
-  OwnerChangedEventObject
->;
+export type OwnerChangedEvent = TypedEvent<[string, string], OwnerChangedEventObject>
 
-export type OwnerChangedEventFilter = TypedEventFilter<OwnerChangedEvent>;
+export type OwnerChangedEventFilter = TypedEventFilter<OwnerChangedEvent>
 
 export interface OwnerNominatedEventObject {
-  newOwner: string;
+	newOwner: string
 }
-export type OwnerNominatedEvent = TypedEvent<
-  [string],
-  OwnerNominatedEventObject
->;
+export type OwnerNominatedEvent = TypedEvent<[string], OwnerNominatedEventObject>
 
-export type OwnerNominatedEventFilter = TypedEventFilter<OwnerNominatedEvent>;
+export type OwnerNominatedEventFilter = TypedEventFilter<OwnerNominatedEvent>
 
 export interface ExchangeRates extends BaseContract {
-  connect(signerOrProvider: Signer | Provider | string): this;
-  attach(addressOrName: string): this;
-  deployed(): Promise<this>;
-
-  interface: ExchangeRatesInterface;
-
-  queryFilter<TEvent extends TypedEvent>(
-    event: TypedEventFilter<TEvent>,
-    fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined
-  ): Promise<Array<TEvent>>;
-
-  listeners<TEvent extends TypedEvent>(
-    eventFilter?: TypedEventFilter<TEvent>
-  ): Array<TypedListener<TEvent>>;
-  listeners(eventName?: string): Array<Listener>;
-  removeAllListeners<TEvent extends TypedEvent>(
-    eventFilter: TypedEventFilter<TEvent>
-  ): this;
-  removeAllListeners(eventName?: string): this;
-  off: OnEvent<this>;
-  on: OnEvent<this>;
-  once: OnEvent<this>;
-  removeListener: OnEvent<this>;
-
-  functions: {
-    CONTRACT_NAME(overrides?: CallOverrides): Promise<[string]>;
-
-    acceptOwnership(
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    addAggregator(
-      currencyKey: BytesLike,
-      aggregatorAddress: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    aggregatorKeys(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
-    aggregatorWarningFlags(overrides?: CallOverrides): Promise<[string]>;
-
-    aggregators(arg0: BytesLike, overrides?: CallOverrides): Promise<[string]>;
-
-    anyRateIsInvalid(
-      currencyKeys: BytesLike[],
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-
-    anyRateIsInvalidAtRound(
-      currencyKeys: BytesLike[],
-      roundIds: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-
-    currenciesUsingAggregator(
-      aggregator: string,
-      overrides?: CallOverrides
-    ): Promise<[string[]] & { currencies: string[] }>;
-
-    currencyKeyDecimals(
-      arg0: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<[number]>;
-
-    effectiveAtomicValueAndRates(
-      arg0: BytesLike,
-      arg1: BigNumberish,
-      arg2: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber, BigNumber, BigNumber] & {
-        value: BigNumber;
-        systemValue: BigNumber;
-        systemSourceRate: BigNumber;
-        systemDestinationRate: BigNumber;
-      }
-    >;
-
-    effectiveValue(
-      sourceCurrencyKey: BytesLike,
-      sourceAmount: BigNumberish,
-      destinationCurrencyKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { value: BigNumber }>;
-
-    effectiveValueAndRates(
-      sourceCurrencyKey: BytesLike,
-      sourceAmount: BigNumberish,
-      destinationCurrencyKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber, BigNumber] & {
-        value: BigNumber;
-        sourceRate: BigNumber;
-        destinationRate: BigNumber;
-      }
-    >;
-
-    effectiveValueAndRatesAtRound(
-      sourceCurrencyKey: BytesLike,
-      sourceAmount: BigNumberish,
-      destinationCurrencyKey: BytesLike,
-      roundIdForSrc: BigNumberish,
-      roundIdForDest: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber, BigNumber] & {
-        value: BigNumber;
-        sourceRate: BigNumber;
-        destinationRate: BigNumber;
-      }
-    >;
-
-    getCurrentRoundId(
-      currencyKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    getLastRoundIdBeforeElapsedSecs(
-      currencyKey: BytesLike,
-      startingRoundId: BigNumberish,
-      startingTimestamp: BigNumberish,
-      timediff: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    isResolverCached(overrides?: CallOverrides): Promise<[boolean]>;
-
-    lastRateUpdateTimes(
-      currencyKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    lastRateUpdateTimesForCurrencies(
-      currencyKeys: BytesLike[],
-      overrides?: CallOverrides
-    ): Promise<[BigNumber[]]>;
-
-    nominateNewOwner(
-      _owner: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    nominatedOwner(overrides?: CallOverrides): Promise<[string]>;
-
-    owner(overrides?: CallOverrides): Promise<[string]>;
-
-    rateAndInvalid(
-      currencyKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber, boolean] & { rate: BigNumber; isInvalid: boolean }>;
-
-    rateAndTimestampAtRound(
-      currencyKey: BytesLike,
-      roundId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber, BigNumber] & { rate: BigNumber; time: BigNumber }>;
-
-    rateAndUpdatedTime(
-      currencyKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber, BigNumber] & { rate: BigNumber; time: BigNumber }>;
-
-    rateForCurrency(
-      currencyKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    rateIsFlagged(
-      currencyKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-
-    rateIsInvalid(
-      currencyKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-
-    rateIsStale(
-      currencyKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-
-    rateStalePeriod(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    rateWithSafetyChecks(
-      currencyKey: BytesLike,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    ratesAndInvalidForCurrencies(
-      currencyKeys: BytesLike[],
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber[], boolean] & { rates: BigNumber[]; anyRateInvalid: boolean }
-    >;
-
-    ratesAndUpdatedTimeForCurrencyLastNRounds(
-      currencyKey: BytesLike,
-      numRounds: BigNumberish,
-      roundId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber[], BigNumber[]] & { rates: BigNumber[]; times: BigNumber[] }
-    >;
-
-    ratesForCurrencies(
-      currencyKeys: BytesLike[],
-      overrides?: CallOverrides
-    ): Promise<[BigNumber[]]>;
-
-    rebuildCache(
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    removeAggregator(
-      currencyKey: BytesLike,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    resolver(overrides?: CallOverrides): Promise<[string]>;
-
-    resolverAddressesRequired(
-      overrides?: CallOverrides
-    ): Promise<[string[]] & { addresses: string[] }>;
-
-    "synthTooVolatileForAtomicExchange(bytes32)"(
-      arg0: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-
-    "synthTooVolatileForAtomicExchange((bytes32,address,address,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))"(
-      arg0: IDirectIntegrationManager.ParameterIntegrationSettingsStruct,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-  };
-
-  CONTRACT_NAME(overrides?: CallOverrides): Promise<string>;
-
-  acceptOwnership(
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  addAggregator(
-    currencyKey: BytesLike,
-    aggregatorAddress: string,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  aggregatorKeys(
-    arg0: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<string>;
-
-  aggregatorWarningFlags(overrides?: CallOverrides): Promise<string>;
-
-  aggregators(arg0: BytesLike, overrides?: CallOverrides): Promise<string>;
-
-  anyRateIsInvalid(
-    currencyKeys: BytesLike[],
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
-  anyRateIsInvalidAtRound(
-    currencyKeys: BytesLike[],
-    roundIds: BigNumberish[],
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
-  currenciesUsingAggregator(
-    aggregator: string,
-    overrides?: CallOverrides
-  ): Promise<string[]>;
-
-  currencyKeyDecimals(
-    arg0: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<number>;
-
-  effectiveAtomicValueAndRates(
-    arg0: BytesLike,
-    arg1: BigNumberish,
-    arg2: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<
-    [BigNumber, BigNumber, BigNumber, BigNumber] & {
-      value: BigNumber;
-      systemValue: BigNumber;
-      systemSourceRate: BigNumber;
-      systemDestinationRate: BigNumber;
-    }
-  >;
-
-  effectiveValue(
-    sourceCurrencyKey: BytesLike,
-    sourceAmount: BigNumberish,
-    destinationCurrencyKey: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  effectiveValueAndRates(
-    sourceCurrencyKey: BytesLike,
-    sourceAmount: BigNumberish,
-    destinationCurrencyKey: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<
-    [BigNumber, BigNumber, BigNumber] & {
-      value: BigNumber;
-      sourceRate: BigNumber;
-      destinationRate: BigNumber;
-    }
-  >;
-
-  effectiveValueAndRatesAtRound(
-    sourceCurrencyKey: BytesLike,
-    sourceAmount: BigNumberish,
-    destinationCurrencyKey: BytesLike,
-    roundIdForSrc: BigNumberish,
-    roundIdForDest: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<
-    [BigNumber, BigNumber, BigNumber] & {
-      value: BigNumber;
-      sourceRate: BigNumber;
-      destinationRate: BigNumber;
-    }
-  >;
-
-  getCurrentRoundId(
-    currencyKey: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  getLastRoundIdBeforeElapsedSecs(
-    currencyKey: BytesLike,
-    startingRoundId: BigNumberish,
-    startingTimestamp: BigNumberish,
-    timediff: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  isResolverCached(overrides?: CallOverrides): Promise<boolean>;
-
-  lastRateUpdateTimes(
-    currencyKey: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  lastRateUpdateTimesForCurrencies(
-    currencyKeys: BytesLike[],
-    overrides?: CallOverrides
-  ): Promise<BigNumber[]>;
-
-  nominateNewOwner(
-    _owner: string,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  nominatedOwner(overrides?: CallOverrides): Promise<string>;
-
-  owner(overrides?: CallOverrides): Promise<string>;
-
-  rateAndInvalid(
-    currencyKey: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<[BigNumber, boolean] & { rate: BigNumber; isInvalid: boolean }>;
-
-  rateAndTimestampAtRound(
-    currencyKey: BytesLike,
-    roundId: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<[BigNumber, BigNumber] & { rate: BigNumber; time: BigNumber }>;
-
-  rateAndUpdatedTime(
-    currencyKey: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<[BigNumber, BigNumber] & { rate: BigNumber; time: BigNumber }>;
-
-  rateForCurrency(
-    currencyKey: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  rateIsFlagged(
-    currencyKey: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
-  rateIsInvalid(
-    currencyKey: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
-  rateIsStale(
-    currencyKey: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
-  rateStalePeriod(overrides?: CallOverrides): Promise<BigNumber>;
-
-  rateWithSafetyChecks(
-    currencyKey: BytesLike,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  ratesAndInvalidForCurrencies(
-    currencyKeys: BytesLike[],
-    overrides?: CallOverrides
-  ): Promise<
-    [BigNumber[], boolean] & { rates: BigNumber[]; anyRateInvalid: boolean }
-  >;
-
-  ratesAndUpdatedTimeForCurrencyLastNRounds(
-    currencyKey: BytesLike,
-    numRounds: BigNumberish,
-    roundId: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<
-    [BigNumber[], BigNumber[]] & { rates: BigNumber[]; times: BigNumber[] }
-  >;
-
-  ratesForCurrencies(
-    currencyKeys: BytesLike[],
-    overrides?: CallOverrides
-  ): Promise<BigNumber[]>;
-
-  rebuildCache(
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  removeAggregator(
-    currencyKey: BytesLike,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  resolver(overrides?: CallOverrides): Promise<string>;
-
-  resolverAddressesRequired(overrides?: CallOverrides): Promise<string[]>;
-
-  "synthTooVolatileForAtomicExchange(bytes32)"(
-    arg0: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
-  "synthTooVolatileForAtomicExchange((bytes32,address,address,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))"(
-    arg0: IDirectIntegrationManager.ParameterIntegrationSettingsStruct,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
-  callStatic: {
-    CONTRACT_NAME(overrides?: CallOverrides): Promise<string>;
-
-    acceptOwnership(overrides?: CallOverrides): Promise<void>;
-
-    addAggregator(
-      currencyKey: BytesLike,
-      aggregatorAddress: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    aggregatorKeys(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
-    aggregatorWarningFlags(overrides?: CallOverrides): Promise<string>;
-
-    aggregators(arg0: BytesLike, overrides?: CallOverrides): Promise<string>;
-
-    anyRateIsInvalid(
-      currencyKeys: BytesLike[],
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    anyRateIsInvalidAtRound(
-      currencyKeys: BytesLike[],
-      roundIds: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    currenciesUsingAggregator(
-      aggregator: string,
-      overrides?: CallOverrides
-    ): Promise<string[]>;
-
-    currencyKeyDecimals(
-      arg0: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<number>;
-
-    effectiveAtomicValueAndRates(
-      arg0: BytesLike,
-      arg1: BigNumberish,
-      arg2: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber, BigNumber, BigNumber] & {
-        value: BigNumber;
-        systemValue: BigNumber;
-        systemSourceRate: BigNumber;
-        systemDestinationRate: BigNumber;
-      }
-    >;
-
-    effectiveValue(
-      sourceCurrencyKey: BytesLike,
-      sourceAmount: BigNumberish,
-      destinationCurrencyKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    effectiveValueAndRates(
-      sourceCurrencyKey: BytesLike,
-      sourceAmount: BigNumberish,
-      destinationCurrencyKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber, BigNumber] & {
-        value: BigNumber;
-        sourceRate: BigNumber;
-        destinationRate: BigNumber;
-      }
-    >;
-
-    effectiveValueAndRatesAtRound(
-      sourceCurrencyKey: BytesLike,
-      sourceAmount: BigNumberish,
-      destinationCurrencyKey: BytesLike,
-      roundIdForSrc: BigNumberish,
-      roundIdForDest: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber, BigNumber] & {
-        value: BigNumber;
-        sourceRate: BigNumber;
-        destinationRate: BigNumber;
-      }
-    >;
-
-    getCurrentRoundId(
-      currencyKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getLastRoundIdBeforeElapsedSecs(
-      currencyKey: BytesLike,
-      startingRoundId: BigNumberish,
-      startingTimestamp: BigNumberish,
-      timediff: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    isResolverCached(overrides?: CallOverrides): Promise<boolean>;
-
-    lastRateUpdateTimes(
-      currencyKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    lastRateUpdateTimesForCurrencies(
-      currencyKeys: BytesLike[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber[]>;
-
-    nominateNewOwner(_owner: string, overrides?: CallOverrides): Promise<void>;
-
-    nominatedOwner(overrides?: CallOverrides): Promise<string>;
-
-    owner(overrides?: CallOverrides): Promise<string>;
-
-    rateAndInvalid(
-      currencyKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber, boolean] & { rate: BigNumber; isInvalid: boolean }>;
-
-    rateAndTimestampAtRound(
-      currencyKey: BytesLike,
-      roundId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber, BigNumber] & { rate: BigNumber; time: BigNumber }>;
-
-    rateAndUpdatedTime(
-      currencyKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber, BigNumber] & { rate: BigNumber; time: BigNumber }>;
-
-    rateForCurrency(
-      currencyKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    rateIsFlagged(
-      currencyKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    rateIsInvalid(
-      currencyKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    rateIsStale(
-      currencyKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    rateStalePeriod(overrides?: CallOverrides): Promise<BigNumber>;
-
-    rateWithSafetyChecks(
-      currencyKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, boolean, boolean] & {
-        rate: BigNumber;
-        broken: boolean;
-        staleOrInvalid: boolean;
-      }
-    >;
-
-    ratesAndInvalidForCurrencies(
-      currencyKeys: BytesLike[],
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber[], boolean] & { rates: BigNumber[]; anyRateInvalid: boolean }
-    >;
-
-    ratesAndUpdatedTimeForCurrencyLastNRounds(
-      currencyKey: BytesLike,
-      numRounds: BigNumberish,
-      roundId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber[], BigNumber[]] & { rates: BigNumber[]; times: BigNumber[] }
-    >;
-
-    ratesForCurrencies(
-      currencyKeys: BytesLike[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber[]>;
-
-    rebuildCache(overrides?: CallOverrides): Promise<void>;
-
-    removeAggregator(
-      currencyKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    resolver(overrides?: CallOverrides): Promise<string>;
-
-    resolverAddressesRequired(overrides?: CallOverrides): Promise<string[]>;
-
-    "synthTooVolatileForAtomicExchange(bytes32)"(
-      arg0: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    "synthTooVolatileForAtomicExchange((bytes32,address,address,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))"(
-      arg0: IDirectIntegrationManager.ParameterIntegrationSettingsStruct,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-  };
-
-  filters: {
-    "AggregatorAdded(bytes32,address)"(
-      currencyKey?: null,
-      aggregator?: null
-    ): AggregatorAddedEventFilter;
-    AggregatorAdded(
-      currencyKey?: null,
-      aggregator?: null
-    ): AggregatorAddedEventFilter;
-
-    "AggregatorRemoved(bytes32,address)"(
-      currencyKey?: null,
-      aggregator?: null
-    ): AggregatorRemovedEventFilter;
-    AggregatorRemoved(
-      currencyKey?: null,
-      aggregator?: null
-    ): AggregatorRemovedEventFilter;
-
-    "CacheUpdated(bytes32,address)"(
-      name?: null,
-      destination?: null
-    ): CacheUpdatedEventFilter;
-    CacheUpdated(name?: null, destination?: null): CacheUpdatedEventFilter;
-
-    "OwnerChanged(address,address)"(
-      oldOwner?: null,
-      newOwner?: null
-    ): OwnerChangedEventFilter;
-    OwnerChanged(oldOwner?: null, newOwner?: null): OwnerChangedEventFilter;
-
-    "OwnerNominated(address)"(newOwner?: null): OwnerNominatedEventFilter;
-    OwnerNominated(newOwner?: null): OwnerNominatedEventFilter;
-  };
-
-  estimateGas: {
-    CONTRACT_NAME(overrides?: CallOverrides): Promise<BigNumber>;
-
-    acceptOwnership(
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    addAggregator(
-      currencyKey: BytesLike,
-      aggregatorAddress: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    aggregatorKeys(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    aggregatorWarningFlags(overrides?: CallOverrides): Promise<BigNumber>;
-
-    aggregators(arg0: BytesLike, overrides?: CallOverrides): Promise<BigNumber>;
-
-    anyRateIsInvalid(
-      currencyKeys: BytesLike[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    anyRateIsInvalidAtRound(
-      currencyKeys: BytesLike[],
-      roundIds: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    currenciesUsingAggregator(
-      aggregator: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    currencyKeyDecimals(
-      arg0: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    effectiveAtomicValueAndRates(
-      arg0: BytesLike,
-      arg1: BigNumberish,
-      arg2: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    effectiveValue(
-      sourceCurrencyKey: BytesLike,
-      sourceAmount: BigNumberish,
-      destinationCurrencyKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    effectiveValueAndRates(
-      sourceCurrencyKey: BytesLike,
-      sourceAmount: BigNumberish,
-      destinationCurrencyKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    effectiveValueAndRatesAtRound(
-      sourceCurrencyKey: BytesLike,
-      sourceAmount: BigNumberish,
-      destinationCurrencyKey: BytesLike,
-      roundIdForSrc: BigNumberish,
-      roundIdForDest: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getCurrentRoundId(
-      currencyKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getLastRoundIdBeforeElapsedSecs(
-      currencyKey: BytesLike,
-      startingRoundId: BigNumberish,
-      startingTimestamp: BigNumberish,
-      timediff: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    isResolverCached(overrides?: CallOverrides): Promise<BigNumber>;
-
-    lastRateUpdateTimes(
-      currencyKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    lastRateUpdateTimesForCurrencies(
-      currencyKeys: BytesLike[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    nominateNewOwner(
-      _owner: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    nominatedOwner(overrides?: CallOverrides): Promise<BigNumber>;
-
-    owner(overrides?: CallOverrides): Promise<BigNumber>;
-
-    rateAndInvalid(
-      currencyKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    rateAndTimestampAtRound(
-      currencyKey: BytesLike,
-      roundId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    rateAndUpdatedTime(
-      currencyKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    rateForCurrency(
-      currencyKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    rateIsFlagged(
-      currencyKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    rateIsInvalid(
-      currencyKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    rateIsStale(
-      currencyKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    rateStalePeriod(overrides?: CallOverrides): Promise<BigNumber>;
-
-    rateWithSafetyChecks(
-      currencyKey: BytesLike,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    ratesAndInvalidForCurrencies(
-      currencyKeys: BytesLike[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    ratesAndUpdatedTimeForCurrencyLastNRounds(
-      currencyKey: BytesLike,
-      numRounds: BigNumberish,
-      roundId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    ratesForCurrencies(
-      currencyKeys: BytesLike[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    rebuildCache(overrides?: Overrides & { from?: string }): Promise<BigNumber>;
-
-    removeAggregator(
-      currencyKey: BytesLike,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    resolver(overrides?: CallOverrides): Promise<BigNumber>;
-
-    resolverAddressesRequired(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "synthTooVolatileForAtomicExchange(bytes32)"(
-      arg0: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "synthTooVolatileForAtomicExchange((bytes32,address,address,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))"(
-      arg0: IDirectIntegrationManager.ParameterIntegrationSettingsStruct,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-  };
-
-  populateTransaction: {
-    CONTRACT_NAME(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    acceptOwnership(
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    addAggregator(
-      currencyKey: BytesLike,
-      aggregatorAddress: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    aggregatorKeys(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    aggregatorWarningFlags(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    aggregators(
-      arg0: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    anyRateIsInvalid(
-      currencyKeys: BytesLike[],
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    anyRateIsInvalidAtRound(
-      currencyKeys: BytesLike[],
-      roundIds: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    currenciesUsingAggregator(
-      aggregator: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    currencyKeyDecimals(
-      arg0: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    effectiveAtomicValueAndRates(
-      arg0: BytesLike,
-      arg1: BigNumberish,
-      arg2: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    effectiveValue(
-      sourceCurrencyKey: BytesLike,
-      sourceAmount: BigNumberish,
-      destinationCurrencyKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    effectiveValueAndRates(
-      sourceCurrencyKey: BytesLike,
-      sourceAmount: BigNumberish,
-      destinationCurrencyKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    effectiveValueAndRatesAtRound(
-      sourceCurrencyKey: BytesLike,
-      sourceAmount: BigNumberish,
-      destinationCurrencyKey: BytesLike,
-      roundIdForSrc: BigNumberish,
-      roundIdForDest: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getCurrentRoundId(
-      currencyKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getLastRoundIdBeforeElapsedSecs(
-      currencyKey: BytesLike,
-      startingRoundId: BigNumberish,
-      startingTimestamp: BigNumberish,
-      timediff: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    isResolverCached(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    lastRateUpdateTimes(
-      currencyKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    lastRateUpdateTimesForCurrencies(
-      currencyKeys: BytesLike[],
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    nominateNewOwner(
-      _owner: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    nominatedOwner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    rateAndInvalid(
-      currencyKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    rateAndTimestampAtRound(
-      currencyKey: BytesLike,
-      roundId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    rateAndUpdatedTime(
-      currencyKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    rateForCurrency(
-      currencyKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    rateIsFlagged(
-      currencyKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    rateIsInvalid(
-      currencyKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    rateIsStale(
-      currencyKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    rateStalePeriod(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    rateWithSafetyChecks(
-      currencyKey: BytesLike,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    ratesAndInvalidForCurrencies(
-      currencyKeys: BytesLike[],
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    ratesAndUpdatedTimeForCurrencyLastNRounds(
-      currencyKey: BytesLike,
-      numRounds: BigNumberish,
-      roundId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    ratesForCurrencies(
-      currencyKeys: BytesLike[],
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    rebuildCache(
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    removeAggregator(
-      currencyKey: BytesLike,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    resolver(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    resolverAddressesRequired(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "synthTooVolatileForAtomicExchange(bytes32)"(
-      arg0: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "synthTooVolatileForAtomicExchange((bytes32,address,address,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))"(
-      arg0: IDirectIntegrationManager.ParameterIntegrationSettingsStruct,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-  };
+	connect(signerOrProvider: Signer | Provider | string): this
+	attach(addressOrName: string): this
+	deployed(): Promise<this>
+
+	interface: ExchangeRatesInterface
+
+	queryFilter<TEvent extends TypedEvent>(
+		event: TypedEventFilter<TEvent>,
+		fromBlockOrBlockhash?: string | number | undefined,
+		toBlock?: string | number | undefined
+	): Promise<Array<TEvent>>
+
+	listeners<TEvent extends TypedEvent>(
+		eventFilter?: TypedEventFilter<TEvent>
+	): Array<TypedListener<TEvent>>
+	listeners(eventName?: string): Array<Listener>
+	removeAllListeners<TEvent extends TypedEvent>(eventFilter: TypedEventFilter<TEvent>): this
+	removeAllListeners(eventName?: string): this
+	off: OnEvent<this>
+	on: OnEvent<this>
+	once: OnEvent<this>
+	removeListener: OnEvent<this>
+
+	functions: {
+		CONTRACT_NAME(overrides?: CallOverrides): Promise<[string]>
+
+		acceptOwnership(overrides?: Overrides & { from?: string }): Promise<ContractTransaction>
+
+		addAggregator(
+			currencyKey: BytesLike,
+			aggregatorAddress: string,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
+
+		aggregatorKeys(arg0: BigNumberish, overrides?: CallOverrides): Promise<[string]>
+
+		aggregatorWarningFlags(overrides?: CallOverrides): Promise<[string]>
+
+		aggregators(arg0: BytesLike, overrides?: CallOverrides): Promise<[string]>
+
+		anyRateIsInvalid(currencyKeys: BytesLike[], overrides?: CallOverrides): Promise<[boolean]>
+
+		anyRateIsInvalidAtRound(
+			currencyKeys: BytesLike[],
+			roundIds: BigNumberish[],
+			overrides?: CallOverrides
+		): Promise<[boolean]>
+
+		currenciesUsingAggregator(
+			aggregator: string,
+			overrides?: CallOverrides
+		): Promise<[string[]] & { currencies: string[] }>
+
+		currencyKeyDecimals(arg0: BytesLike, overrides?: CallOverrides): Promise<[number]>
+
+		effectiveAtomicValueAndRates(
+			arg0: BytesLike,
+			arg1: BigNumberish,
+			arg2: BytesLike,
+			overrides?: CallOverrides
+		): Promise<
+			[BigNumber, BigNumber, BigNumber, BigNumber] & {
+				value: BigNumber
+				systemValue: BigNumber
+				systemSourceRate: BigNumber
+				systemDestinationRate: BigNumber
+			}
+		>
+
+		effectiveValue(
+			sourceCurrencyKey: BytesLike,
+			sourceAmount: BigNumberish,
+			destinationCurrencyKey: BytesLike,
+			overrides?: CallOverrides
+		): Promise<[BigNumber] & { value: BigNumber }>
+
+		effectiveValueAndRates(
+			sourceCurrencyKey: BytesLike,
+			sourceAmount: BigNumberish,
+			destinationCurrencyKey: BytesLike,
+			overrides?: CallOverrides
+		): Promise<
+			[BigNumber, BigNumber, BigNumber] & {
+				value: BigNumber
+				sourceRate: BigNumber
+				destinationRate: BigNumber
+			}
+		>
+
+		effectiveValueAndRatesAtRound(
+			sourceCurrencyKey: BytesLike,
+			sourceAmount: BigNumberish,
+			destinationCurrencyKey: BytesLike,
+			roundIdForSrc: BigNumberish,
+			roundIdForDest: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<
+			[BigNumber, BigNumber, BigNumber] & {
+				value: BigNumber
+				sourceRate: BigNumber
+				destinationRate: BigNumber
+			}
+		>
+
+		getCurrentRoundId(currencyKey: BytesLike, overrides?: CallOverrides): Promise<[BigNumber]>
+
+		getLastRoundIdBeforeElapsedSecs(
+			currencyKey: BytesLike,
+			startingRoundId: BigNumberish,
+			startingTimestamp: BigNumberish,
+			timediff: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<[BigNumber]>
+
+		isResolverCached(overrides?: CallOverrides): Promise<[boolean]>
+
+		lastRateUpdateTimes(currencyKey: BytesLike, overrides?: CallOverrides): Promise<[BigNumber]>
+
+		lastRateUpdateTimesForCurrencies(
+			currencyKeys: BytesLike[],
+			overrides?: CallOverrides
+		): Promise<[BigNumber[]]>
+
+		nominateNewOwner(
+			_owner: string,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
+
+		nominatedOwner(overrides?: CallOverrides): Promise<[string]>
+
+		owner(overrides?: CallOverrides): Promise<[string]>
+
+		rateAndInvalid(
+			currencyKey: BytesLike,
+			overrides?: CallOverrides
+		): Promise<[BigNumber, boolean] & { rate: BigNumber; isInvalid: boolean }>
+
+		rateAndTimestampAtRound(
+			currencyKey: BytesLike,
+			roundId: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<[BigNumber, BigNumber] & { rate: BigNumber; time: BigNumber }>
+
+		rateAndUpdatedTime(
+			currencyKey: BytesLike,
+			overrides?: CallOverrides
+		): Promise<[BigNumber, BigNumber] & { rate: BigNumber; time: BigNumber }>
+
+		rateForCurrency(currencyKey: BytesLike, overrides?: CallOverrides): Promise<[BigNumber]>
+
+		rateIsFlagged(currencyKey: BytesLike, overrides?: CallOverrides): Promise<[boolean]>
+
+		rateIsInvalid(currencyKey: BytesLike, overrides?: CallOverrides): Promise<[boolean]>
+
+		rateIsStale(currencyKey: BytesLike, overrides?: CallOverrides): Promise<[boolean]>
+
+		rateStalePeriod(overrides?: CallOverrides): Promise<[BigNumber]>
+
+		rateWithSafetyChecks(
+			currencyKey: BytesLike,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
+
+		ratesAndInvalidForCurrencies(
+			currencyKeys: BytesLike[],
+			overrides?: CallOverrides
+		): Promise<[BigNumber[], boolean] & { rates: BigNumber[]; anyRateInvalid: boolean }>
+
+		ratesAndUpdatedTimeForCurrencyLastNRounds(
+			currencyKey: BytesLike,
+			numRounds: BigNumberish,
+			roundId: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<[BigNumber[], BigNumber[]] & { rates: BigNumber[]; times: BigNumber[] }>
+
+		ratesForCurrencies(currencyKeys: BytesLike[], overrides?: CallOverrides): Promise<[BigNumber[]]>
+
+		rebuildCache(overrides?: Overrides & { from?: string }): Promise<ContractTransaction>
+
+		removeAggregator(
+			currencyKey: BytesLike,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
+
+		resolver(overrides?: CallOverrides): Promise<[string]>
+
+		resolverAddressesRequired(
+			overrides?: CallOverrides
+		): Promise<[string[]] & { addresses: string[] }>
+
+		'synthTooVolatileForAtomicExchange(bytes32)'(
+			arg0: BytesLike,
+			overrides?: CallOverrides
+		): Promise<[boolean]>
+
+		'synthTooVolatileForAtomicExchange((bytes32,address,address,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))'(
+			arg0: IDirectIntegrationManager.ParameterIntegrationSettingsStruct,
+			overrides?: CallOverrides
+		): Promise<[boolean]>
+	}
+
+	CONTRACT_NAME(overrides?: CallOverrides): Promise<string>
+
+	acceptOwnership(overrides?: Overrides & { from?: string }): Promise<ContractTransaction>
+
+	addAggregator(
+		currencyKey: BytesLike,
+		aggregatorAddress: string,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
+
+	aggregatorKeys(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>
+
+	aggregatorWarningFlags(overrides?: CallOverrides): Promise<string>
+
+	aggregators(arg0: BytesLike, overrides?: CallOverrides): Promise<string>
+
+	anyRateIsInvalid(currencyKeys: BytesLike[], overrides?: CallOverrides): Promise<boolean>
+
+	anyRateIsInvalidAtRound(
+		currencyKeys: BytesLike[],
+		roundIds: BigNumberish[],
+		overrides?: CallOverrides
+	): Promise<boolean>
+
+	currenciesUsingAggregator(aggregator: string, overrides?: CallOverrides): Promise<string[]>
+
+	currencyKeyDecimals(arg0: BytesLike, overrides?: CallOverrides): Promise<number>
+
+	effectiveAtomicValueAndRates(
+		arg0: BytesLike,
+		arg1: BigNumberish,
+		arg2: BytesLike,
+		overrides?: CallOverrides
+	): Promise<
+		[BigNumber, BigNumber, BigNumber, BigNumber] & {
+			value: BigNumber
+			systemValue: BigNumber
+			systemSourceRate: BigNumber
+			systemDestinationRate: BigNumber
+		}
+	>
+
+	effectiveValue(
+		sourceCurrencyKey: BytesLike,
+		sourceAmount: BigNumberish,
+		destinationCurrencyKey: BytesLike,
+		overrides?: CallOverrides
+	): Promise<BigNumber>
+
+	effectiveValueAndRates(
+		sourceCurrencyKey: BytesLike,
+		sourceAmount: BigNumberish,
+		destinationCurrencyKey: BytesLike,
+		overrides?: CallOverrides
+	): Promise<
+		[BigNumber, BigNumber, BigNumber] & {
+			value: BigNumber
+			sourceRate: BigNumber
+			destinationRate: BigNumber
+		}
+	>
+
+	effectiveValueAndRatesAtRound(
+		sourceCurrencyKey: BytesLike,
+		sourceAmount: BigNumberish,
+		destinationCurrencyKey: BytesLike,
+		roundIdForSrc: BigNumberish,
+		roundIdForDest: BigNumberish,
+		overrides?: CallOverrides
+	): Promise<
+		[BigNumber, BigNumber, BigNumber] & {
+			value: BigNumber
+			sourceRate: BigNumber
+			destinationRate: BigNumber
+		}
+	>
+
+	getCurrentRoundId(currencyKey: BytesLike, overrides?: CallOverrides): Promise<BigNumber>
+
+	getLastRoundIdBeforeElapsedSecs(
+		currencyKey: BytesLike,
+		startingRoundId: BigNumberish,
+		startingTimestamp: BigNumberish,
+		timediff: BigNumberish,
+		overrides?: CallOverrides
+	): Promise<BigNumber>
+
+	isResolverCached(overrides?: CallOverrides): Promise<boolean>
+
+	lastRateUpdateTimes(currencyKey: BytesLike, overrides?: CallOverrides): Promise<BigNumber>
+
+	lastRateUpdateTimesForCurrencies(
+		currencyKeys: BytesLike[],
+		overrides?: CallOverrides
+	): Promise<BigNumber[]>
+
+	nominateNewOwner(
+		_owner: string,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
+
+	nominatedOwner(overrides?: CallOverrides): Promise<string>
+
+	owner(overrides?: CallOverrides): Promise<string>
+
+	rateAndInvalid(
+		currencyKey: BytesLike,
+		overrides?: CallOverrides
+	): Promise<[BigNumber, boolean] & { rate: BigNumber; isInvalid: boolean }>
+
+	rateAndTimestampAtRound(
+		currencyKey: BytesLike,
+		roundId: BigNumberish,
+		overrides?: CallOverrides
+	): Promise<[BigNumber, BigNumber] & { rate: BigNumber; time: BigNumber }>
+
+	rateAndUpdatedTime(
+		currencyKey: BytesLike,
+		overrides?: CallOverrides
+	): Promise<[BigNumber, BigNumber] & { rate: BigNumber; time: BigNumber }>
+
+	rateForCurrency(currencyKey: BytesLike, overrides?: CallOverrides): Promise<BigNumber>
+
+	rateIsFlagged(currencyKey: BytesLike, overrides?: CallOverrides): Promise<boolean>
+
+	rateIsInvalid(currencyKey: BytesLike, overrides?: CallOverrides): Promise<boolean>
+
+	rateIsStale(currencyKey: BytesLike, overrides?: CallOverrides): Promise<boolean>
+
+	rateStalePeriod(overrides?: CallOverrides): Promise<BigNumber>
+
+	rateWithSafetyChecks(
+		currencyKey: BytesLike,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
+
+	ratesAndInvalidForCurrencies(
+		currencyKeys: BytesLike[],
+		overrides?: CallOverrides
+	): Promise<[BigNumber[], boolean] & { rates: BigNumber[]; anyRateInvalid: boolean }>
+
+	ratesAndUpdatedTimeForCurrencyLastNRounds(
+		currencyKey: BytesLike,
+		numRounds: BigNumberish,
+		roundId: BigNumberish,
+		overrides?: CallOverrides
+	): Promise<[BigNumber[], BigNumber[]] & { rates: BigNumber[]; times: BigNumber[] }>
+
+	ratesForCurrencies(currencyKeys: BytesLike[], overrides?: CallOverrides): Promise<BigNumber[]>
+
+	rebuildCache(overrides?: Overrides & { from?: string }): Promise<ContractTransaction>
+
+	removeAggregator(
+		currencyKey: BytesLike,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
+
+	resolver(overrides?: CallOverrides): Promise<string>
+
+	resolverAddressesRequired(overrides?: CallOverrides): Promise<string[]>
+
+	'synthTooVolatileForAtomicExchange(bytes32)'(
+		arg0: BytesLike,
+		overrides?: CallOverrides
+	): Promise<boolean>
+
+	'synthTooVolatileForAtomicExchange((bytes32,address,address,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))'(
+		arg0: IDirectIntegrationManager.ParameterIntegrationSettingsStruct,
+		overrides?: CallOverrides
+	): Promise<boolean>
+
+	callStatic: {
+		CONTRACT_NAME(overrides?: CallOverrides): Promise<string>
+
+		acceptOwnership(overrides?: CallOverrides): Promise<void>
+
+		addAggregator(
+			currencyKey: BytesLike,
+			aggregatorAddress: string,
+			overrides?: CallOverrides
+		): Promise<void>
+
+		aggregatorKeys(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>
+
+		aggregatorWarningFlags(overrides?: CallOverrides): Promise<string>
+
+		aggregators(arg0: BytesLike, overrides?: CallOverrides): Promise<string>
+
+		anyRateIsInvalid(currencyKeys: BytesLike[], overrides?: CallOverrides): Promise<boolean>
+
+		anyRateIsInvalidAtRound(
+			currencyKeys: BytesLike[],
+			roundIds: BigNumberish[],
+			overrides?: CallOverrides
+		): Promise<boolean>
+
+		currenciesUsingAggregator(aggregator: string, overrides?: CallOverrides): Promise<string[]>
+
+		currencyKeyDecimals(arg0: BytesLike, overrides?: CallOverrides): Promise<number>
+
+		effectiveAtomicValueAndRates(
+			arg0: BytesLike,
+			arg1: BigNumberish,
+			arg2: BytesLike,
+			overrides?: CallOverrides
+		): Promise<
+			[BigNumber, BigNumber, BigNumber, BigNumber] & {
+				value: BigNumber
+				systemValue: BigNumber
+				systemSourceRate: BigNumber
+				systemDestinationRate: BigNumber
+			}
+		>
+
+		effectiveValue(
+			sourceCurrencyKey: BytesLike,
+			sourceAmount: BigNumberish,
+			destinationCurrencyKey: BytesLike,
+			overrides?: CallOverrides
+		): Promise<BigNumber>
+
+		effectiveValueAndRates(
+			sourceCurrencyKey: BytesLike,
+			sourceAmount: BigNumberish,
+			destinationCurrencyKey: BytesLike,
+			overrides?: CallOverrides
+		): Promise<
+			[BigNumber, BigNumber, BigNumber] & {
+				value: BigNumber
+				sourceRate: BigNumber
+				destinationRate: BigNumber
+			}
+		>
+
+		effectiveValueAndRatesAtRound(
+			sourceCurrencyKey: BytesLike,
+			sourceAmount: BigNumberish,
+			destinationCurrencyKey: BytesLike,
+			roundIdForSrc: BigNumberish,
+			roundIdForDest: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<
+			[BigNumber, BigNumber, BigNumber] & {
+				value: BigNumber
+				sourceRate: BigNumber
+				destinationRate: BigNumber
+			}
+		>
+
+		getCurrentRoundId(currencyKey: BytesLike, overrides?: CallOverrides): Promise<BigNumber>
+
+		getLastRoundIdBeforeElapsedSecs(
+			currencyKey: BytesLike,
+			startingRoundId: BigNumberish,
+			startingTimestamp: BigNumberish,
+			timediff: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<BigNumber>
+
+		isResolverCached(overrides?: CallOverrides): Promise<boolean>
+
+		lastRateUpdateTimes(currencyKey: BytesLike, overrides?: CallOverrides): Promise<BigNumber>
+
+		lastRateUpdateTimesForCurrencies(
+			currencyKeys: BytesLike[],
+			overrides?: CallOverrides
+		): Promise<BigNumber[]>
+
+		nominateNewOwner(_owner: string, overrides?: CallOverrides): Promise<void>
+
+		nominatedOwner(overrides?: CallOverrides): Promise<string>
+
+		owner(overrides?: CallOverrides): Promise<string>
+
+		rateAndInvalid(
+			currencyKey: BytesLike,
+			overrides?: CallOverrides
+		): Promise<[BigNumber, boolean] & { rate: BigNumber; isInvalid: boolean }>
+
+		rateAndTimestampAtRound(
+			currencyKey: BytesLike,
+			roundId: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<[BigNumber, BigNumber] & { rate: BigNumber; time: BigNumber }>
+
+		rateAndUpdatedTime(
+			currencyKey: BytesLike,
+			overrides?: CallOverrides
+		): Promise<[BigNumber, BigNumber] & { rate: BigNumber; time: BigNumber }>
+
+		rateForCurrency(currencyKey: BytesLike, overrides?: CallOverrides): Promise<BigNumber>
+
+		rateIsFlagged(currencyKey: BytesLike, overrides?: CallOverrides): Promise<boolean>
+
+		rateIsInvalid(currencyKey: BytesLike, overrides?: CallOverrides): Promise<boolean>
+
+		rateIsStale(currencyKey: BytesLike, overrides?: CallOverrides): Promise<boolean>
+
+		rateStalePeriod(overrides?: CallOverrides): Promise<BigNumber>
+
+		rateWithSafetyChecks(
+			currencyKey: BytesLike,
+			overrides?: CallOverrides
+		): Promise<
+			[BigNumber, boolean, boolean] & {
+				rate: BigNumber
+				broken: boolean
+				staleOrInvalid: boolean
+			}
+		>
+
+		ratesAndInvalidForCurrencies(
+			currencyKeys: BytesLike[],
+			overrides?: CallOverrides
+		): Promise<[BigNumber[], boolean] & { rates: BigNumber[]; anyRateInvalid: boolean }>
+
+		ratesAndUpdatedTimeForCurrencyLastNRounds(
+			currencyKey: BytesLike,
+			numRounds: BigNumberish,
+			roundId: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<[BigNumber[], BigNumber[]] & { rates: BigNumber[]; times: BigNumber[] }>
+
+		ratesForCurrencies(currencyKeys: BytesLike[], overrides?: CallOverrides): Promise<BigNumber[]>
+
+		rebuildCache(overrides?: CallOverrides): Promise<void>
+
+		removeAggregator(currencyKey: BytesLike, overrides?: CallOverrides): Promise<void>
+
+		resolver(overrides?: CallOverrides): Promise<string>
+
+		resolverAddressesRequired(overrides?: CallOverrides): Promise<string[]>
+
+		'synthTooVolatileForAtomicExchange(bytes32)'(
+			arg0: BytesLike,
+			overrides?: CallOverrides
+		): Promise<boolean>
+
+		'synthTooVolatileForAtomicExchange((bytes32,address,address,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))'(
+			arg0: IDirectIntegrationManager.ParameterIntegrationSettingsStruct,
+			overrides?: CallOverrides
+		): Promise<boolean>
+	}
+
+	filters: {
+		'AggregatorAdded(bytes32,address)'(
+			currencyKey?: null,
+			aggregator?: null
+		): AggregatorAddedEventFilter
+		AggregatorAdded(currencyKey?: null, aggregator?: null): AggregatorAddedEventFilter
+
+		'AggregatorRemoved(bytes32,address)'(
+			currencyKey?: null,
+			aggregator?: null
+		): AggregatorRemovedEventFilter
+		AggregatorRemoved(currencyKey?: null, aggregator?: null): AggregatorRemovedEventFilter
+
+		'CacheUpdated(bytes32,address)'(name?: null, destination?: null): CacheUpdatedEventFilter
+		CacheUpdated(name?: null, destination?: null): CacheUpdatedEventFilter
+
+		'OwnerChanged(address,address)'(oldOwner?: null, newOwner?: null): OwnerChangedEventFilter
+		OwnerChanged(oldOwner?: null, newOwner?: null): OwnerChangedEventFilter
+
+		'OwnerNominated(address)'(newOwner?: null): OwnerNominatedEventFilter
+		OwnerNominated(newOwner?: null): OwnerNominatedEventFilter
+	}
+
+	estimateGas: {
+		CONTRACT_NAME(overrides?: CallOverrides): Promise<BigNumber>
+
+		acceptOwnership(overrides?: Overrides & { from?: string }): Promise<BigNumber>
+
+		addAggregator(
+			currencyKey: BytesLike,
+			aggregatorAddress: string,
+			overrides?: Overrides & { from?: string }
+		): Promise<BigNumber>
+
+		aggregatorKeys(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
+
+		aggregatorWarningFlags(overrides?: CallOverrides): Promise<BigNumber>
+
+		aggregators(arg0: BytesLike, overrides?: CallOverrides): Promise<BigNumber>
+
+		anyRateIsInvalid(currencyKeys: BytesLike[], overrides?: CallOverrides): Promise<BigNumber>
+
+		anyRateIsInvalidAtRound(
+			currencyKeys: BytesLike[],
+			roundIds: BigNumberish[],
+			overrides?: CallOverrides
+		): Promise<BigNumber>
+
+		currenciesUsingAggregator(aggregator: string, overrides?: CallOverrides): Promise<BigNumber>
+
+		currencyKeyDecimals(arg0: BytesLike, overrides?: CallOverrides): Promise<BigNumber>
+
+		effectiveAtomicValueAndRates(
+			arg0: BytesLike,
+			arg1: BigNumberish,
+			arg2: BytesLike,
+			overrides?: CallOverrides
+		): Promise<BigNumber>
+
+		effectiveValue(
+			sourceCurrencyKey: BytesLike,
+			sourceAmount: BigNumberish,
+			destinationCurrencyKey: BytesLike,
+			overrides?: CallOverrides
+		): Promise<BigNumber>
+
+		effectiveValueAndRates(
+			sourceCurrencyKey: BytesLike,
+			sourceAmount: BigNumberish,
+			destinationCurrencyKey: BytesLike,
+			overrides?: CallOverrides
+		): Promise<BigNumber>
+
+		effectiveValueAndRatesAtRound(
+			sourceCurrencyKey: BytesLike,
+			sourceAmount: BigNumberish,
+			destinationCurrencyKey: BytesLike,
+			roundIdForSrc: BigNumberish,
+			roundIdForDest: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<BigNumber>
+
+		getCurrentRoundId(currencyKey: BytesLike, overrides?: CallOverrides): Promise<BigNumber>
+
+		getLastRoundIdBeforeElapsedSecs(
+			currencyKey: BytesLike,
+			startingRoundId: BigNumberish,
+			startingTimestamp: BigNumberish,
+			timediff: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<BigNumber>
+
+		isResolverCached(overrides?: CallOverrides): Promise<BigNumber>
+
+		lastRateUpdateTimes(currencyKey: BytesLike, overrides?: CallOverrides): Promise<BigNumber>
+
+		lastRateUpdateTimesForCurrencies(
+			currencyKeys: BytesLike[],
+			overrides?: CallOverrides
+		): Promise<BigNumber>
+
+		nominateNewOwner(_owner: string, overrides?: Overrides & { from?: string }): Promise<BigNumber>
+
+		nominatedOwner(overrides?: CallOverrides): Promise<BigNumber>
+
+		owner(overrides?: CallOverrides): Promise<BigNumber>
+
+		rateAndInvalid(currencyKey: BytesLike, overrides?: CallOverrides): Promise<BigNumber>
+
+		rateAndTimestampAtRound(
+			currencyKey: BytesLike,
+			roundId: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<BigNumber>
+
+		rateAndUpdatedTime(currencyKey: BytesLike, overrides?: CallOverrides): Promise<BigNumber>
+
+		rateForCurrency(currencyKey: BytesLike, overrides?: CallOverrides): Promise<BigNumber>
+
+		rateIsFlagged(currencyKey: BytesLike, overrides?: CallOverrides): Promise<BigNumber>
+
+		rateIsInvalid(currencyKey: BytesLike, overrides?: CallOverrides): Promise<BigNumber>
+
+		rateIsStale(currencyKey: BytesLike, overrides?: CallOverrides): Promise<BigNumber>
+
+		rateStalePeriod(overrides?: CallOverrides): Promise<BigNumber>
+
+		rateWithSafetyChecks(
+			currencyKey: BytesLike,
+			overrides?: Overrides & { from?: string }
+		): Promise<BigNumber>
+
+		ratesAndInvalidForCurrencies(
+			currencyKeys: BytesLike[],
+			overrides?: CallOverrides
+		): Promise<BigNumber>
+
+		ratesAndUpdatedTimeForCurrencyLastNRounds(
+			currencyKey: BytesLike,
+			numRounds: BigNumberish,
+			roundId: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<BigNumber>
+
+		ratesForCurrencies(currencyKeys: BytesLike[], overrides?: CallOverrides): Promise<BigNumber>
+
+		rebuildCache(overrides?: Overrides & { from?: string }): Promise<BigNumber>
+
+		removeAggregator(
+			currencyKey: BytesLike,
+			overrides?: Overrides & { from?: string }
+		): Promise<BigNumber>
+
+		resolver(overrides?: CallOverrides): Promise<BigNumber>
+
+		resolverAddressesRequired(overrides?: CallOverrides): Promise<BigNumber>
+
+		'synthTooVolatileForAtomicExchange(bytes32)'(
+			arg0: BytesLike,
+			overrides?: CallOverrides
+		): Promise<BigNumber>
+
+		'synthTooVolatileForAtomicExchange((bytes32,address,address,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))'(
+			arg0: IDirectIntegrationManager.ParameterIntegrationSettingsStruct,
+			overrides?: CallOverrides
+		): Promise<BigNumber>
+	}
+
+	populateTransaction: {
+		CONTRACT_NAME(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		acceptOwnership(overrides?: Overrides & { from?: string }): Promise<PopulatedTransaction>
+
+		addAggregator(
+			currencyKey: BytesLike,
+			aggregatorAddress: string,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		aggregatorKeys(arg0: BigNumberish, overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		aggregatorWarningFlags(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		aggregators(arg0: BytesLike, overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		anyRateIsInvalid(
+			currencyKeys: BytesLike[],
+			overrides?: CallOverrides
+		): Promise<PopulatedTransaction>
+
+		anyRateIsInvalidAtRound(
+			currencyKeys: BytesLike[],
+			roundIds: BigNumberish[],
+			overrides?: CallOverrides
+		): Promise<PopulatedTransaction>
+
+		currenciesUsingAggregator(
+			aggregator: string,
+			overrides?: CallOverrides
+		): Promise<PopulatedTransaction>
+
+		currencyKeyDecimals(arg0: BytesLike, overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		effectiveAtomicValueAndRates(
+			arg0: BytesLike,
+			arg1: BigNumberish,
+			arg2: BytesLike,
+			overrides?: CallOverrides
+		): Promise<PopulatedTransaction>
+
+		effectiveValue(
+			sourceCurrencyKey: BytesLike,
+			sourceAmount: BigNumberish,
+			destinationCurrencyKey: BytesLike,
+			overrides?: CallOverrides
+		): Promise<PopulatedTransaction>
+
+		effectiveValueAndRates(
+			sourceCurrencyKey: BytesLike,
+			sourceAmount: BigNumberish,
+			destinationCurrencyKey: BytesLike,
+			overrides?: CallOverrides
+		): Promise<PopulatedTransaction>
+
+		effectiveValueAndRatesAtRound(
+			sourceCurrencyKey: BytesLike,
+			sourceAmount: BigNumberish,
+			destinationCurrencyKey: BytesLike,
+			roundIdForSrc: BigNumberish,
+			roundIdForDest: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<PopulatedTransaction>
+
+		getCurrentRoundId(
+			currencyKey: BytesLike,
+			overrides?: CallOverrides
+		): Promise<PopulatedTransaction>
+
+		getLastRoundIdBeforeElapsedSecs(
+			currencyKey: BytesLike,
+			startingRoundId: BigNumberish,
+			startingTimestamp: BigNumberish,
+			timediff: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<PopulatedTransaction>
+
+		isResolverCached(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		lastRateUpdateTimes(
+			currencyKey: BytesLike,
+			overrides?: CallOverrides
+		): Promise<PopulatedTransaction>
+
+		lastRateUpdateTimesForCurrencies(
+			currencyKeys: BytesLike[],
+			overrides?: CallOverrides
+		): Promise<PopulatedTransaction>
+
+		nominateNewOwner(
+			_owner: string,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		nominatedOwner(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		owner(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		rateAndInvalid(currencyKey: BytesLike, overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		rateAndTimestampAtRound(
+			currencyKey: BytesLike,
+			roundId: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<PopulatedTransaction>
+
+		rateAndUpdatedTime(
+			currencyKey: BytesLike,
+			overrides?: CallOverrides
+		): Promise<PopulatedTransaction>
+
+		rateForCurrency(
+			currencyKey: BytesLike,
+			overrides?: CallOverrides
+		): Promise<PopulatedTransaction>
+
+		rateIsFlagged(currencyKey: BytesLike, overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		rateIsInvalid(currencyKey: BytesLike, overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		rateIsStale(currencyKey: BytesLike, overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		rateStalePeriod(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		rateWithSafetyChecks(
+			currencyKey: BytesLike,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		ratesAndInvalidForCurrencies(
+			currencyKeys: BytesLike[],
+			overrides?: CallOverrides
+		): Promise<PopulatedTransaction>
+
+		ratesAndUpdatedTimeForCurrencyLastNRounds(
+			currencyKey: BytesLike,
+			numRounds: BigNumberish,
+			roundId: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<PopulatedTransaction>
+
+		ratesForCurrencies(
+			currencyKeys: BytesLike[],
+			overrides?: CallOverrides
+		): Promise<PopulatedTransaction>
+
+		rebuildCache(overrides?: Overrides & { from?: string }): Promise<PopulatedTransaction>
+
+		removeAggregator(
+			currencyKey: BytesLike,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		resolver(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		resolverAddressesRequired(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		'synthTooVolatileForAtomicExchange(bytes32)'(
+			arg0: BytesLike,
+			overrides?: CallOverrides
+		): Promise<PopulatedTransaction>
+
+		'synthTooVolatileForAtomicExchange((bytes32,address,address,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))'(
+			arg0: IDirectIntegrationManager.ParameterIntegrationSettingsStruct,
+			overrides?: CallOverrides
+		): Promise<PopulatedTransaction>
+	}
 }

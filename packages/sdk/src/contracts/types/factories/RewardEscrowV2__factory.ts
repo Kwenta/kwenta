@@ -2,1458 +2,1452 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import { Contract, Signer, utils } from "ethers";
-import type { Provider } from "@ethersproject/providers";
-import type {
-  RewardEscrowV2,
-  RewardEscrowV2Interface,
-} from "../RewardEscrowV2";
+import { Contract, Signer, utils } from 'ethers'
+import type { Provider } from '@ethersproject/providers'
+import type { RewardEscrowV2, RewardEscrowV2Interface } from '../RewardEscrowV2'
 
 const _abi = [
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "_kwenta",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "_rewardsNotifier",
-        type: "address",
-      },
-    ],
-    stateMutability: "nonpayable",
-    type: "constructor",
-  },
-  {
-    inputs: [],
-    name: "CannotTransferToSelf",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "EarlyVestingFeeTooHigh",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "EarlyVestingFeeTooLow",
-    type: "error",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "escrowAmount",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "unstakedBalance",
-        type: "uint256",
-      },
-    ],
-    name: "InsufficientUnstakedBalance",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "InvalidDuration",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "OnlyEscrowMigrator",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "OnlyStakingRewards",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "StakingRewardsAlreadySet",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "ZeroAddress",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "ZeroAmount",
-    type: "error",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: "address",
-        name: "previousAdmin",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "address",
-        name: "newAdmin",
-        type: "address",
-      },
-    ],
-    name: "AdminChanged",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "address",
-        name: "owner",
-        type: "address",
-      },
-      {
-        indexed: true,
-        internalType: "address",
-        name: "approved",
-        type: "address",
-      },
-      {
-        indexed: true,
-        internalType: "uint256",
-        name: "tokenId",
-        type: "uint256",
-      },
-    ],
-    name: "Approval",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "address",
-        name: "owner",
-        type: "address",
-      },
-      {
-        indexed: true,
-        internalType: "address",
-        name: "operator",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "bool",
-        name: "approved",
-        type: "bool",
-      },
-    ],
-    name: "ApprovalForAll",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "address",
-        name: "beacon",
-        type: "address",
-      },
-    ],
-    name: "BeaconUpgraded",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "amountToTreasury",
-        type: "uint256",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "amountToNotifier",
-        type: "uint256",
-      },
-    ],
-    name: "EarlyVestFeeSent",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: "address",
-        name: "escrowMigrator",
-        type: "address",
-      },
-    ],
-    name: "EscrowMigratorSet",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: "uint8",
-        name: "version",
-        type: "uint8",
-      },
-    ],
-    name: "Initialized",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "address",
-        name: "previousOwner",
-        type: "address",
-      },
-      {
-        indexed: true,
-        internalType: "address",
-        name: "newOwner",
-        type: "address",
-      },
-    ],
-    name: "OwnershipTransferStarted",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "address",
-        name: "previousOwner",
-        type: "address",
-      },
-      {
-        indexed: true,
-        internalType: "address",
-        name: "newOwner",
-        type: "address",
-      },
-    ],
-    name: "OwnershipTransferred",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: "address",
-        name: "account",
-        type: "address",
-      },
-    ],
-    name: "Paused",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: "address",
-        name: "stakingRewards",
-        type: "address",
-      },
-    ],
-    name: "StakingRewardsSet",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "address",
-        name: "from",
-        type: "address",
-      },
-      {
-        indexed: true,
-        internalType: "address",
-        name: "to",
-        type: "address",
-      },
-      {
-        indexed: true,
-        internalType: "uint256",
-        name: "tokenId",
-        type: "uint256",
-      },
-    ],
-    name: "Transfer",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: "address",
-        name: "treasuryDAO",
-        type: "address",
-      },
-    ],
-    name: "TreasuryDAOSet",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: "address",
-        name: "account",
-        type: "address",
-      },
-    ],
-    name: "Unpaused",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "address",
-        name: "implementation",
-        type: "address",
-      },
-    ],
-    name: "Upgraded",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "address",
-        name: "beneficiary",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "value",
-        type: "uint256",
-      },
-    ],
-    name: "Vested",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "address",
-        name: "beneficiary",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "value",
-        type: "uint256",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "duration",
-        type: "uint256",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "entryID",
-        type: "uint256",
-      },
-      {
-        indexed: false,
-        internalType: "uint8",
-        name: "earlyVestingFee",
-        type: "uint8",
-      },
-    ],
-    name: "VestingEntryCreated",
-    type: "event",
-  },
-  {
-    inputs: [],
-    name: "DEFAULT_DURATION",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "DEFAULT_EARLY_VESTING_FEE",
-    outputs: [
-      {
-        internalType: "uint8",
-        name: "",
-        type: "uint8",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "MAXIMUM_EARLY_VESTING_FEE",
-    outputs: [
-      {
-        internalType: "uint8",
-        name: "",
-        type: "uint8",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "MAX_DURATION",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "MINIMUM_EARLY_VESTING_FEE",
-    outputs: [
-      {
-        internalType: "uint8",
-        name: "",
-        type: "uint8",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "acceptOwnership",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "_account",
-        type: "address",
-      },
-      {
-        internalType: "uint144",
-        name: "_quantity",
-        type: "uint144",
-      },
-    ],
-    name: "appendVestingEntry",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "to",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "tokenId",
-        type: "uint256",
-      },
-    ],
-    name: "approve",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "owner",
-        type: "address",
-      },
-    ],
-    name: "balanceOf",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "_from",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "_to",
-        type: "address",
-      },
-      {
-        internalType: "uint256[]",
-        name: "_entryIDs",
-        type: "uint256[]",
-      },
-    ],
-    name: "bulkTransferFrom",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "_beneficiary",
-        type: "address",
-      },
-      {
-        internalType: "uint144",
-        name: "_deposit",
-        type: "uint144",
-      },
-      {
-        internalType: "uint40",
-        name: "_duration",
-        type: "uint40",
-      },
-      {
-        internalType: "uint8",
-        name: "_earlyVestingFee",
-        type: "uint8",
-      },
-    ],
-    name: "createEscrowEntry",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "escrowMigrator",
-    outputs: [
-      {
-        internalType: "contract IEscrowMigrator",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "_account",
-        type: "address",
-      },
-    ],
-    name: "escrowedBalanceOf",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "_account",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "_index",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "_pageSize",
-        type: "uint256",
-      },
-    ],
-    name: "getAccountVestingEntryIDs",
-    outputs: [
-      {
-        internalType: "uint256[]",
-        name: "",
-        type: "uint256[]",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "tokenId",
-        type: "uint256",
-      },
-    ],
-    name: "getApproved",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "getKwentaAddress",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "_entryID",
-        type: "uint256",
-      },
-    ],
-    name: "getVestingEntry",
-    outputs: [
-      {
-        internalType: "uint64",
-        name: "endTime",
-        type: "uint64",
-      },
-      {
-        internalType: "uint256",
-        name: "escrowAmount",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "duration",
-        type: "uint256",
-      },
-      {
-        internalType: "uint8",
-        name: "earlyVestingFee",
-        type: "uint8",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "_entryID",
-        type: "uint256",
-      },
-    ],
-    name: "getVestingEntryClaimable",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "quantity",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "fee",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256[]",
-        name: "_entryIDs",
-        type: "uint256[]",
-      },
-    ],
-    name: "getVestingQuantity",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "total",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "totalFee",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "_account",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "_index",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "_pageSize",
-        type: "uint256",
-      },
-    ],
-    name: "getVestingSchedules",
-    outputs: [
-      {
-        components: [
-          {
-            internalType: "uint256",
-            name: "escrowAmount",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "entryID",
-            type: "uint256",
-          },
-          {
-            internalType: "uint64",
-            name: "endTime",
-            type: "uint64",
-          },
-        ],
-        internalType: "struct IRewardEscrowV2.VestingEntryWithID[]",
-        name: "",
-        type: "tuple[]",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "_account",
-        type: "address",
-      },
-      {
-        components: [
-          {
-            internalType: "uint144",
-            name: "escrowAmount",
-            type: "uint144",
-          },
-          {
-            internalType: "uint40",
-            name: "duration",
-            type: "uint40",
-          },
-          {
-            internalType: "uint64",
-            name: "endTime",
-            type: "uint64",
-          },
-          {
-            internalType: "uint8",
-            name: "earlyVestingFee",
-            type: "uint8",
-          },
-        ],
-        internalType: "struct IRewardEscrowV2.VestingEntry",
-        name: "_entry",
-        type: "tuple",
-      },
-    ],
-    name: "importEscrowEntry",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "_contractOwner",
-        type: "address",
-      },
-    ],
-    name: "initialize",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "owner",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "operator",
-        type: "address",
-      },
-    ],
-    name: "isApprovedForAll",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "kwenta",
-    outputs: [
-      {
-        internalType: "contract IKwenta",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "name",
-    outputs: [
-      {
-        internalType: "string",
-        name: "",
-        type: "string",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "nextEntryId",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "owner",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "tokenId",
-        type: "uint256",
-      },
-    ],
-    name: "ownerOf",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "pauseRewardEscrow",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "paused",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "pendingOwner",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "proxiableUUID",
-    outputs: [
-      {
-        internalType: "bytes32",
-        name: "",
-        type: "bytes32",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "renounceOwnership",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "rewardsNotifier",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "from",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "to",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "tokenId",
-        type: "uint256",
-      },
-    ],
-    name: "safeTransferFrom",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "from",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "to",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "tokenId",
-        type: "uint256",
-      },
-      {
-        internalType: "bytes",
-        name: "data",
-        type: "bytes",
-      },
-    ],
-    name: "safeTransferFrom",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "operator",
-        type: "address",
-      },
-      {
-        internalType: "bool",
-        name: "approved",
-        type: "bool",
-      },
-    ],
-    name: "setApprovalForAll",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "_escrowMigrator",
-        type: "address",
-      },
-    ],
-    name: "setEscrowMigrator",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "_stakingRewards",
-        type: "address",
-      },
-    ],
-    name: "setStakingRewards",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "_treasuryDAO",
-        type: "address",
-      },
-    ],
-    name: "setTreasuryDAO",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "stakingRewards",
-    outputs: [
-      {
-        internalType: "contract IStakingRewardsV2",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "bytes4",
-        name: "interfaceId",
-        type: "bytes4",
-      },
-    ],
-    name: "supportsInterface",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "symbol",
-    outputs: [
-      {
-        internalType: "string",
-        name: "",
-        type: "string",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "index",
-        type: "uint256",
-      },
-    ],
-    name: "tokenByIndex",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "owner",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "index",
-        type: "uint256",
-      },
-    ],
-    name: "tokenOfOwnerByIndex",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "tokenId",
-        type: "uint256",
-      },
-    ],
-    name: "tokenURI",
-    outputs: [
-      {
-        internalType: "string",
-        name: "",
-        type: "string",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
-    name: "totalEscrowedAccountBalance",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "totalEscrowedBalance",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "totalSupply",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
-    name: "totalVestedAccountBalance",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "from",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "to",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "tokenId",
-        type: "uint256",
-      },
-    ],
-    name: "transferFrom",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "newOwner",
-        type: "address",
-      },
-    ],
-    name: "transferOwnership",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "treasuryDAO",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "unpauseRewardEscrow",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "_account",
-        type: "address",
-      },
-    ],
-    name: "unstakedEscrowedBalanceOf",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "newImplementation",
-        type: "address",
-      },
-    ],
-    name: "upgradeTo",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "newImplementation",
-        type: "address",
-      },
-      {
-        internalType: "bytes",
-        name: "data",
-        type: "bytes",
-      },
-    ],
-    name: "upgradeToAndCall",
-    outputs: [],
-    stateMutability: "payable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256[]",
-        name: "_entryIDs",
-        type: "uint256[]",
-      },
-    ],
-    name: "vest",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    name: "vestingSchedules",
-    outputs: [
-      {
-        internalType: "uint144",
-        name: "escrowAmount",
-        type: "uint144",
-      },
-      {
-        internalType: "uint40",
-        name: "duration",
-        type: "uint40",
-      },
-      {
-        internalType: "uint64",
-        name: "endTime",
-        type: "uint64",
-      },
-      {
-        internalType: "uint8",
-        name: "earlyVestingFee",
-        type: "uint8",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-] as const;
+	{
+		inputs: [
+			{
+				internalType: 'address',
+				name: '_kwenta',
+				type: 'address',
+			},
+			{
+				internalType: 'address',
+				name: '_rewardsNotifier',
+				type: 'address',
+			},
+		],
+		stateMutability: 'nonpayable',
+		type: 'constructor',
+	},
+	{
+		inputs: [],
+		name: 'CannotTransferToSelf',
+		type: 'error',
+	},
+	{
+		inputs: [],
+		name: 'EarlyVestingFeeTooHigh',
+		type: 'error',
+	},
+	{
+		inputs: [],
+		name: 'EarlyVestingFeeTooLow',
+		type: 'error',
+	},
+	{
+		inputs: [
+			{
+				internalType: 'uint256',
+				name: 'escrowAmount',
+				type: 'uint256',
+			},
+			{
+				internalType: 'uint256',
+				name: 'unstakedBalance',
+				type: 'uint256',
+			},
+		],
+		name: 'InsufficientUnstakedBalance',
+		type: 'error',
+	},
+	{
+		inputs: [],
+		name: 'InvalidDuration',
+		type: 'error',
+	},
+	{
+		inputs: [],
+		name: 'OnlyEscrowMigrator',
+		type: 'error',
+	},
+	{
+		inputs: [],
+		name: 'OnlyStakingRewards',
+		type: 'error',
+	},
+	{
+		inputs: [],
+		name: 'StakingRewardsAlreadySet',
+		type: 'error',
+	},
+	{
+		inputs: [],
+		name: 'ZeroAddress',
+		type: 'error',
+	},
+	{
+		inputs: [],
+		name: 'ZeroAmount',
+		type: 'error',
+	},
+	{
+		anonymous: false,
+		inputs: [
+			{
+				indexed: false,
+				internalType: 'address',
+				name: 'previousAdmin',
+				type: 'address',
+			},
+			{
+				indexed: false,
+				internalType: 'address',
+				name: 'newAdmin',
+				type: 'address',
+			},
+		],
+		name: 'AdminChanged',
+		type: 'event',
+	},
+	{
+		anonymous: false,
+		inputs: [
+			{
+				indexed: true,
+				internalType: 'address',
+				name: 'owner',
+				type: 'address',
+			},
+			{
+				indexed: true,
+				internalType: 'address',
+				name: 'approved',
+				type: 'address',
+			},
+			{
+				indexed: true,
+				internalType: 'uint256',
+				name: 'tokenId',
+				type: 'uint256',
+			},
+		],
+		name: 'Approval',
+		type: 'event',
+	},
+	{
+		anonymous: false,
+		inputs: [
+			{
+				indexed: true,
+				internalType: 'address',
+				name: 'owner',
+				type: 'address',
+			},
+			{
+				indexed: true,
+				internalType: 'address',
+				name: 'operator',
+				type: 'address',
+			},
+			{
+				indexed: false,
+				internalType: 'bool',
+				name: 'approved',
+				type: 'bool',
+			},
+		],
+		name: 'ApprovalForAll',
+		type: 'event',
+	},
+	{
+		anonymous: false,
+		inputs: [
+			{
+				indexed: true,
+				internalType: 'address',
+				name: 'beacon',
+				type: 'address',
+			},
+		],
+		name: 'BeaconUpgraded',
+		type: 'event',
+	},
+	{
+		anonymous: false,
+		inputs: [
+			{
+				indexed: false,
+				internalType: 'uint256',
+				name: 'amountToTreasury',
+				type: 'uint256',
+			},
+			{
+				indexed: false,
+				internalType: 'uint256',
+				name: 'amountToNotifier',
+				type: 'uint256',
+			},
+		],
+		name: 'EarlyVestFeeSent',
+		type: 'event',
+	},
+	{
+		anonymous: false,
+		inputs: [
+			{
+				indexed: false,
+				internalType: 'address',
+				name: 'escrowMigrator',
+				type: 'address',
+			},
+		],
+		name: 'EscrowMigratorSet',
+		type: 'event',
+	},
+	{
+		anonymous: false,
+		inputs: [
+			{
+				indexed: false,
+				internalType: 'uint8',
+				name: 'version',
+				type: 'uint8',
+			},
+		],
+		name: 'Initialized',
+		type: 'event',
+	},
+	{
+		anonymous: false,
+		inputs: [
+			{
+				indexed: true,
+				internalType: 'address',
+				name: 'previousOwner',
+				type: 'address',
+			},
+			{
+				indexed: true,
+				internalType: 'address',
+				name: 'newOwner',
+				type: 'address',
+			},
+		],
+		name: 'OwnershipTransferStarted',
+		type: 'event',
+	},
+	{
+		anonymous: false,
+		inputs: [
+			{
+				indexed: true,
+				internalType: 'address',
+				name: 'previousOwner',
+				type: 'address',
+			},
+			{
+				indexed: true,
+				internalType: 'address',
+				name: 'newOwner',
+				type: 'address',
+			},
+		],
+		name: 'OwnershipTransferred',
+		type: 'event',
+	},
+	{
+		anonymous: false,
+		inputs: [
+			{
+				indexed: false,
+				internalType: 'address',
+				name: 'account',
+				type: 'address',
+			},
+		],
+		name: 'Paused',
+		type: 'event',
+	},
+	{
+		anonymous: false,
+		inputs: [
+			{
+				indexed: false,
+				internalType: 'address',
+				name: 'stakingRewards',
+				type: 'address',
+			},
+		],
+		name: 'StakingRewardsSet',
+		type: 'event',
+	},
+	{
+		anonymous: false,
+		inputs: [
+			{
+				indexed: true,
+				internalType: 'address',
+				name: 'from',
+				type: 'address',
+			},
+			{
+				indexed: true,
+				internalType: 'address',
+				name: 'to',
+				type: 'address',
+			},
+			{
+				indexed: true,
+				internalType: 'uint256',
+				name: 'tokenId',
+				type: 'uint256',
+			},
+		],
+		name: 'Transfer',
+		type: 'event',
+	},
+	{
+		anonymous: false,
+		inputs: [
+			{
+				indexed: false,
+				internalType: 'address',
+				name: 'treasuryDAO',
+				type: 'address',
+			},
+		],
+		name: 'TreasuryDAOSet',
+		type: 'event',
+	},
+	{
+		anonymous: false,
+		inputs: [
+			{
+				indexed: false,
+				internalType: 'address',
+				name: 'account',
+				type: 'address',
+			},
+		],
+		name: 'Unpaused',
+		type: 'event',
+	},
+	{
+		anonymous: false,
+		inputs: [
+			{
+				indexed: true,
+				internalType: 'address',
+				name: 'implementation',
+				type: 'address',
+			},
+		],
+		name: 'Upgraded',
+		type: 'event',
+	},
+	{
+		anonymous: false,
+		inputs: [
+			{
+				indexed: true,
+				internalType: 'address',
+				name: 'beneficiary',
+				type: 'address',
+			},
+			{
+				indexed: false,
+				internalType: 'uint256',
+				name: 'value',
+				type: 'uint256',
+			},
+		],
+		name: 'Vested',
+		type: 'event',
+	},
+	{
+		anonymous: false,
+		inputs: [
+			{
+				indexed: true,
+				internalType: 'address',
+				name: 'beneficiary',
+				type: 'address',
+			},
+			{
+				indexed: false,
+				internalType: 'uint256',
+				name: 'value',
+				type: 'uint256',
+			},
+			{
+				indexed: false,
+				internalType: 'uint256',
+				name: 'duration',
+				type: 'uint256',
+			},
+			{
+				indexed: false,
+				internalType: 'uint256',
+				name: 'entryID',
+				type: 'uint256',
+			},
+			{
+				indexed: false,
+				internalType: 'uint8',
+				name: 'earlyVestingFee',
+				type: 'uint8',
+			},
+		],
+		name: 'VestingEntryCreated',
+		type: 'event',
+	},
+	{
+		inputs: [],
+		name: 'DEFAULT_DURATION',
+		outputs: [
+			{
+				internalType: 'uint256',
+				name: '',
+				type: 'uint256',
+			},
+		],
+		stateMutability: 'view',
+		type: 'function',
+	},
+	{
+		inputs: [],
+		name: 'DEFAULT_EARLY_VESTING_FEE',
+		outputs: [
+			{
+				internalType: 'uint8',
+				name: '',
+				type: 'uint8',
+			},
+		],
+		stateMutability: 'view',
+		type: 'function',
+	},
+	{
+		inputs: [],
+		name: 'MAXIMUM_EARLY_VESTING_FEE',
+		outputs: [
+			{
+				internalType: 'uint8',
+				name: '',
+				type: 'uint8',
+			},
+		],
+		stateMutability: 'view',
+		type: 'function',
+	},
+	{
+		inputs: [],
+		name: 'MAX_DURATION',
+		outputs: [
+			{
+				internalType: 'uint256',
+				name: '',
+				type: 'uint256',
+			},
+		],
+		stateMutability: 'view',
+		type: 'function',
+	},
+	{
+		inputs: [],
+		name: 'MINIMUM_EARLY_VESTING_FEE',
+		outputs: [
+			{
+				internalType: 'uint8',
+				name: '',
+				type: 'uint8',
+			},
+		],
+		stateMutability: 'view',
+		type: 'function',
+	},
+	{
+		inputs: [],
+		name: 'acceptOwnership',
+		outputs: [],
+		stateMutability: 'nonpayable',
+		type: 'function',
+	},
+	{
+		inputs: [
+			{
+				internalType: 'address',
+				name: '_account',
+				type: 'address',
+			},
+			{
+				internalType: 'uint144',
+				name: '_quantity',
+				type: 'uint144',
+			},
+		],
+		name: 'appendVestingEntry',
+		outputs: [],
+		stateMutability: 'nonpayable',
+		type: 'function',
+	},
+	{
+		inputs: [
+			{
+				internalType: 'address',
+				name: 'to',
+				type: 'address',
+			},
+			{
+				internalType: 'uint256',
+				name: 'tokenId',
+				type: 'uint256',
+			},
+		],
+		name: 'approve',
+		outputs: [],
+		stateMutability: 'nonpayable',
+		type: 'function',
+	},
+	{
+		inputs: [
+			{
+				internalType: 'address',
+				name: 'owner',
+				type: 'address',
+			},
+		],
+		name: 'balanceOf',
+		outputs: [
+			{
+				internalType: 'uint256',
+				name: '',
+				type: 'uint256',
+			},
+		],
+		stateMutability: 'view',
+		type: 'function',
+	},
+	{
+		inputs: [
+			{
+				internalType: 'address',
+				name: '_from',
+				type: 'address',
+			},
+			{
+				internalType: 'address',
+				name: '_to',
+				type: 'address',
+			},
+			{
+				internalType: 'uint256[]',
+				name: '_entryIDs',
+				type: 'uint256[]',
+			},
+		],
+		name: 'bulkTransferFrom',
+		outputs: [],
+		stateMutability: 'nonpayable',
+		type: 'function',
+	},
+	{
+		inputs: [
+			{
+				internalType: 'address',
+				name: '_beneficiary',
+				type: 'address',
+			},
+			{
+				internalType: 'uint144',
+				name: '_deposit',
+				type: 'uint144',
+			},
+			{
+				internalType: 'uint40',
+				name: '_duration',
+				type: 'uint40',
+			},
+			{
+				internalType: 'uint8',
+				name: '_earlyVestingFee',
+				type: 'uint8',
+			},
+		],
+		name: 'createEscrowEntry',
+		outputs: [],
+		stateMutability: 'nonpayable',
+		type: 'function',
+	},
+	{
+		inputs: [],
+		name: 'escrowMigrator',
+		outputs: [
+			{
+				internalType: 'contract IEscrowMigrator',
+				name: '',
+				type: 'address',
+			},
+		],
+		stateMutability: 'view',
+		type: 'function',
+	},
+	{
+		inputs: [
+			{
+				internalType: 'address',
+				name: '_account',
+				type: 'address',
+			},
+		],
+		name: 'escrowedBalanceOf',
+		outputs: [
+			{
+				internalType: 'uint256',
+				name: '',
+				type: 'uint256',
+			},
+		],
+		stateMutability: 'view',
+		type: 'function',
+	},
+	{
+		inputs: [
+			{
+				internalType: 'address',
+				name: '_account',
+				type: 'address',
+			},
+			{
+				internalType: 'uint256',
+				name: '_index',
+				type: 'uint256',
+			},
+			{
+				internalType: 'uint256',
+				name: '_pageSize',
+				type: 'uint256',
+			},
+		],
+		name: 'getAccountVestingEntryIDs',
+		outputs: [
+			{
+				internalType: 'uint256[]',
+				name: '',
+				type: 'uint256[]',
+			},
+		],
+		stateMutability: 'view',
+		type: 'function',
+	},
+	{
+		inputs: [
+			{
+				internalType: 'uint256',
+				name: 'tokenId',
+				type: 'uint256',
+			},
+		],
+		name: 'getApproved',
+		outputs: [
+			{
+				internalType: 'address',
+				name: '',
+				type: 'address',
+			},
+		],
+		stateMutability: 'view',
+		type: 'function',
+	},
+	{
+		inputs: [],
+		name: 'getKwentaAddress',
+		outputs: [
+			{
+				internalType: 'address',
+				name: '',
+				type: 'address',
+			},
+		],
+		stateMutability: 'view',
+		type: 'function',
+	},
+	{
+		inputs: [
+			{
+				internalType: 'uint256',
+				name: '_entryID',
+				type: 'uint256',
+			},
+		],
+		name: 'getVestingEntry',
+		outputs: [
+			{
+				internalType: 'uint64',
+				name: 'endTime',
+				type: 'uint64',
+			},
+			{
+				internalType: 'uint256',
+				name: 'escrowAmount',
+				type: 'uint256',
+			},
+			{
+				internalType: 'uint256',
+				name: 'duration',
+				type: 'uint256',
+			},
+			{
+				internalType: 'uint8',
+				name: 'earlyVestingFee',
+				type: 'uint8',
+			},
+		],
+		stateMutability: 'view',
+		type: 'function',
+	},
+	{
+		inputs: [
+			{
+				internalType: 'uint256',
+				name: '_entryID',
+				type: 'uint256',
+			},
+		],
+		name: 'getVestingEntryClaimable',
+		outputs: [
+			{
+				internalType: 'uint256',
+				name: 'quantity',
+				type: 'uint256',
+			},
+			{
+				internalType: 'uint256',
+				name: 'fee',
+				type: 'uint256',
+			},
+		],
+		stateMutability: 'view',
+		type: 'function',
+	},
+	{
+		inputs: [
+			{
+				internalType: 'uint256[]',
+				name: '_entryIDs',
+				type: 'uint256[]',
+			},
+		],
+		name: 'getVestingQuantity',
+		outputs: [
+			{
+				internalType: 'uint256',
+				name: 'total',
+				type: 'uint256',
+			},
+			{
+				internalType: 'uint256',
+				name: 'totalFee',
+				type: 'uint256',
+			},
+		],
+		stateMutability: 'view',
+		type: 'function',
+	},
+	{
+		inputs: [
+			{
+				internalType: 'address',
+				name: '_account',
+				type: 'address',
+			},
+			{
+				internalType: 'uint256',
+				name: '_index',
+				type: 'uint256',
+			},
+			{
+				internalType: 'uint256',
+				name: '_pageSize',
+				type: 'uint256',
+			},
+		],
+		name: 'getVestingSchedules',
+		outputs: [
+			{
+				components: [
+					{
+						internalType: 'uint256',
+						name: 'escrowAmount',
+						type: 'uint256',
+					},
+					{
+						internalType: 'uint256',
+						name: 'entryID',
+						type: 'uint256',
+					},
+					{
+						internalType: 'uint64',
+						name: 'endTime',
+						type: 'uint64',
+					},
+				],
+				internalType: 'struct IRewardEscrowV2.VestingEntryWithID[]',
+				name: '',
+				type: 'tuple[]',
+			},
+		],
+		stateMutability: 'view',
+		type: 'function',
+	},
+	{
+		inputs: [
+			{
+				internalType: 'address',
+				name: '_account',
+				type: 'address',
+			},
+			{
+				components: [
+					{
+						internalType: 'uint144',
+						name: 'escrowAmount',
+						type: 'uint144',
+					},
+					{
+						internalType: 'uint40',
+						name: 'duration',
+						type: 'uint40',
+					},
+					{
+						internalType: 'uint64',
+						name: 'endTime',
+						type: 'uint64',
+					},
+					{
+						internalType: 'uint8',
+						name: 'earlyVestingFee',
+						type: 'uint8',
+					},
+				],
+				internalType: 'struct IRewardEscrowV2.VestingEntry',
+				name: '_entry',
+				type: 'tuple',
+			},
+		],
+		name: 'importEscrowEntry',
+		outputs: [],
+		stateMutability: 'nonpayable',
+		type: 'function',
+	},
+	{
+		inputs: [
+			{
+				internalType: 'address',
+				name: '_contractOwner',
+				type: 'address',
+			},
+		],
+		name: 'initialize',
+		outputs: [],
+		stateMutability: 'nonpayable',
+		type: 'function',
+	},
+	{
+		inputs: [
+			{
+				internalType: 'address',
+				name: 'owner',
+				type: 'address',
+			},
+			{
+				internalType: 'address',
+				name: 'operator',
+				type: 'address',
+			},
+		],
+		name: 'isApprovedForAll',
+		outputs: [
+			{
+				internalType: 'bool',
+				name: '',
+				type: 'bool',
+			},
+		],
+		stateMutability: 'view',
+		type: 'function',
+	},
+	{
+		inputs: [],
+		name: 'kwenta',
+		outputs: [
+			{
+				internalType: 'contract IKwenta',
+				name: '',
+				type: 'address',
+			},
+		],
+		stateMutability: 'view',
+		type: 'function',
+	},
+	{
+		inputs: [],
+		name: 'name',
+		outputs: [
+			{
+				internalType: 'string',
+				name: '',
+				type: 'string',
+			},
+		],
+		stateMutability: 'view',
+		type: 'function',
+	},
+	{
+		inputs: [],
+		name: 'nextEntryId',
+		outputs: [
+			{
+				internalType: 'uint256',
+				name: '',
+				type: 'uint256',
+			},
+		],
+		stateMutability: 'view',
+		type: 'function',
+	},
+	{
+		inputs: [],
+		name: 'owner',
+		outputs: [
+			{
+				internalType: 'address',
+				name: '',
+				type: 'address',
+			},
+		],
+		stateMutability: 'view',
+		type: 'function',
+	},
+	{
+		inputs: [
+			{
+				internalType: 'uint256',
+				name: 'tokenId',
+				type: 'uint256',
+			},
+		],
+		name: 'ownerOf',
+		outputs: [
+			{
+				internalType: 'address',
+				name: '',
+				type: 'address',
+			},
+		],
+		stateMutability: 'view',
+		type: 'function',
+	},
+	{
+		inputs: [],
+		name: 'pauseRewardEscrow',
+		outputs: [],
+		stateMutability: 'nonpayable',
+		type: 'function',
+	},
+	{
+		inputs: [],
+		name: 'paused',
+		outputs: [
+			{
+				internalType: 'bool',
+				name: '',
+				type: 'bool',
+			},
+		],
+		stateMutability: 'view',
+		type: 'function',
+	},
+	{
+		inputs: [],
+		name: 'pendingOwner',
+		outputs: [
+			{
+				internalType: 'address',
+				name: '',
+				type: 'address',
+			},
+		],
+		stateMutability: 'view',
+		type: 'function',
+	},
+	{
+		inputs: [],
+		name: 'proxiableUUID',
+		outputs: [
+			{
+				internalType: 'bytes32',
+				name: '',
+				type: 'bytes32',
+			},
+		],
+		stateMutability: 'view',
+		type: 'function',
+	},
+	{
+		inputs: [],
+		name: 'renounceOwnership',
+		outputs: [],
+		stateMutability: 'nonpayable',
+		type: 'function',
+	},
+	{
+		inputs: [],
+		name: 'rewardsNotifier',
+		outputs: [
+			{
+				internalType: 'address',
+				name: '',
+				type: 'address',
+			},
+		],
+		stateMutability: 'view',
+		type: 'function',
+	},
+	{
+		inputs: [
+			{
+				internalType: 'address',
+				name: 'from',
+				type: 'address',
+			},
+			{
+				internalType: 'address',
+				name: 'to',
+				type: 'address',
+			},
+			{
+				internalType: 'uint256',
+				name: 'tokenId',
+				type: 'uint256',
+			},
+		],
+		name: 'safeTransferFrom',
+		outputs: [],
+		stateMutability: 'nonpayable',
+		type: 'function',
+	},
+	{
+		inputs: [
+			{
+				internalType: 'address',
+				name: 'from',
+				type: 'address',
+			},
+			{
+				internalType: 'address',
+				name: 'to',
+				type: 'address',
+			},
+			{
+				internalType: 'uint256',
+				name: 'tokenId',
+				type: 'uint256',
+			},
+			{
+				internalType: 'bytes',
+				name: 'data',
+				type: 'bytes',
+			},
+		],
+		name: 'safeTransferFrom',
+		outputs: [],
+		stateMutability: 'nonpayable',
+		type: 'function',
+	},
+	{
+		inputs: [
+			{
+				internalType: 'address',
+				name: 'operator',
+				type: 'address',
+			},
+			{
+				internalType: 'bool',
+				name: 'approved',
+				type: 'bool',
+			},
+		],
+		name: 'setApprovalForAll',
+		outputs: [],
+		stateMutability: 'nonpayable',
+		type: 'function',
+	},
+	{
+		inputs: [
+			{
+				internalType: 'address',
+				name: '_escrowMigrator',
+				type: 'address',
+			},
+		],
+		name: 'setEscrowMigrator',
+		outputs: [],
+		stateMutability: 'nonpayable',
+		type: 'function',
+	},
+	{
+		inputs: [
+			{
+				internalType: 'address',
+				name: '_stakingRewards',
+				type: 'address',
+			},
+		],
+		name: 'setStakingRewards',
+		outputs: [],
+		stateMutability: 'nonpayable',
+		type: 'function',
+	},
+	{
+		inputs: [
+			{
+				internalType: 'address',
+				name: '_treasuryDAO',
+				type: 'address',
+			},
+		],
+		name: 'setTreasuryDAO',
+		outputs: [],
+		stateMutability: 'nonpayable',
+		type: 'function',
+	},
+	{
+		inputs: [],
+		name: 'stakingRewards',
+		outputs: [
+			{
+				internalType: 'contract IStakingRewardsV2',
+				name: '',
+				type: 'address',
+			},
+		],
+		stateMutability: 'view',
+		type: 'function',
+	},
+	{
+		inputs: [
+			{
+				internalType: 'bytes4',
+				name: 'interfaceId',
+				type: 'bytes4',
+			},
+		],
+		name: 'supportsInterface',
+		outputs: [
+			{
+				internalType: 'bool',
+				name: '',
+				type: 'bool',
+			},
+		],
+		stateMutability: 'view',
+		type: 'function',
+	},
+	{
+		inputs: [],
+		name: 'symbol',
+		outputs: [
+			{
+				internalType: 'string',
+				name: '',
+				type: 'string',
+			},
+		],
+		stateMutability: 'view',
+		type: 'function',
+	},
+	{
+		inputs: [
+			{
+				internalType: 'uint256',
+				name: 'index',
+				type: 'uint256',
+			},
+		],
+		name: 'tokenByIndex',
+		outputs: [
+			{
+				internalType: 'uint256',
+				name: '',
+				type: 'uint256',
+			},
+		],
+		stateMutability: 'view',
+		type: 'function',
+	},
+	{
+		inputs: [
+			{
+				internalType: 'address',
+				name: 'owner',
+				type: 'address',
+			},
+			{
+				internalType: 'uint256',
+				name: 'index',
+				type: 'uint256',
+			},
+		],
+		name: 'tokenOfOwnerByIndex',
+		outputs: [
+			{
+				internalType: 'uint256',
+				name: '',
+				type: 'uint256',
+			},
+		],
+		stateMutability: 'view',
+		type: 'function',
+	},
+	{
+		inputs: [
+			{
+				internalType: 'uint256',
+				name: 'tokenId',
+				type: 'uint256',
+			},
+		],
+		name: 'tokenURI',
+		outputs: [
+			{
+				internalType: 'string',
+				name: '',
+				type: 'string',
+			},
+		],
+		stateMutability: 'view',
+		type: 'function',
+	},
+	{
+		inputs: [
+			{
+				internalType: 'address',
+				name: '',
+				type: 'address',
+			},
+		],
+		name: 'totalEscrowedAccountBalance',
+		outputs: [
+			{
+				internalType: 'uint256',
+				name: '',
+				type: 'uint256',
+			},
+		],
+		stateMutability: 'view',
+		type: 'function',
+	},
+	{
+		inputs: [],
+		name: 'totalEscrowedBalance',
+		outputs: [
+			{
+				internalType: 'uint256',
+				name: '',
+				type: 'uint256',
+			},
+		],
+		stateMutability: 'view',
+		type: 'function',
+	},
+	{
+		inputs: [],
+		name: 'totalSupply',
+		outputs: [
+			{
+				internalType: 'uint256',
+				name: '',
+				type: 'uint256',
+			},
+		],
+		stateMutability: 'view',
+		type: 'function',
+	},
+	{
+		inputs: [
+			{
+				internalType: 'address',
+				name: '',
+				type: 'address',
+			},
+		],
+		name: 'totalVestedAccountBalance',
+		outputs: [
+			{
+				internalType: 'uint256',
+				name: '',
+				type: 'uint256',
+			},
+		],
+		stateMutability: 'view',
+		type: 'function',
+	},
+	{
+		inputs: [
+			{
+				internalType: 'address',
+				name: 'from',
+				type: 'address',
+			},
+			{
+				internalType: 'address',
+				name: 'to',
+				type: 'address',
+			},
+			{
+				internalType: 'uint256',
+				name: 'tokenId',
+				type: 'uint256',
+			},
+		],
+		name: 'transferFrom',
+		outputs: [],
+		stateMutability: 'nonpayable',
+		type: 'function',
+	},
+	{
+		inputs: [
+			{
+				internalType: 'address',
+				name: 'newOwner',
+				type: 'address',
+			},
+		],
+		name: 'transferOwnership',
+		outputs: [],
+		stateMutability: 'nonpayable',
+		type: 'function',
+	},
+	{
+		inputs: [],
+		name: 'treasuryDAO',
+		outputs: [
+			{
+				internalType: 'address',
+				name: '',
+				type: 'address',
+			},
+		],
+		stateMutability: 'view',
+		type: 'function',
+	},
+	{
+		inputs: [],
+		name: 'unpauseRewardEscrow',
+		outputs: [],
+		stateMutability: 'nonpayable',
+		type: 'function',
+	},
+	{
+		inputs: [
+			{
+				internalType: 'address',
+				name: '_account',
+				type: 'address',
+			},
+		],
+		name: 'unstakedEscrowedBalanceOf',
+		outputs: [
+			{
+				internalType: 'uint256',
+				name: '',
+				type: 'uint256',
+			},
+		],
+		stateMutability: 'view',
+		type: 'function',
+	},
+	{
+		inputs: [
+			{
+				internalType: 'address',
+				name: 'newImplementation',
+				type: 'address',
+			},
+		],
+		name: 'upgradeTo',
+		outputs: [],
+		stateMutability: 'nonpayable',
+		type: 'function',
+	},
+	{
+		inputs: [
+			{
+				internalType: 'address',
+				name: 'newImplementation',
+				type: 'address',
+			},
+			{
+				internalType: 'bytes',
+				name: 'data',
+				type: 'bytes',
+			},
+		],
+		name: 'upgradeToAndCall',
+		outputs: [],
+		stateMutability: 'payable',
+		type: 'function',
+	},
+	{
+		inputs: [
+			{
+				internalType: 'uint256[]',
+				name: '_entryIDs',
+				type: 'uint256[]',
+			},
+		],
+		name: 'vest',
+		outputs: [],
+		stateMutability: 'nonpayable',
+		type: 'function',
+	},
+	{
+		inputs: [
+			{
+				internalType: 'uint256',
+				name: '',
+				type: 'uint256',
+			},
+		],
+		name: 'vestingSchedules',
+		outputs: [
+			{
+				internalType: 'uint144',
+				name: 'escrowAmount',
+				type: 'uint144',
+			},
+			{
+				internalType: 'uint40',
+				name: 'duration',
+				type: 'uint40',
+			},
+			{
+				internalType: 'uint64',
+				name: 'endTime',
+				type: 'uint64',
+			},
+			{
+				internalType: 'uint8',
+				name: 'earlyVestingFee',
+				type: 'uint8',
+			},
+		],
+		stateMutability: 'view',
+		type: 'function',
+	},
+] as const
 
 export class RewardEscrowV2__factory {
-  static readonly abi = _abi;
-  static createInterface(): RewardEscrowV2Interface {
-    return new utils.Interface(_abi) as RewardEscrowV2Interface;
-  }
-  static connect(
-    address: string,
-    signerOrProvider: Signer | Provider
-  ): RewardEscrowV2 {
-    return new Contract(address, _abi, signerOrProvider) as RewardEscrowV2;
-  }
+	static readonly abi = _abi
+	static createInterface(): RewardEscrowV2Interface {
+		return new utils.Interface(_abi) as RewardEscrowV2Interface
+	}
+	static connect(address: string, signerOrProvider: Signer | Provider): RewardEscrowV2 {
+		return new Contract(address, _abi, signerOrProvider) as RewardEscrowV2
+	}
 }

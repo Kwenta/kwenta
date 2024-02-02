@@ -2,892 +2,885 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import { Contract, Signer, utils } from "ethers";
-import type { Provider } from "@ethersproject/providers";
+import { Contract, Signer, utils } from 'ethers'
+import type { Provider } from '@ethersproject/providers'
 import type {
-  FuturesMarketSettings,
-  FuturesMarketSettingsInterface,
-} from "../FuturesMarketSettings";
+	FuturesMarketSettings,
+	FuturesMarketSettingsInterface,
+} from '../FuturesMarketSettings'
 
 const _abi = [
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "_owner",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "_resolver",
-        type: "address",
-      },
-    ],
-    payable: false,
-    stateMutability: "nonpayable",
-    type: "constructor",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: "bytes32",
-        name: "name",
-        type: "bytes32",
-      },
-      {
-        indexed: false,
-        internalType: "address",
-        name: "destination",
-        type: "address",
-      },
-    ],
-    name: "CacheUpdated",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "bps",
-        type: "uint256",
-      },
-    ],
-    name: "LiquidationBufferRatioUpdated",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "bps",
-        type: "uint256",
-      },
-    ],
-    name: "LiquidationFeeRatioUpdated",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "minMargin",
-        type: "uint256",
-      },
-    ],
-    name: "MinInitialMarginUpdated",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "sUSD",
-        type: "uint256",
-      },
-    ],
-    name: "MinKeeperFeeUpdated",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: "address",
-        name: "oldOwner",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "address",
-        name: "newOwner",
-        type: "address",
-      },
-    ],
-    name: "OwnerChanged",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: "address",
-        name: "newOwner",
-        type: "address",
-      },
-    ],
-    name: "OwnerNominated",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "bytes32",
-        name: "marketKey",
-        type: "bytes32",
-      },
-      {
-        indexed: true,
-        internalType: "bytes32",
-        name: "parameter",
-        type: "bytes32",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "value",
-        type: "uint256",
-      },
-    ],
-    name: "ParameterUpdated",
-    type: "event",
-  },
-  {
-    constant: false,
-    inputs: [],
-    name: "acceptOwnership",
-    outputs: [],
-    payable: false,
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    constant: true,
-    inputs: [],
-    name: "isResolverCached",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
-    payable: false,
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    constant: true,
-    inputs: [],
-    name: "liquidationBufferRatio",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    payable: false,
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    constant: true,
-    inputs: [],
-    name: "liquidationFeeRatio",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    payable: false,
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    constant: true,
-    inputs: [
-      {
-        internalType: "bytes32",
-        name: "_marketKey",
-        type: "bytes32",
-      },
-    ],
-    name: "makerFee",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    payable: false,
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    constant: true,
-    inputs: [
-      {
-        internalType: "bytes32",
-        name: "_marketKey",
-        type: "bytes32",
-      },
-    ],
-    name: "makerFeeNextPrice",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    payable: false,
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    constant: true,
-    inputs: [
-      {
-        internalType: "bytes32",
-        name: "_marketKey",
-        type: "bytes32",
-      },
-    ],
-    name: "maxFundingRate",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    payable: false,
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    constant: true,
-    inputs: [
-      {
-        internalType: "bytes32",
-        name: "_marketKey",
-        type: "bytes32",
-      },
-    ],
-    name: "maxLeverage",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    payable: false,
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    constant: true,
-    inputs: [
-      {
-        internalType: "bytes32",
-        name: "_marketKey",
-        type: "bytes32",
-      },
-    ],
-    name: "maxMarketValueUSD",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    payable: false,
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    constant: true,
-    inputs: [],
-    name: "minInitialMargin",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    payable: false,
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    constant: true,
-    inputs: [],
-    name: "minKeeperFee",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    payable: false,
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    constant: true,
-    inputs: [
-      {
-        internalType: "bytes32",
-        name: "_marketKey",
-        type: "bytes32",
-      },
-    ],
-    name: "nextPriceConfirmWindow",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    payable: false,
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    constant: false,
-    inputs: [
-      {
-        internalType: "address",
-        name: "_owner",
-        type: "address",
-      },
-    ],
-    name: "nominateNewOwner",
-    outputs: [],
-    payable: false,
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    constant: true,
-    inputs: [],
-    name: "nominatedOwner",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
-    payable: false,
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    constant: true,
-    inputs: [],
-    name: "owner",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
-    payable: false,
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    constant: true,
-    inputs: [
-      {
-        internalType: "bytes32",
-        name: "_marketKey",
-        type: "bytes32",
-      },
-    ],
-    name: "parameters",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "takerFee",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "makerFee",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "takerFeeNextPrice",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "makerFeeNextPrice",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "nextPriceConfirmWindow",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "maxLeverage",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "maxMarketValueUSD",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "maxFundingRate",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "skewScaleUSD",
-        type: "uint256",
-      },
-    ],
-    payable: false,
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    constant: false,
-    inputs: [],
-    name: "rebuildCache",
-    outputs: [],
-    payable: false,
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    constant: true,
-    inputs: [],
-    name: "resolver",
-    outputs: [
-      {
-        internalType: "contract AddressResolver",
-        name: "",
-        type: "address",
-      },
-    ],
-    payable: false,
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    constant: true,
-    inputs: [],
-    name: "resolverAddressesRequired",
-    outputs: [
-      {
-        internalType: "bytes32[]",
-        name: "addresses",
-        type: "bytes32[]",
-      },
-    ],
-    payable: false,
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    constant: false,
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "_ratio",
-        type: "uint256",
-      },
-    ],
-    name: "setLiquidationBufferRatio",
-    outputs: [],
-    payable: false,
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    constant: false,
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "_ratio",
-        type: "uint256",
-      },
-    ],
-    name: "setLiquidationFeeRatio",
-    outputs: [],
-    payable: false,
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    constant: false,
-    inputs: [
-      {
-        internalType: "bytes32",
-        name: "_marketKey",
-        type: "bytes32",
-      },
-      {
-        internalType: "uint256",
-        name: "_makerFee",
-        type: "uint256",
-      },
-    ],
-    name: "setMakerFee",
-    outputs: [],
-    payable: false,
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    constant: false,
-    inputs: [
-      {
-        internalType: "bytes32",
-        name: "_marketKey",
-        type: "bytes32",
-      },
-      {
-        internalType: "uint256",
-        name: "_makerFeeNextPrice",
-        type: "uint256",
-      },
-    ],
-    name: "setMakerFeeNextPrice",
-    outputs: [],
-    payable: false,
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    constant: false,
-    inputs: [
-      {
-        internalType: "bytes32",
-        name: "_marketKey",
-        type: "bytes32",
-      },
-      {
-        internalType: "uint256",
-        name: "_maxFundingRate",
-        type: "uint256",
-      },
-    ],
-    name: "setMaxFundingRate",
-    outputs: [],
-    payable: false,
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    constant: false,
-    inputs: [
-      {
-        internalType: "bytes32",
-        name: "_marketKey",
-        type: "bytes32",
-      },
-      {
-        internalType: "uint256",
-        name: "_maxLeverage",
-        type: "uint256",
-      },
-    ],
-    name: "setMaxLeverage",
-    outputs: [],
-    payable: false,
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    constant: false,
-    inputs: [
-      {
-        internalType: "bytes32",
-        name: "_marketKey",
-        type: "bytes32",
-      },
-      {
-        internalType: "uint256",
-        name: "_maxMarketValueUSD",
-        type: "uint256",
-      },
-    ],
-    name: "setMaxMarketValueUSD",
-    outputs: [],
-    payable: false,
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    constant: false,
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "_minMargin",
-        type: "uint256",
-      },
-    ],
-    name: "setMinInitialMargin",
-    outputs: [],
-    payable: false,
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    constant: false,
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "_sUSD",
-        type: "uint256",
-      },
-    ],
-    name: "setMinKeeperFee",
-    outputs: [],
-    payable: false,
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    constant: false,
-    inputs: [
-      {
-        internalType: "bytes32",
-        name: "_marketKey",
-        type: "bytes32",
-      },
-      {
-        internalType: "uint256",
-        name: "_nextPriceConfirmWindow",
-        type: "uint256",
-      },
-    ],
-    name: "setNextPriceConfirmWindow",
-    outputs: [],
-    payable: false,
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    constant: false,
-    inputs: [
-      {
-        internalType: "bytes32",
-        name: "_marketKey",
-        type: "bytes32",
-      },
-      {
-        internalType: "uint256",
-        name: "_takerFee",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "_makerFee",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "_takerFeeNextPrice",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "_makerFeeNextPrice",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "_nextPriceConfirmWindow",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "_maxLeverage",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "_maxMarketValueUSD",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "_maxFundingRate",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "_skewScaleUSD",
-        type: "uint256",
-      },
-    ],
-    name: "setParameters",
-    outputs: [],
-    payable: false,
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    constant: false,
-    inputs: [
-      {
-        internalType: "bytes32",
-        name: "_marketKey",
-        type: "bytes32",
-      },
-      {
-        internalType: "uint256",
-        name: "_skewScaleUSD",
-        type: "uint256",
-      },
-    ],
-    name: "setSkewScaleUSD",
-    outputs: [],
-    payable: false,
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    constant: false,
-    inputs: [
-      {
-        internalType: "bytes32",
-        name: "_marketKey",
-        type: "bytes32",
-      },
-      {
-        internalType: "uint256",
-        name: "_takerFee",
-        type: "uint256",
-      },
-    ],
-    name: "setTakerFee",
-    outputs: [],
-    payable: false,
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    constant: false,
-    inputs: [
-      {
-        internalType: "bytes32",
-        name: "_marketKey",
-        type: "bytes32",
-      },
-      {
-        internalType: "uint256",
-        name: "_takerFeeNextPrice",
-        type: "uint256",
-      },
-    ],
-    name: "setTakerFeeNextPrice",
-    outputs: [],
-    payable: false,
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    constant: true,
-    inputs: [
-      {
-        internalType: "bytes32",
-        name: "_marketKey",
-        type: "bytes32",
-      },
-    ],
-    name: "skewScaleUSD",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    payable: false,
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    constant: true,
-    inputs: [
-      {
-        internalType: "bytes32",
-        name: "_marketKey",
-        type: "bytes32",
-      },
-    ],
-    name: "takerFee",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    payable: false,
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    constant: true,
-    inputs: [
-      {
-        internalType: "bytes32",
-        name: "_marketKey",
-        type: "bytes32",
-      },
-    ],
-    name: "takerFeeNextPrice",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    "payab`le": false,
-    stateMutability: "view",
-    type: "function",
-  },
-] as const;
+	{
+		inputs: [
+			{
+				internalType: 'address',
+				name: '_owner',
+				type: 'address',
+			},
+			{
+				internalType: 'address',
+				name: '_resolver',
+				type: 'address',
+			},
+		],
+		payable: false,
+		stateMutability: 'nonpayable',
+		type: 'constructor',
+	},
+	{
+		anonymous: false,
+		inputs: [
+			{
+				indexed: false,
+				internalType: 'bytes32',
+				name: 'name',
+				type: 'bytes32',
+			},
+			{
+				indexed: false,
+				internalType: 'address',
+				name: 'destination',
+				type: 'address',
+			},
+		],
+		name: 'CacheUpdated',
+		type: 'event',
+	},
+	{
+		anonymous: false,
+		inputs: [
+			{
+				indexed: false,
+				internalType: 'uint256',
+				name: 'bps',
+				type: 'uint256',
+			},
+		],
+		name: 'LiquidationBufferRatioUpdated',
+		type: 'event',
+	},
+	{
+		anonymous: false,
+		inputs: [
+			{
+				indexed: false,
+				internalType: 'uint256',
+				name: 'bps',
+				type: 'uint256',
+			},
+		],
+		name: 'LiquidationFeeRatioUpdated',
+		type: 'event',
+	},
+	{
+		anonymous: false,
+		inputs: [
+			{
+				indexed: false,
+				internalType: 'uint256',
+				name: 'minMargin',
+				type: 'uint256',
+			},
+		],
+		name: 'MinInitialMarginUpdated',
+		type: 'event',
+	},
+	{
+		anonymous: false,
+		inputs: [
+			{
+				indexed: false,
+				internalType: 'uint256',
+				name: 'sUSD',
+				type: 'uint256',
+			},
+		],
+		name: 'MinKeeperFeeUpdated',
+		type: 'event',
+	},
+	{
+		anonymous: false,
+		inputs: [
+			{
+				indexed: false,
+				internalType: 'address',
+				name: 'oldOwner',
+				type: 'address',
+			},
+			{
+				indexed: false,
+				internalType: 'address',
+				name: 'newOwner',
+				type: 'address',
+			},
+		],
+		name: 'OwnerChanged',
+		type: 'event',
+	},
+	{
+		anonymous: false,
+		inputs: [
+			{
+				indexed: false,
+				internalType: 'address',
+				name: 'newOwner',
+				type: 'address',
+			},
+		],
+		name: 'OwnerNominated',
+		type: 'event',
+	},
+	{
+		anonymous: false,
+		inputs: [
+			{
+				indexed: true,
+				internalType: 'bytes32',
+				name: 'marketKey',
+				type: 'bytes32',
+			},
+			{
+				indexed: true,
+				internalType: 'bytes32',
+				name: 'parameter',
+				type: 'bytes32',
+			},
+			{
+				indexed: false,
+				internalType: 'uint256',
+				name: 'value',
+				type: 'uint256',
+			},
+		],
+		name: 'ParameterUpdated',
+		type: 'event',
+	},
+	{
+		constant: false,
+		inputs: [],
+		name: 'acceptOwnership',
+		outputs: [],
+		payable: false,
+		stateMutability: 'nonpayable',
+		type: 'function',
+	},
+	{
+		constant: true,
+		inputs: [],
+		name: 'isResolverCached',
+		outputs: [
+			{
+				internalType: 'bool',
+				name: '',
+				type: 'bool',
+			},
+		],
+		payable: false,
+		stateMutability: 'view',
+		type: 'function',
+	},
+	{
+		constant: true,
+		inputs: [],
+		name: 'liquidationBufferRatio',
+		outputs: [
+			{
+				internalType: 'uint256',
+				name: '',
+				type: 'uint256',
+			},
+		],
+		payable: false,
+		stateMutability: 'view',
+		type: 'function',
+	},
+	{
+		constant: true,
+		inputs: [],
+		name: 'liquidationFeeRatio',
+		outputs: [
+			{
+				internalType: 'uint256',
+				name: '',
+				type: 'uint256',
+			},
+		],
+		payable: false,
+		stateMutability: 'view',
+		type: 'function',
+	},
+	{
+		constant: true,
+		inputs: [
+			{
+				internalType: 'bytes32',
+				name: '_marketKey',
+				type: 'bytes32',
+			},
+		],
+		name: 'makerFee',
+		outputs: [
+			{
+				internalType: 'uint256',
+				name: '',
+				type: 'uint256',
+			},
+		],
+		payable: false,
+		stateMutability: 'view',
+		type: 'function',
+	},
+	{
+		constant: true,
+		inputs: [
+			{
+				internalType: 'bytes32',
+				name: '_marketKey',
+				type: 'bytes32',
+			},
+		],
+		name: 'makerFeeNextPrice',
+		outputs: [
+			{
+				internalType: 'uint256',
+				name: '',
+				type: 'uint256',
+			},
+		],
+		payable: false,
+		stateMutability: 'view',
+		type: 'function',
+	},
+	{
+		constant: true,
+		inputs: [
+			{
+				internalType: 'bytes32',
+				name: '_marketKey',
+				type: 'bytes32',
+			},
+		],
+		name: 'maxFundingRate',
+		outputs: [
+			{
+				internalType: 'uint256',
+				name: '',
+				type: 'uint256',
+			},
+		],
+		payable: false,
+		stateMutability: 'view',
+		type: 'function',
+	},
+	{
+		constant: true,
+		inputs: [
+			{
+				internalType: 'bytes32',
+				name: '_marketKey',
+				type: 'bytes32',
+			},
+		],
+		name: 'maxLeverage',
+		outputs: [
+			{
+				internalType: 'uint256',
+				name: '',
+				type: 'uint256',
+			},
+		],
+		payable: false,
+		stateMutability: 'view',
+		type: 'function',
+	},
+	{
+		constant: true,
+		inputs: [
+			{
+				internalType: 'bytes32',
+				name: '_marketKey',
+				type: 'bytes32',
+			},
+		],
+		name: 'maxMarketValueUSD',
+		outputs: [
+			{
+				internalType: 'uint256',
+				name: '',
+				type: 'uint256',
+			},
+		],
+		payable: false,
+		stateMutability: 'view',
+		type: 'function',
+	},
+	{
+		constant: true,
+		inputs: [],
+		name: 'minInitialMargin',
+		outputs: [
+			{
+				internalType: 'uint256',
+				name: '',
+				type: 'uint256',
+			},
+		],
+		payable: false,
+		stateMutability: 'view',
+		type: 'function',
+	},
+	{
+		constant: true,
+		inputs: [],
+		name: 'minKeeperFee',
+		outputs: [
+			{
+				internalType: 'uint256',
+				name: '',
+				type: 'uint256',
+			},
+		],
+		payable: false,
+		stateMutability: 'view',
+		type: 'function',
+	},
+	{
+		constant: true,
+		inputs: [
+			{
+				internalType: 'bytes32',
+				name: '_marketKey',
+				type: 'bytes32',
+			},
+		],
+		name: 'nextPriceConfirmWindow',
+		outputs: [
+			{
+				internalType: 'uint256',
+				name: '',
+				type: 'uint256',
+			},
+		],
+		payable: false,
+		stateMutability: 'view',
+		type: 'function',
+	},
+	{
+		constant: false,
+		inputs: [
+			{
+				internalType: 'address',
+				name: '_owner',
+				type: 'address',
+			},
+		],
+		name: 'nominateNewOwner',
+		outputs: [],
+		payable: false,
+		stateMutability: 'nonpayable',
+		type: 'function',
+	},
+	{
+		constant: true,
+		inputs: [],
+		name: 'nominatedOwner',
+		outputs: [
+			{
+				internalType: 'address',
+				name: '',
+				type: 'address',
+			},
+		],
+		payable: false,
+		stateMutability: 'view',
+		type: 'function',
+	},
+	{
+		constant: true,
+		inputs: [],
+		name: 'owner',
+		outputs: [
+			{
+				internalType: 'address',
+				name: '',
+				type: 'address',
+			},
+		],
+		payable: false,
+		stateMutability: 'view',
+		type: 'function',
+	},
+	{
+		constant: true,
+		inputs: [
+			{
+				internalType: 'bytes32',
+				name: '_marketKey',
+				type: 'bytes32',
+			},
+		],
+		name: 'parameters',
+		outputs: [
+			{
+				internalType: 'uint256',
+				name: 'takerFee',
+				type: 'uint256',
+			},
+			{
+				internalType: 'uint256',
+				name: 'makerFee',
+				type: 'uint256',
+			},
+			{
+				internalType: 'uint256',
+				name: 'takerFeeNextPrice',
+				type: 'uint256',
+			},
+			{
+				internalType: 'uint256',
+				name: 'makerFeeNextPrice',
+				type: 'uint256',
+			},
+			{
+				internalType: 'uint256',
+				name: 'nextPriceConfirmWindow',
+				type: 'uint256',
+			},
+			{
+				internalType: 'uint256',
+				name: 'maxLeverage',
+				type: 'uint256',
+			},
+			{
+				internalType: 'uint256',
+				name: 'maxMarketValueUSD',
+				type: 'uint256',
+			},
+			{
+				internalType: 'uint256',
+				name: 'maxFundingRate',
+				type: 'uint256',
+			},
+			{
+				internalType: 'uint256',
+				name: 'skewScaleUSD',
+				type: 'uint256',
+			},
+		],
+		payable: false,
+		stateMutability: 'view',
+		type: 'function',
+	},
+	{
+		constant: false,
+		inputs: [],
+		name: 'rebuildCache',
+		outputs: [],
+		payable: false,
+		stateMutability: 'nonpayable',
+		type: 'function',
+	},
+	{
+		constant: true,
+		inputs: [],
+		name: 'resolver',
+		outputs: [
+			{
+				internalType: 'contract AddressResolver',
+				name: '',
+				type: 'address',
+			},
+		],
+		payable: false,
+		stateMutability: 'view',
+		type: 'function',
+	},
+	{
+		constant: true,
+		inputs: [],
+		name: 'resolverAddressesRequired',
+		outputs: [
+			{
+				internalType: 'bytes32[]',
+				name: 'addresses',
+				type: 'bytes32[]',
+			},
+		],
+		payable: false,
+		stateMutability: 'view',
+		type: 'function',
+	},
+	{
+		constant: false,
+		inputs: [
+			{
+				internalType: 'uint256',
+				name: '_ratio',
+				type: 'uint256',
+			},
+		],
+		name: 'setLiquidationBufferRatio',
+		outputs: [],
+		payable: false,
+		stateMutability: 'nonpayable',
+		type: 'function',
+	},
+	{
+		constant: false,
+		inputs: [
+			{
+				internalType: 'uint256',
+				name: '_ratio',
+				type: 'uint256',
+			},
+		],
+		name: 'setLiquidationFeeRatio',
+		outputs: [],
+		payable: false,
+		stateMutability: 'nonpayable',
+		type: 'function',
+	},
+	{
+		constant: false,
+		inputs: [
+			{
+				internalType: 'bytes32',
+				name: '_marketKey',
+				type: 'bytes32',
+			},
+			{
+				internalType: 'uint256',
+				name: '_makerFee',
+				type: 'uint256',
+			},
+		],
+		name: 'setMakerFee',
+		outputs: [],
+		payable: false,
+		stateMutability: 'nonpayable',
+		type: 'function',
+	},
+	{
+		constant: false,
+		inputs: [
+			{
+				internalType: 'bytes32',
+				name: '_marketKey',
+				type: 'bytes32',
+			},
+			{
+				internalType: 'uint256',
+				name: '_makerFeeNextPrice',
+				type: 'uint256',
+			},
+		],
+		name: 'setMakerFeeNextPrice',
+		outputs: [],
+		payable: false,
+		stateMutability: 'nonpayable',
+		type: 'function',
+	},
+	{
+		constant: false,
+		inputs: [
+			{
+				internalType: 'bytes32',
+				name: '_marketKey',
+				type: 'bytes32',
+			},
+			{
+				internalType: 'uint256',
+				name: '_maxFundingRate',
+				type: 'uint256',
+			},
+		],
+		name: 'setMaxFundingRate',
+		outputs: [],
+		payable: false,
+		stateMutability: 'nonpayable',
+		type: 'function',
+	},
+	{
+		constant: false,
+		inputs: [
+			{
+				internalType: 'bytes32',
+				name: '_marketKey',
+				type: 'bytes32',
+			},
+			{
+				internalType: 'uint256',
+				name: '_maxLeverage',
+				type: 'uint256',
+			},
+		],
+		name: 'setMaxLeverage',
+		outputs: [],
+		payable: false,
+		stateMutability: 'nonpayable',
+		type: 'function',
+	},
+	{
+		constant: false,
+		inputs: [
+			{
+				internalType: 'bytes32',
+				name: '_marketKey',
+				type: 'bytes32',
+			},
+			{
+				internalType: 'uint256',
+				name: '_maxMarketValueUSD',
+				type: 'uint256',
+			},
+		],
+		name: 'setMaxMarketValueUSD',
+		outputs: [],
+		payable: false,
+		stateMutability: 'nonpayable',
+		type: 'function',
+	},
+	{
+		constant: false,
+		inputs: [
+			{
+				internalType: 'uint256',
+				name: '_minMargin',
+				type: 'uint256',
+			},
+		],
+		name: 'setMinInitialMargin',
+		outputs: [],
+		payable: false,
+		stateMutability: 'nonpayable',
+		type: 'function',
+	},
+	{
+		constant: false,
+		inputs: [
+			{
+				internalType: 'uint256',
+				name: '_sUSD',
+				type: 'uint256',
+			},
+		],
+		name: 'setMinKeeperFee',
+		outputs: [],
+		payable: false,
+		stateMutability: 'nonpayable',
+		type: 'function',
+	},
+	{
+		constant: false,
+		inputs: [
+			{
+				internalType: 'bytes32',
+				name: '_marketKey',
+				type: 'bytes32',
+			},
+			{
+				internalType: 'uint256',
+				name: '_nextPriceConfirmWindow',
+				type: 'uint256',
+			},
+		],
+		name: 'setNextPriceConfirmWindow',
+		outputs: [],
+		payable: false,
+		stateMutability: 'nonpayable',
+		type: 'function',
+	},
+	{
+		constant: false,
+		inputs: [
+			{
+				internalType: 'bytes32',
+				name: '_marketKey',
+				type: 'bytes32',
+			},
+			{
+				internalType: 'uint256',
+				name: '_takerFee',
+				type: 'uint256',
+			},
+			{
+				internalType: 'uint256',
+				name: '_makerFee',
+				type: 'uint256',
+			},
+			{
+				internalType: 'uint256',
+				name: '_takerFeeNextPrice',
+				type: 'uint256',
+			},
+			{
+				internalType: 'uint256',
+				name: '_makerFeeNextPrice',
+				type: 'uint256',
+			},
+			{
+				internalType: 'uint256',
+				name: '_nextPriceConfirmWindow',
+				type: 'uint256',
+			},
+			{
+				internalType: 'uint256',
+				name: '_maxLeverage',
+				type: 'uint256',
+			},
+			{
+				internalType: 'uint256',
+				name: '_maxMarketValueUSD',
+				type: 'uint256',
+			},
+			{
+				internalType: 'uint256',
+				name: '_maxFundingRate',
+				type: 'uint256',
+			},
+			{
+				internalType: 'uint256',
+				name: '_skewScaleUSD',
+				type: 'uint256',
+			},
+		],
+		name: 'setParameters',
+		outputs: [],
+		payable: false,
+		stateMutability: 'nonpayable',
+		type: 'function',
+	},
+	{
+		constant: false,
+		inputs: [
+			{
+				internalType: 'bytes32',
+				name: '_marketKey',
+				type: 'bytes32',
+			},
+			{
+				internalType: 'uint256',
+				name: '_skewScaleUSD',
+				type: 'uint256',
+			},
+		],
+		name: 'setSkewScaleUSD',
+		outputs: [],
+		payable: false,
+		stateMutability: 'nonpayable',
+		type: 'function',
+	},
+	{
+		constant: false,
+		inputs: [
+			{
+				internalType: 'bytes32',
+				name: '_marketKey',
+				type: 'bytes32',
+			},
+			{
+				internalType: 'uint256',
+				name: '_takerFee',
+				type: 'uint256',
+			},
+		],
+		name: 'setTakerFee',
+		outputs: [],
+		payable: false,
+		stateMutability: 'nonpayable',
+		type: 'function',
+	},
+	{
+		constant: false,
+		inputs: [
+			{
+				internalType: 'bytes32',
+				name: '_marketKey',
+				type: 'bytes32',
+			},
+			{
+				internalType: 'uint256',
+				name: '_takerFeeNextPrice',
+				type: 'uint256',
+			},
+		],
+		name: 'setTakerFeeNextPrice',
+		outputs: [],
+		payable: false,
+		stateMutability: 'nonpayable',
+		type: 'function',
+	},
+	{
+		constant: true,
+		inputs: [
+			{
+				internalType: 'bytes32',
+				name: '_marketKey',
+				type: 'bytes32',
+			},
+		],
+		name: 'skewScaleUSD',
+		outputs: [
+			{
+				internalType: 'uint256',
+				name: '',
+				type: 'uint256',
+			},
+		],
+		payable: false,
+		stateMutability: 'view',
+		type: 'function',
+	},
+	{
+		constant: true,
+		inputs: [
+			{
+				internalType: 'bytes32',
+				name: '_marketKey',
+				type: 'bytes32',
+			},
+		],
+		name: 'takerFee',
+		outputs: [
+			{
+				internalType: 'uint256',
+				name: '',
+				type: 'uint256',
+			},
+		],
+		payable: false,
+		stateMutability: 'view',
+		type: 'function',
+	},
+	{
+		constant: true,
+		inputs: [
+			{
+				internalType: 'bytes32',
+				name: '_marketKey',
+				type: 'bytes32',
+			},
+		],
+		name: 'takerFeeNextPrice',
+		outputs: [
+			{
+				internalType: 'uint256',
+				name: '',
+				type: 'uint256',
+			},
+		],
+		'payab`le': false,
+		stateMutability: 'view',
+		type: 'function',
+	},
+] as const
 
 export class FuturesMarketSettings__factory {
-  static readonly abi = _abi;
-  static createInterface(): FuturesMarketSettingsInterface {
-    return new utils.Interface(_abi) as FuturesMarketSettingsInterface;
-  }
-  static connect(
-    address: string,
-    signerOrProvider: Signer | Provider
-  ): FuturesMarketSettings {
-    return new Contract(
-      address,
-      _abi,
-      signerOrProvider
-    ) as FuturesMarketSettings;
-  }
+	static readonly abi = _abi
+	static createInterface(): FuturesMarketSettingsInterface {
+		return new utils.Interface(_abi) as FuturesMarketSettingsInterface
+	}
+	static connect(address: string, signerOrProvider: Signer | Provider): FuturesMarketSettings {
+		return new Contract(address, _abi, signerOrProvider) as FuturesMarketSettings
+	}
 }

@@ -6,6 +6,7 @@ import { ethers } from 'ethers'
 import { defaultAbiCoder } from 'ethers/lib/utils'
 import request, { gql } from 'graphql-request'
 import { orderBy } from 'lodash'
+import axios from 'axios'
 
 import KwentaSDK from '..'
 import { UNSUPPORTED_NETWORK } from '../common/errors'
@@ -97,6 +98,7 @@ import { getFuturesAggregateStats } from '../utils/subgraph'
 import { getReasonFromCode } from '../utils/synths'
 import { getPermit2Amount, getPermit2TypedData } from '../utils/permit2'
 import { PERMIT2_ADDRESS, PERMIT_STRUCT } from '../constants/permit2'
+import { FuturesAggregateStatResult } from '../utils/subgraph'
 
 export default class FuturesService {
 	private sdk: KwentaSDK
@@ -127,73 +129,78 @@ export default class FuturesService {
 	 * ```
 	 */
 	public async getMarkets(networkOverride?: NetworkOverrideOptions) {
-		const enabledMarkets = marketsForNetwork(
-			networkOverride?.networkId || this.sdk.context.networkId,
-			this.sdk.context.logError
+		// const enabledMarkets = marketsForNetwork(
+		// 	networkOverride?.networkId || this.sdk.context.networkId,
+		// 	this.sdk.context.logError
+		// )
+		// const contracts =
+		// 	networkOverride && networkOverride?.networkId !== this.sdk.context.networkId
+		// 		? getContractsByNetwork(networkOverride.networkId, networkOverride.provider)
+		// 		: this.sdk.context.contracts
+
+		// const { SystemStatus } = contracts
+		// const { ExchangeRates, PerpsV2MarketData, PerpsV2MarketSettings } =
+		// 	this.sdk.context.multicallContracts
+
+		// if (!SystemStatus || !ExchangeRates || !PerpsV2MarketData || !PerpsV2MarketSettings) {
+		// 	throw new Error(UNSUPPORTED_NETWORK)
+		// }
+
+		// const futuresData = await this.sdk.context.multicallProvider.all([
+		// 	PerpsV2MarketData.allProxiedMarketSummaries(),
+		// 	PerpsV2MarketSettings.minInitialMargin(),
+		// 	PerpsV2MarketSettings.minKeeperFee(),
+		// ])
+
+		// const { markets, minInitialMargin, minKeeperFee } = {
+		// 	markets: futuresData[0] as PerpsV2MarketData.MarketSummaryStructOutput[],
+		// 	minInitialMargin: futuresData[1] as BigNumber,
+		// 	minKeeperFee: futuresData[2] as BigNumber,
+		// }
+
+		// const filteredMarkets = markets.filter((m) => {
+		// 	const marketKey = parseBytes32String(m.key) as FuturesMarketKey
+		// 	const market = enabledMarkets.find((market) => marketKey === market.key)
+		// 	return !!market
+		// })
+
+		// const marketKeys = filteredMarkets.map((m) => m.key)
+
+		// const parametersCalls = marketKeys.map((key) => PerpsV2MarketSettings.parameters(key))
+
+		// let marketParameters: IPerpsV2MarketSettings.ParametersStructOutput[] = []
+
+		// if (this.sdk.context.isMainnet) {
+		// 	marketParameters = await this.sdk.context.multicallProvider.all(parametersCalls)
+		// } else {
+		// 	const firstResponses = await this.sdk.context.multicallProvider.all(
+		// 		parametersCalls.slice(0, 20)
+		// 	)
+		// 	const secondResponses = await this.sdk.context.multicallProvider.all(
+		// 		parametersCalls.slice(20, parametersCalls.length)
+		// 	)
+		// 	marketParameters = [
+		// 		...firstResponses,
+		// 		...secondResponses,
+		// 	] as IPerpsV2MarketSettings.ParametersStructOutput[]
+		// }
+
+		// const { suspensions, reasons } = await SystemStatus.getFuturesMarketSuspensions(marketKeys)
+
+		// const futuresMarkets = filteredMarkets.map((m, i) =>
+		// 	formatPerpsV2Market(
+		// 		m,
+		// 		marketParameters[i],
+		// 		{ minKeeperFee: wei(minKeeperFee), minInitialMargin: wei(minInitialMargin) },
+		// 		suspensions[i],
+		// 		getReasonFromCode(reasons[i]) as MarketClosureReason
+		// 	)
+		// )
+
+		const { data: futuresMarkets } = await axios.get<PerpsMarketV2[]>(
+			'http://localhost/futures/markets'
 		)
-		const contracts =
-			networkOverride && networkOverride?.networkId !== this.sdk.context.networkId
-				? getContractsByNetwork(networkOverride.networkId, networkOverride.provider)
-				: this.sdk.context.contracts
 
-		const { SystemStatus } = contracts
-		const { ExchangeRates, PerpsV2MarketData, PerpsV2MarketSettings } =
-			this.sdk.context.multicallContracts
-
-		if (!SystemStatus || !ExchangeRates || !PerpsV2MarketData || !PerpsV2MarketSettings) {
-			throw new Error(UNSUPPORTED_NETWORK)
-		}
-
-		const futuresData = await this.sdk.context.multicallProvider.all([
-			PerpsV2MarketData.allProxiedMarketSummaries(),
-			PerpsV2MarketSettings.minInitialMargin(),
-			PerpsV2MarketSettings.minKeeperFee(),
-		])
-
-		const { markets, minInitialMargin, minKeeperFee } = {
-			markets: futuresData[0] as PerpsV2MarketData.MarketSummaryStructOutput[],
-			minInitialMargin: futuresData[1] as BigNumber,
-			minKeeperFee: futuresData[2] as BigNumber,
-		}
-
-		const filteredMarkets = markets.filter((m) => {
-			const marketKey = parseBytes32String(m.key) as FuturesMarketKey
-			const market = enabledMarkets.find((market) => marketKey === market.key)
-			return !!market
-		})
-
-		const marketKeys = filteredMarkets.map((m) => m.key)
-
-		const parametersCalls = marketKeys.map((key) => PerpsV2MarketSettings.parameters(key))
-
-		let marketParameters: IPerpsV2MarketSettings.ParametersStructOutput[] = []
-
-		if (this.sdk.context.isMainnet) {
-			marketParameters = await this.sdk.context.multicallProvider.all(parametersCalls)
-		} else {
-			const firstResponses = await this.sdk.context.multicallProvider.all(
-				parametersCalls.slice(0, 20)
-			)
-			const secondResponses = await this.sdk.context.multicallProvider.all(
-				parametersCalls.slice(20, parametersCalls.length)
-			)
-			marketParameters = [
-				...firstResponses,
-				...secondResponses,
-			] as IPerpsV2MarketSettings.ParametersStructOutput[]
-		}
-
-		const { suspensions, reasons } = await SystemStatus.getFuturesMarketSuspensions(marketKeys)
-
-		const futuresMarkets = filteredMarkets.map((m, i) =>
-			formatPerpsV2Market(
-				m,
-				marketParameters[i],
-				{ minKeeperFee: wei(minKeeperFee), minInitialMargin: wei(minInitialMargin) },
-				suspensions[i],
-				getReasonFromCode(reasons[i]) as MarketClosureReason
-			)
-		)
 		return futuresMarkets
 	}
 
@@ -402,29 +409,34 @@ export default class FuturesService {
 	 * ```
 	 */
 	public async getDailyVolumes(): Promise<FuturesVolumes> {
-		const minTimestamp = Math.floor(calculateTimestampForPeriod(PERIOD_IN_HOURS.ONE_DAY) / 1000)
-		const response = await getFuturesAggregateStats(
-			this.futuresGqlEndpoint,
-			{
-				first: 999999,
-				where: {
-					period: `${PERIOD_IN_SECONDS.ONE_HOUR}`,
-					timestamp_gte: `${minTimestamp}`,
-				},
-			},
-			{
-				id: true,
-				marketKey: true,
-				asset: true,
-				volume: true,
-				trades: true,
-				timestamp: true,
-				period: true,
-				feesCrossMarginAccounts: true,
-				feesKwenta: true,
-				feesSynthetix: true,
-			}
+		// const minTimestamp = Math.floor(calculateTimestampForPeriod(PERIOD_IN_HOURS.ONE_DAY) / 1000)
+		// const response = await getFuturesAggregateStats(
+		// 	this.futuresGqlEndpoint,
+		// 	{
+		// 		first: 999999,
+		// 		where: {
+		// 			period: `${PERIOD_IN_SECONDS.ONE_HOUR}`,
+		// 			timestamp_gte: `${minTimestamp}`,
+		// 		},
+		// 	},
+		// 	{
+		// 		id: true,
+		// 		marketKey: true,
+		// 		asset: true,
+		// 		volume: true,
+		// 		trades: true,
+		// 		timestamp: true,
+		// 		period: true,
+		// 		feesCrossMarginAccounts: true,
+		// 		feesKwenta: true,
+		// 		feesSynthetix: true,
+		// 	}
+		// )
+
+		const { data: response } = await axios.get<FuturesAggregateStatResult[]>(
+			'http://localhost/futures/daily-volumes'
 		)
+
 		return response ? calculateVolumes(response) : {}
 	}
 

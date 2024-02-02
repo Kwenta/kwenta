@@ -2,481 +2,382 @@
 /* tslint:disable */
 /* eslint-disable */
 import type {
-  BaseContract,
-  BigNumber,
-  BigNumberish,
-  BytesLike,
-  CallOverrides,
-  ContractTransaction,
-  Overrides,
-  PopulatedTransaction,
-  Signer,
-  utils,
-} from "ethers";
-import type {
-  FunctionFragment,
-  Result,
-  EventFragment,
-} from "@ethersproject/abi";
-import type { Listener, Provider } from "@ethersproject/providers";
-import type {
-  TypedEventFilter,
-  TypedEvent,
-  TypedListener,
-  OnEvent,
-} from "./common";
+	BaseContract,
+	BigNumber,
+	BigNumberish,
+	BytesLike,
+	CallOverrides,
+	ContractTransaction,
+	Overrides,
+	PopulatedTransaction,
+	Signer,
+	utils,
+} from 'ethers'
+import type { FunctionFragment, Result, EventFragment } from '@ethersproject/abi'
+import type { Listener, Provider } from '@ethersproject/providers'
+import type { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from './common'
 
 export declare namespace IMultipleMerkleDistributor {
-  export type ClaimsStruct = {
-    index: BigNumberish;
-    account: string;
-    amount: BigNumberish;
-    merkleProof: BytesLike[];
-    epoch: BigNumberish;
-  };
+	export type ClaimsStruct = {
+		index: BigNumberish
+		account: string
+		amount: BigNumberish
+		merkleProof: BytesLike[]
+		epoch: BigNumberish
+	}
 
-  export type ClaimsStructOutput = [
-    BigNumber,
-    string,
-    BigNumber,
-    string[],
-    BigNumber
-  ] & {
-    index: BigNumber;
-    account: string;
-    amount: BigNumber;
-    merkleProof: string[];
-    epoch: BigNumber;
-  };
+	export type ClaimsStructOutput = [BigNumber, string, BigNumber, string[], BigNumber] & {
+		index: BigNumber
+		account: string
+		amount: BigNumber
+		merkleProof: string[]
+		epoch: BigNumber
+	}
 }
 
 export interface MultipleMerkleDistributorOpInterface extends utils.Interface {
-  functions: {
-    "acceptOwnership()": FunctionFragment;
-    "claim(uint256,address,uint256,bytes32[],uint256)": FunctionFragment;
-    "claimMultiple((uint256,address,uint256,bytes32[],uint256)[])": FunctionFragment;
-    "isClaimed(uint256,uint256)": FunctionFragment;
-    "merkleRoots(uint256)": FunctionFragment;
-    "nominateNewOwner(address)": FunctionFragment;
-    "nominatedOwner()": FunctionFragment;
-    "owner()": FunctionFragment;
-    "setMerkleRootForEpoch(bytes32,uint256)": FunctionFragment;
-    "token()": FunctionFragment;
-  };
+	functions: {
+		'acceptOwnership()': FunctionFragment
+		'claim(uint256,address,uint256,bytes32[],uint256)': FunctionFragment
+		'claimMultiple((uint256,address,uint256,bytes32[],uint256)[])': FunctionFragment
+		'isClaimed(uint256,uint256)': FunctionFragment
+		'merkleRoots(uint256)': FunctionFragment
+		'nominateNewOwner(address)': FunctionFragment
+		'nominatedOwner()': FunctionFragment
+		'owner()': FunctionFragment
+		'setMerkleRootForEpoch(bytes32,uint256)': FunctionFragment
+		'token()': FunctionFragment
+	}
 
-  getFunction(
-    nameOrSignatureOrTopic:
-      | "acceptOwnership"
-      | "claim"
-      | "claimMultiple"
-      | "isClaimed"
-      | "merkleRoots"
-      | "nominateNewOwner"
-      | "nominatedOwner"
-      | "owner"
-      | "setMerkleRootForEpoch"
-      | "token"
-  ): FunctionFragment;
+	getFunction(
+		nameOrSignatureOrTopic:
+			| 'acceptOwnership'
+			| 'claim'
+			| 'claimMultiple'
+			| 'isClaimed'
+			| 'merkleRoots'
+			| 'nominateNewOwner'
+			| 'nominatedOwner'
+			| 'owner'
+			| 'setMerkleRootForEpoch'
+			| 'token'
+	): FunctionFragment
 
-  encodeFunctionData(
-    functionFragment: "acceptOwnership",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "claim",
-    values: [BigNumberish, string, BigNumberish, BytesLike[], BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "claimMultiple",
-    values: [IMultipleMerkleDistributor.ClaimsStruct[]]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "isClaimed",
-    values: [BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "merkleRoots",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "nominateNewOwner",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "nominatedOwner",
-    values?: undefined
-  ): string;
-  encodeFunctionData(functionFragment: "owner", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "setMerkleRootForEpoch",
-    values: [BytesLike, BigNumberish]
-  ): string;
-  encodeFunctionData(functionFragment: "token", values?: undefined): string;
+	encodeFunctionData(functionFragment: 'acceptOwnership', values?: undefined): string
+	encodeFunctionData(
+		functionFragment: 'claim',
+		values: [BigNumberish, string, BigNumberish, BytesLike[], BigNumberish]
+	): string
+	encodeFunctionData(
+		functionFragment: 'claimMultiple',
+		values: [IMultipleMerkleDistributor.ClaimsStruct[]]
+	): string
+	encodeFunctionData(functionFragment: 'isClaimed', values: [BigNumberish, BigNumberish]): string
+	encodeFunctionData(functionFragment: 'merkleRoots', values: [BigNumberish]): string
+	encodeFunctionData(functionFragment: 'nominateNewOwner', values: [string]): string
+	encodeFunctionData(functionFragment: 'nominatedOwner', values?: undefined): string
+	encodeFunctionData(functionFragment: 'owner', values?: undefined): string
+	encodeFunctionData(
+		functionFragment: 'setMerkleRootForEpoch',
+		values: [BytesLike, BigNumberish]
+	): string
+	encodeFunctionData(functionFragment: 'token', values?: undefined): string
 
-  decodeFunctionResult(
-    functionFragment: "acceptOwnership",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "claim", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "claimMultiple",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "isClaimed", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "merkleRoots",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "nominateNewOwner",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "nominatedOwner",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "setMerkleRootForEpoch",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "token", data: BytesLike): Result;
+	decodeFunctionResult(functionFragment: 'acceptOwnership', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'claim', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'claimMultiple', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'isClaimed', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'merkleRoots', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'nominateNewOwner', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'nominatedOwner', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'owner', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'setMerkleRootForEpoch', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'token', data: BytesLike): Result
 
-  events: {
-    "Claimed(uint256,address,uint256,uint256)": EventFragment;
-    "MerkleRootModified(uint256)": EventFragment;
-    "OwnerChanged(address,address)": EventFragment;
-    "OwnerNominated(address)": EventFragment;
-  };
+	events: {
+		'Claimed(uint256,address,uint256,uint256)': EventFragment
+		'MerkleRootModified(uint256)': EventFragment
+		'OwnerChanged(address,address)': EventFragment
+		'OwnerNominated(address)': EventFragment
+	}
 
-  getEvent(nameOrSignatureOrTopic: "Claimed"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "MerkleRootModified"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "OwnerChanged"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "OwnerNominated"): EventFragment;
+	getEvent(nameOrSignatureOrTopic: 'Claimed'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'MerkleRootModified'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'OwnerChanged'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'OwnerNominated'): EventFragment
 }
 
 export interface ClaimedEventObject {
-  index: BigNumber;
-  account: string;
-  amount: BigNumber;
-  epoch: BigNumber;
+	index: BigNumber
+	account: string
+	amount: BigNumber
+	epoch: BigNumber
 }
-export type ClaimedEvent = TypedEvent<
-  [BigNumber, string, BigNumber, BigNumber],
-  ClaimedEventObject
->;
+export type ClaimedEvent = TypedEvent<[BigNumber, string, BigNumber, BigNumber], ClaimedEventObject>
 
-export type ClaimedEventFilter = TypedEventFilter<ClaimedEvent>;
+export type ClaimedEventFilter = TypedEventFilter<ClaimedEvent>
 
 export interface MerkleRootModifiedEventObject {
-  epoch: BigNumber;
+	epoch: BigNumber
 }
-export type MerkleRootModifiedEvent = TypedEvent<
-  [BigNumber],
-  MerkleRootModifiedEventObject
->;
+export type MerkleRootModifiedEvent = TypedEvent<[BigNumber], MerkleRootModifiedEventObject>
 
-export type MerkleRootModifiedEventFilter =
-  TypedEventFilter<MerkleRootModifiedEvent>;
+export type MerkleRootModifiedEventFilter = TypedEventFilter<MerkleRootModifiedEvent>
 
 export interface OwnerChangedEventObject {
-  oldOwner: string;
-  newOwner: string;
+	oldOwner: string
+	newOwner: string
 }
-export type OwnerChangedEvent = TypedEvent<
-  [string, string],
-  OwnerChangedEventObject
->;
+export type OwnerChangedEvent = TypedEvent<[string, string], OwnerChangedEventObject>
 
-export type OwnerChangedEventFilter = TypedEventFilter<OwnerChangedEvent>;
+export type OwnerChangedEventFilter = TypedEventFilter<OwnerChangedEvent>
 
 export interface OwnerNominatedEventObject {
-  newOwner: string;
+	newOwner: string
 }
-export type OwnerNominatedEvent = TypedEvent<
-  [string],
-  OwnerNominatedEventObject
->;
+export type OwnerNominatedEvent = TypedEvent<[string], OwnerNominatedEventObject>
 
-export type OwnerNominatedEventFilter = TypedEventFilter<OwnerNominatedEvent>;
+export type OwnerNominatedEventFilter = TypedEventFilter<OwnerNominatedEvent>
 
 export interface MultipleMerkleDistributorOp extends BaseContract {
-  connect(signerOrProvider: Signer | Provider | string): this;
-  attach(addressOrName: string): this;
-  deployed(): Promise<this>;
+	connect(signerOrProvider: Signer | Provider | string): this
+	attach(addressOrName: string): this
+	deployed(): Promise<this>
 
-  interface: MultipleMerkleDistributorOpInterface;
+	interface: MultipleMerkleDistributorOpInterface
 
-  queryFilter<TEvent extends TypedEvent>(
-    event: TypedEventFilter<TEvent>,
-    fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined
-  ): Promise<Array<TEvent>>;
+	queryFilter<TEvent extends TypedEvent>(
+		event: TypedEventFilter<TEvent>,
+		fromBlockOrBlockhash?: string | number | undefined,
+		toBlock?: string | number | undefined
+	): Promise<Array<TEvent>>
 
-  listeners<TEvent extends TypedEvent>(
-    eventFilter?: TypedEventFilter<TEvent>
-  ): Array<TypedListener<TEvent>>;
-  listeners(eventName?: string): Array<Listener>;
-  removeAllListeners<TEvent extends TypedEvent>(
-    eventFilter: TypedEventFilter<TEvent>
-  ): this;
-  removeAllListeners(eventName?: string): this;
-  off: OnEvent<this>;
-  on: OnEvent<this>;
-  once: OnEvent<this>;
-  removeListener: OnEvent<this>;
+	listeners<TEvent extends TypedEvent>(
+		eventFilter?: TypedEventFilter<TEvent>
+	): Array<TypedListener<TEvent>>
+	listeners(eventName?: string): Array<Listener>
+	removeAllListeners<TEvent extends TypedEvent>(eventFilter: TypedEventFilter<TEvent>): this
+	removeAllListeners(eventName?: string): this
+	off: OnEvent<this>
+	on: OnEvent<this>
+	once: OnEvent<this>
+	removeListener: OnEvent<this>
 
-  functions: {
-    acceptOwnership(
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
+	functions: {
+		acceptOwnership(overrides?: Overrides & { from?: string }): Promise<ContractTransaction>
 
-    claim(
-      index: BigNumberish,
-      account: string,
-      amount: BigNumberish,
-      merkleProof: BytesLike[],
-      epoch: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
+		claim(
+			index: BigNumberish,
+			account: string,
+			amount: BigNumberish,
+			merkleProof: BytesLike[],
+			epoch: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
 
-    claimMultiple(
-      claims: IMultipleMerkleDistributor.ClaimsStruct[],
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
+		claimMultiple(
+			claims: IMultipleMerkleDistributor.ClaimsStruct[],
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
 
-    isClaimed(
-      index: BigNumberish,
-      epoch: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
+		isClaimed(
+			index: BigNumberish,
+			epoch: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<[boolean]>
 
-    merkleRoots(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
+		merkleRoots(arg0: BigNumberish, overrides?: CallOverrides): Promise<[string]>
 
-    nominateNewOwner(
-      _owner: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
+		nominateNewOwner(
+			_owner: string,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
 
-    nominatedOwner(overrides?: CallOverrides): Promise<[string]>;
+		nominatedOwner(overrides?: CallOverrides): Promise<[string]>
 
-    owner(overrides?: CallOverrides): Promise<[string]>;
+		owner(overrides?: CallOverrides): Promise<[string]>
 
-    setMerkleRootForEpoch(
-      merkleRoot: BytesLike,
-      epoch: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
+		setMerkleRootForEpoch(
+			merkleRoot: BytesLike,
+			epoch: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
 
-    token(overrides?: CallOverrides): Promise<[string]>;
-  };
+		token(overrides?: CallOverrides): Promise<[string]>
+	}
 
-  acceptOwnership(
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
+	acceptOwnership(overrides?: Overrides & { from?: string }): Promise<ContractTransaction>
 
-  claim(
-    index: BigNumberish,
-    account: string,
-    amount: BigNumberish,
-    merkleProof: BytesLike[],
-    epoch: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
+	claim(
+		index: BigNumberish,
+		account: string,
+		amount: BigNumberish,
+		merkleProof: BytesLike[],
+		epoch: BigNumberish,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
 
-  claimMultiple(
-    claims: IMultipleMerkleDistributor.ClaimsStruct[],
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
+	claimMultiple(
+		claims: IMultipleMerkleDistributor.ClaimsStruct[],
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
 
-  isClaimed(
-    index: BigNumberish,
-    epoch: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
+	isClaimed(index: BigNumberish, epoch: BigNumberish, overrides?: CallOverrides): Promise<boolean>
 
-  merkleRoots(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
+	merkleRoots(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>
 
-  nominateNewOwner(
-    _owner: string,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
+	nominateNewOwner(
+		_owner: string,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
 
-  nominatedOwner(overrides?: CallOverrides): Promise<string>;
+	nominatedOwner(overrides?: CallOverrides): Promise<string>
 
-  owner(overrides?: CallOverrides): Promise<string>;
+	owner(overrides?: CallOverrides): Promise<string>
 
-  setMerkleRootForEpoch(
-    merkleRoot: BytesLike,
-    epoch: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
+	setMerkleRootForEpoch(
+		merkleRoot: BytesLike,
+		epoch: BigNumberish,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
 
-  token(overrides?: CallOverrides): Promise<string>;
+	token(overrides?: CallOverrides): Promise<string>
 
-  callStatic: {
-    acceptOwnership(overrides?: CallOverrides): Promise<void>;
+	callStatic: {
+		acceptOwnership(overrides?: CallOverrides): Promise<void>
 
-    claim(
-      index: BigNumberish,
-      account: string,
-      amount: BigNumberish,
-      merkleProof: BytesLike[],
-      epoch: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
+		claim(
+			index: BigNumberish,
+			account: string,
+			amount: BigNumberish,
+			merkleProof: BytesLike[],
+			epoch: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<void>
 
-    claimMultiple(
-      claims: IMultipleMerkleDistributor.ClaimsStruct[],
-      overrides?: CallOverrides
-    ): Promise<void>;
+		claimMultiple(
+			claims: IMultipleMerkleDistributor.ClaimsStruct[],
+			overrides?: CallOverrides
+		): Promise<void>
 
-    isClaimed(
-      index: BigNumberish,
-      epoch: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
+		isClaimed(index: BigNumberish, epoch: BigNumberish, overrides?: CallOverrides): Promise<boolean>
 
-    merkleRoots(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
+		merkleRoots(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>
 
-    nominateNewOwner(_owner: string, overrides?: CallOverrides): Promise<void>;
+		nominateNewOwner(_owner: string, overrides?: CallOverrides): Promise<void>
 
-    nominatedOwner(overrides?: CallOverrides): Promise<string>;
+		nominatedOwner(overrides?: CallOverrides): Promise<string>
 
-    owner(overrides?: CallOverrides): Promise<string>;
+		owner(overrides?: CallOverrides): Promise<string>
 
-    setMerkleRootForEpoch(
-      merkleRoot: BytesLike,
-      epoch: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
+		setMerkleRootForEpoch(
+			merkleRoot: BytesLike,
+			epoch: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<void>
 
-    token(overrides?: CallOverrides): Promise<string>;
-  };
+		token(overrides?: CallOverrides): Promise<string>
+	}
 
-  filters: {
-    "Claimed(uint256,address,uint256,uint256)"(
-      index?: null,
-      account?: null,
-      amount?: null,
-      epoch?: null
-    ): ClaimedEventFilter;
-    Claimed(
-      index?: null,
-      account?: null,
-      amount?: null,
-      epoch?: null
-    ): ClaimedEventFilter;
+	filters: {
+		'Claimed(uint256,address,uint256,uint256)'(
+			index?: null,
+			account?: null,
+			amount?: null,
+			epoch?: null
+		): ClaimedEventFilter
+		Claimed(index?: null, account?: null, amount?: null, epoch?: null): ClaimedEventFilter
 
-    "MerkleRootModified(uint256)"(epoch?: null): MerkleRootModifiedEventFilter;
-    MerkleRootModified(epoch?: null): MerkleRootModifiedEventFilter;
+		'MerkleRootModified(uint256)'(epoch?: null): MerkleRootModifiedEventFilter
+		MerkleRootModified(epoch?: null): MerkleRootModifiedEventFilter
 
-    "OwnerChanged(address,address)"(
-      oldOwner?: null,
-      newOwner?: null
-    ): OwnerChangedEventFilter;
-    OwnerChanged(oldOwner?: null, newOwner?: null): OwnerChangedEventFilter;
+		'OwnerChanged(address,address)'(oldOwner?: null, newOwner?: null): OwnerChangedEventFilter
+		OwnerChanged(oldOwner?: null, newOwner?: null): OwnerChangedEventFilter
 
-    "OwnerNominated(address)"(newOwner?: null): OwnerNominatedEventFilter;
-    OwnerNominated(newOwner?: null): OwnerNominatedEventFilter;
-  };
+		'OwnerNominated(address)'(newOwner?: null): OwnerNominatedEventFilter
+		OwnerNominated(newOwner?: null): OwnerNominatedEventFilter
+	}
 
-  estimateGas: {
-    acceptOwnership(
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
+	estimateGas: {
+		acceptOwnership(overrides?: Overrides & { from?: string }): Promise<BigNumber>
 
-    claim(
-      index: BigNumberish,
-      account: string,
-      amount: BigNumberish,
-      merkleProof: BytesLike[],
-      epoch: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
+		claim(
+			index: BigNumberish,
+			account: string,
+			amount: BigNumberish,
+			merkleProof: BytesLike[],
+			epoch: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<BigNumber>
 
-    claimMultiple(
-      claims: IMultipleMerkleDistributor.ClaimsStruct[],
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
+		claimMultiple(
+			claims: IMultipleMerkleDistributor.ClaimsStruct[],
+			overrides?: Overrides & { from?: string }
+		): Promise<BigNumber>
 
-    isClaimed(
-      index: BigNumberish,
-      epoch: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+		isClaimed(
+			index: BigNumberish,
+			epoch: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<BigNumber>
 
-    merkleRoots(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+		merkleRoots(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
 
-    nominateNewOwner(
-      _owner: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
+		nominateNewOwner(_owner: string, overrides?: Overrides & { from?: string }): Promise<BigNumber>
 
-    nominatedOwner(overrides?: CallOverrides): Promise<BigNumber>;
+		nominatedOwner(overrides?: CallOverrides): Promise<BigNumber>
 
-    owner(overrides?: CallOverrides): Promise<BigNumber>;
+		owner(overrides?: CallOverrides): Promise<BigNumber>
 
-    setMerkleRootForEpoch(
-      merkleRoot: BytesLike,
-      epoch: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
+		setMerkleRootForEpoch(
+			merkleRoot: BytesLike,
+			epoch: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<BigNumber>
 
-    token(overrides?: CallOverrides): Promise<BigNumber>;
-  };
+		token(overrides?: CallOverrides): Promise<BigNumber>
+	}
 
-  populateTransaction: {
-    acceptOwnership(
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
+	populateTransaction: {
+		acceptOwnership(overrides?: Overrides & { from?: string }): Promise<PopulatedTransaction>
 
-    claim(
-      index: BigNumberish,
-      account: string,
-      amount: BigNumberish,
-      merkleProof: BytesLike[],
-      epoch: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
+		claim(
+			index: BigNumberish,
+			account: string,
+			amount: BigNumberish,
+			merkleProof: BytesLike[],
+			epoch: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
 
-    claimMultiple(
-      claims: IMultipleMerkleDistributor.ClaimsStruct[],
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
+		claimMultiple(
+			claims: IMultipleMerkleDistributor.ClaimsStruct[],
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
 
-    isClaimed(
-      index: BigNumberish,
-      epoch: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+		isClaimed(
+			index: BigNumberish,
+			epoch: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<PopulatedTransaction>
 
-    merkleRoots(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+		merkleRoots(arg0: BigNumberish, overrides?: CallOverrides): Promise<PopulatedTransaction>
 
-    nominateNewOwner(
-      _owner: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
+		nominateNewOwner(
+			_owner: string,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
 
-    nominatedOwner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+		nominatedOwner(overrides?: CallOverrides): Promise<PopulatedTransaction>
 
-    owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+		owner(overrides?: CallOverrides): Promise<PopulatedTransaction>
 
-    setMerkleRootForEpoch(
-      merkleRoot: BytesLike,
-      epoch: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
+		setMerkleRootForEpoch(
+			merkleRoot: BytesLike,
+			epoch: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
 
-    token(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-  };
+		token(overrides?: CallOverrides): Promise<PopulatedTransaction>
+	}
 }

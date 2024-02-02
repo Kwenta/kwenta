@@ -2,2267 +2,1715 @@
 /* tslint:disable */
 /* eslint-disable */
 import type {
-  BaseContract,
-  BigNumber,
-  BigNumberish,
-  BytesLike,
-  CallOverrides,
-  ContractTransaction,
-  Overrides,
-  PayableOverrides,
-  PopulatedTransaction,
-  Signer,
-  utils,
-} from "ethers";
-import type {
-  FunctionFragment,
-  Result,
-  EventFragment,
-} from "@ethersproject/abi";
-import type { Listener, Provider } from "@ethersproject/providers";
-import type {
-  TypedEventFilter,
-  TypedEvent,
-  TypedListener,
-  OnEvent,
-} from "./common";
+	BaseContract,
+	BigNumber,
+	BigNumberish,
+	BytesLike,
+	CallOverrides,
+	ContractTransaction,
+	Overrides,
+	PayableOverrides,
+	PopulatedTransaction,
+	Signer,
+	utils,
+} from 'ethers'
+import type { FunctionFragment, Result, EventFragment } from '@ethersproject/abi'
+import type { Listener, Provider } from '@ethersproject/providers'
+import type { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from './common'
 
 export declare namespace IRewardEscrowV2 {
-  export type VestingEntryWithIDStruct = {
-    escrowAmount: BigNumberish;
-    entryID: BigNumberish;
-    endTime: BigNumberish;
-  };
+	export type VestingEntryWithIDStruct = {
+		escrowAmount: BigNumberish
+		entryID: BigNumberish
+		endTime: BigNumberish
+	}
 
-  export type VestingEntryWithIDStructOutput = [
-    BigNumber,
-    BigNumber,
-    BigNumber
-  ] & { escrowAmount: BigNumber; entryID: BigNumber; endTime: BigNumber };
+	export type VestingEntryWithIDStructOutput = [BigNumber, BigNumber, BigNumber] & {
+		escrowAmount: BigNumber
+		entryID: BigNumber
+		endTime: BigNumber
+	}
 
-  export type VestingEntryStruct = {
-    escrowAmount: BigNumberish;
-    duration: BigNumberish;
-    endTime: BigNumberish;
-    earlyVestingFee: BigNumberish;
-  };
+	export type VestingEntryStruct = {
+		escrowAmount: BigNumberish
+		duration: BigNumberish
+		endTime: BigNumberish
+		earlyVestingFee: BigNumberish
+	}
 
-  export type VestingEntryStructOutput = [
-    BigNumber,
-    number,
-    BigNumber,
-    number
-  ] & {
-    escrowAmount: BigNumber;
-    duration: number;
-    endTime: BigNumber;
-    earlyVestingFee: number;
-  };
+	export type VestingEntryStructOutput = [BigNumber, number, BigNumber, number] & {
+		escrowAmount: BigNumber
+		duration: number
+		endTime: BigNumber
+		earlyVestingFee: number
+	}
 }
 
 export interface RewardEscrowV2Interface extends utils.Interface {
-  functions: {
-    "DEFAULT_DURATION()": FunctionFragment;
-    "DEFAULT_EARLY_VESTING_FEE()": FunctionFragment;
-    "MAXIMUM_EARLY_VESTING_FEE()": FunctionFragment;
-    "MAX_DURATION()": FunctionFragment;
-    "MINIMUM_EARLY_VESTING_FEE()": FunctionFragment;
-    "acceptOwnership()": FunctionFragment;
-    "appendVestingEntry(address,uint144)": FunctionFragment;
-    "approve(address,uint256)": FunctionFragment;
-    "balanceOf(address)": FunctionFragment;
-    "bulkTransferFrom(address,address,uint256[])": FunctionFragment;
-    "createEscrowEntry(address,uint144,uint40,uint8)": FunctionFragment;
-    "escrowMigrator()": FunctionFragment;
-    "escrowedBalanceOf(address)": FunctionFragment;
-    "getAccountVestingEntryIDs(address,uint256,uint256)": FunctionFragment;
-    "getApproved(uint256)": FunctionFragment;
-    "getKwentaAddress()": FunctionFragment;
-    "getVestingEntry(uint256)": FunctionFragment;
-    "getVestingEntryClaimable(uint256)": FunctionFragment;
-    "getVestingQuantity(uint256[])": FunctionFragment;
-    "getVestingSchedules(address,uint256,uint256)": FunctionFragment;
-    "importEscrowEntry(address,(uint144,uint40,uint64,uint8))": FunctionFragment;
-    "initialize(address)": FunctionFragment;
-    "isApprovedForAll(address,address)": FunctionFragment;
-    "kwenta()": FunctionFragment;
-    "name()": FunctionFragment;
-    "nextEntryId()": FunctionFragment;
-    "owner()": FunctionFragment;
-    "ownerOf(uint256)": FunctionFragment;
-    "pauseRewardEscrow()": FunctionFragment;
-    "paused()": FunctionFragment;
-    "pendingOwner()": FunctionFragment;
-    "proxiableUUID()": FunctionFragment;
-    "renounceOwnership()": FunctionFragment;
-    "rewardsNotifier()": FunctionFragment;
-    "safeTransferFrom(address,address,uint256)": FunctionFragment;
-    "safeTransferFrom(address,address,uint256,bytes)": FunctionFragment;
-    "setApprovalForAll(address,bool)": FunctionFragment;
-    "setEscrowMigrator(address)": FunctionFragment;
-    "setStakingRewards(address)": FunctionFragment;
-    "setTreasuryDAO(address)": FunctionFragment;
-    "stakingRewards()": FunctionFragment;
-    "supportsInterface(bytes4)": FunctionFragment;
-    "symbol()": FunctionFragment;
-    "tokenByIndex(uint256)": FunctionFragment;
-    "tokenOfOwnerByIndex(address,uint256)": FunctionFragment;
-    "tokenURI(uint256)": FunctionFragment;
-    "totalEscrowedAccountBalance(address)": FunctionFragment;
-    "totalEscrowedBalance()": FunctionFragment;
-    "totalSupply()": FunctionFragment;
-    "totalVestedAccountBalance(address)": FunctionFragment;
-    "transferFrom(address,address,uint256)": FunctionFragment;
-    "transferOwnership(address)": FunctionFragment;
-    "treasuryDAO()": FunctionFragment;
-    "unpauseRewardEscrow()": FunctionFragment;
-    "unstakedEscrowedBalanceOf(address)": FunctionFragment;
-    "upgradeTo(address)": FunctionFragment;
-    "upgradeToAndCall(address,bytes)": FunctionFragment;
-    "vest(uint256[])": FunctionFragment;
-    "vestingSchedules(uint256)": FunctionFragment;
-  };
+	functions: {
+		'DEFAULT_DURATION()': FunctionFragment
+		'DEFAULT_EARLY_VESTING_FEE()': FunctionFragment
+		'MAXIMUM_EARLY_VESTING_FEE()': FunctionFragment
+		'MAX_DURATION()': FunctionFragment
+		'MINIMUM_EARLY_VESTING_FEE()': FunctionFragment
+		'acceptOwnership()': FunctionFragment
+		'appendVestingEntry(address,uint144)': FunctionFragment
+		'approve(address,uint256)': FunctionFragment
+		'balanceOf(address)': FunctionFragment
+		'bulkTransferFrom(address,address,uint256[])': FunctionFragment
+		'createEscrowEntry(address,uint144,uint40,uint8)': FunctionFragment
+		'escrowMigrator()': FunctionFragment
+		'escrowedBalanceOf(address)': FunctionFragment
+		'getAccountVestingEntryIDs(address,uint256,uint256)': FunctionFragment
+		'getApproved(uint256)': FunctionFragment
+		'getKwentaAddress()': FunctionFragment
+		'getVestingEntry(uint256)': FunctionFragment
+		'getVestingEntryClaimable(uint256)': FunctionFragment
+		'getVestingQuantity(uint256[])': FunctionFragment
+		'getVestingSchedules(address,uint256,uint256)': FunctionFragment
+		'importEscrowEntry(address,(uint144,uint40,uint64,uint8))': FunctionFragment
+		'initialize(address)': FunctionFragment
+		'isApprovedForAll(address,address)': FunctionFragment
+		'kwenta()': FunctionFragment
+		'name()': FunctionFragment
+		'nextEntryId()': FunctionFragment
+		'owner()': FunctionFragment
+		'ownerOf(uint256)': FunctionFragment
+		'pauseRewardEscrow()': FunctionFragment
+		'paused()': FunctionFragment
+		'pendingOwner()': FunctionFragment
+		'proxiableUUID()': FunctionFragment
+		'renounceOwnership()': FunctionFragment
+		'rewardsNotifier()': FunctionFragment
+		'safeTransferFrom(address,address,uint256)': FunctionFragment
+		'safeTransferFrom(address,address,uint256,bytes)': FunctionFragment
+		'setApprovalForAll(address,bool)': FunctionFragment
+		'setEscrowMigrator(address)': FunctionFragment
+		'setStakingRewards(address)': FunctionFragment
+		'setTreasuryDAO(address)': FunctionFragment
+		'stakingRewards()': FunctionFragment
+		'supportsInterface(bytes4)': FunctionFragment
+		'symbol()': FunctionFragment
+		'tokenByIndex(uint256)': FunctionFragment
+		'tokenOfOwnerByIndex(address,uint256)': FunctionFragment
+		'tokenURI(uint256)': FunctionFragment
+		'totalEscrowedAccountBalance(address)': FunctionFragment
+		'totalEscrowedBalance()': FunctionFragment
+		'totalSupply()': FunctionFragment
+		'totalVestedAccountBalance(address)': FunctionFragment
+		'transferFrom(address,address,uint256)': FunctionFragment
+		'transferOwnership(address)': FunctionFragment
+		'treasuryDAO()': FunctionFragment
+		'unpauseRewardEscrow()': FunctionFragment
+		'unstakedEscrowedBalanceOf(address)': FunctionFragment
+		'upgradeTo(address)': FunctionFragment
+		'upgradeToAndCall(address,bytes)': FunctionFragment
+		'vest(uint256[])': FunctionFragment
+		'vestingSchedules(uint256)': FunctionFragment
+	}
 
-  getFunction(
-    nameOrSignatureOrTopic:
-      | "DEFAULT_DURATION"
-      | "DEFAULT_EARLY_VESTING_FEE"
-      | "MAXIMUM_EARLY_VESTING_FEE"
-      | "MAX_DURATION"
-      | "MINIMUM_EARLY_VESTING_FEE"
-      | "acceptOwnership"
-      | "appendVestingEntry"
-      | "approve"
-      | "balanceOf"
-      | "bulkTransferFrom"
-      | "createEscrowEntry"
-      | "escrowMigrator"
-      | "escrowedBalanceOf"
-      | "getAccountVestingEntryIDs"
-      | "getApproved"
-      | "getKwentaAddress"
-      | "getVestingEntry"
-      | "getVestingEntryClaimable"
-      | "getVestingQuantity"
-      | "getVestingSchedules"
-      | "importEscrowEntry"
-      | "initialize"
-      | "isApprovedForAll"
-      | "kwenta"
-      | "name"
-      | "nextEntryId"
-      | "owner"
-      | "ownerOf"
-      | "pauseRewardEscrow"
-      | "paused"
-      | "pendingOwner"
-      | "proxiableUUID"
-      | "renounceOwnership"
-      | "rewardsNotifier"
-      | "safeTransferFrom(address,address,uint256)"
-      | "safeTransferFrom(address,address,uint256,bytes)"
-      | "setApprovalForAll"
-      | "setEscrowMigrator"
-      | "setStakingRewards"
-      | "setTreasuryDAO"
-      | "stakingRewards"
-      | "supportsInterface"
-      | "symbol"
-      | "tokenByIndex"
-      | "tokenOfOwnerByIndex"
-      | "tokenURI"
-      | "totalEscrowedAccountBalance"
-      | "totalEscrowedBalance"
-      | "totalSupply"
-      | "totalVestedAccountBalance"
-      | "transferFrom"
-      | "transferOwnership"
-      | "treasuryDAO"
-      | "unpauseRewardEscrow"
-      | "unstakedEscrowedBalanceOf"
-      | "upgradeTo"
-      | "upgradeToAndCall"
-      | "vest"
-      | "vestingSchedules"
-  ): FunctionFragment;
+	getFunction(
+		nameOrSignatureOrTopic:
+			| 'DEFAULT_DURATION'
+			| 'DEFAULT_EARLY_VESTING_FEE'
+			| 'MAXIMUM_EARLY_VESTING_FEE'
+			| 'MAX_DURATION'
+			| 'MINIMUM_EARLY_VESTING_FEE'
+			| 'acceptOwnership'
+			| 'appendVestingEntry'
+			| 'approve'
+			| 'balanceOf'
+			| 'bulkTransferFrom'
+			| 'createEscrowEntry'
+			| 'escrowMigrator'
+			| 'escrowedBalanceOf'
+			| 'getAccountVestingEntryIDs'
+			| 'getApproved'
+			| 'getKwentaAddress'
+			| 'getVestingEntry'
+			| 'getVestingEntryClaimable'
+			| 'getVestingQuantity'
+			| 'getVestingSchedules'
+			| 'importEscrowEntry'
+			| 'initialize'
+			| 'isApprovedForAll'
+			| 'kwenta'
+			| 'name'
+			| 'nextEntryId'
+			| 'owner'
+			| 'ownerOf'
+			| 'pauseRewardEscrow'
+			| 'paused'
+			| 'pendingOwner'
+			| 'proxiableUUID'
+			| 'renounceOwnership'
+			| 'rewardsNotifier'
+			| 'safeTransferFrom(address,address,uint256)'
+			| 'safeTransferFrom(address,address,uint256,bytes)'
+			| 'setApprovalForAll'
+			| 'setEscrowMigrator'
+			| 'setStakingRewards'
+			| 'setTreasuryDAO'
+			| 'stakingRewards'
+			| 'supportsInterface'
+			| 'symbol'
+			| 'tokenByIndex'
+			| 'tokenOfOwnerByIndex'
+			| 'tokenURI'
+			| 'totalEscrowedAccountBalance'
+			| 'totalEscrowedBalance'
+			| 'totalSupply'
+			| 'totalVestedAccountBalance'
+			| 'transferFrom'
+			| 'transferOwnership'
+			| 'treasuryDAO'
+			| 'unpauseRewardEscrow'
+			| 'unstakedEscrowedBalanceOf'
+			| 'upgradeTo'
+			| 'upgradeToAndCall'
+			| 'vest'
+			| 'vestingSchedules'
+	): FunctionFragment
 
-  encodeFunctionData(
-    functionFragment: "DEFAULT_DURATION",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "DEFAULT_EARLY_VESTING_FEE",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "MAXIMUM_EARLY_VESTING_FEE",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "MAX_DURATION",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "MINIMUM_EARLY_VESTING_FEE",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "acceptOwnership",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "appendVestingEntry",
-    values: [string, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "approve",
-    values: [string, BigNumberish]
-  ): string;
-  encodeFunctionData(functionFragment: "balanceOf", values: [string]): string;
-  encodeFunctionData(
-    functionFragment: "bulkTransferFrom",
-    values: [string, string, BigNumberish[]]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "createEscrowEntry",
-    values: [string, BigNumberish, BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "escrowMigrator",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "escrowedBalanceOf",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getAccountVestingEntryIDs",
-    values: [string, BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getApproved",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getKwentaAddress",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getVestingEntry",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getVestingEntryClaimable",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getVestingQuantity",
-    values: [BigNumberish[]]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getVestingSchedules",
-    values: [string, BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "importEscrowEntry",
-    values: [string, IRewardEscrowV2.VestingEntryStruct]
-  ): string;
-  encodeFunctionData(functionFragment: "initialize", values: [string]): string;
-  encodeFunctionData(
-    functionFragment: "isApprovedForAll",
-    values: [string, string]
-  ): string;
-  encodeFunctionData(functionFragment: "kwenta", values?: undefined): string;
-  encodeFunctionData(functionFragment: "name", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "nextEntryId",
-    values?: undefined
-  ): string;
-  encodeFunctionData(functionFragment: "owner", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "ownerOf",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "pauseRewardEscrow",
-    values?: undefined
-  ): string;
-  encodeFunctionData(functionFragment: "paused", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "pendingOwner",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "proxiableUUID",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "renounceOwnership",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "rewardsNotifier",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "safeTransferFrom(address,address,uint256)",
-    values: [string, string, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "safeTransferFrom(address,address,uint256,bytes)",
-    values: [string, string, BigNumberish, BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setApprovalForAll",
-    values: [string, boolean]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setEscrowMigrator",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setStakingRewards",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setTreasuryDAO",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "stakingRewards",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "supportsInterface",
-    values: [BytesLike]
-  ): string;
-  encodeFunctionData(functionFragment: "symbol", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "tokenByIndex",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "tokenOfOwnerByIndex",
-    values: [string, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "tokenURI",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "totalEscrowedAccountBalance",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "totalEscrowedBalance",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "totalSupply",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "totalVestedAccountBalance",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "transferFrom",
-    values: [string, string, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "transferOwnership",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "treasuryDAO",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "unpauseRewardEscrow",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "unstakedEscrowedBalanceOf",
-    values: [string]
-  ): string;
-  encodeFunctionData(functionFragment: "upgradeTo", values: [string]): string;
-  encodeFunctionData(
-    functionFragment: "upgradeToAndCall",
-    values: [string, BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "vest",
-    values: [BigNumberish[]]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "vestingSchedules",
-    values: [BigNumberish]
-  ): string;
+	encodeFunctionData(functionFragment: 'DEFAULT_DURATION', values?: undefined): string
+	encodeFunctionData(functionFragment: 'DEFAULT_EARLY_VESTING_FEE', values?: undefined): string
+	encodeFunctionData(functionFragment: 'MAXIMUM_EARLY_VESTING_FEE', values?: undefined): string
+	encodeFunctionData(functionFragment: 'MAX_DURATION', values?: undefined): string
+	encodeFunctionData(functionFragment: 'MINIMUM_EARLY_VESTING_FEE', values?: undefined): string
+	encodeFunctionData(functionFragment: 'acceptOwnership', values?: undefined): string
+	encodeFunctionData(functionFragment: 'appendVestingEntry', values: [string, BigNumberish]): string
+	encodeFunctionData(functionFragment: 'approve', values: [string, BigNumberish]): string
+	encodeFunctionData(functionFragment: 'balanceOf', values: [string]): string
+	encodeFunctionData(
+		functionFragment: 'bulkTransferFrom',
+		values: [string, string, BigNumberish[]]
+	): string
+	encodeFunctionData(
+		functionFragment: 'createEscrowEntry',
+		values: [string, BigNumberish, BigNumberish, BigNumberish]
+	): string
+	encodeFunctionData(functionFragment: 'escrowMigrator', values?: undefined): string
+	encodeFunctionData(functionFragment: 'escrowedBalanceOf', values: [string]): string
+	encodeFunctionData(
+		functionFragment: 'getAccountVestingEntryIDs',
+		values: [string, BigNumberish, BigNumberish]
+	): string
+	encodeFunctionData(functionFragment: 'getApproved', values: [BigNumberish]): string
+	encodeFunctionData(functionFragment: 'getKwentaAddress', values?: undefined): string
+	encodeFunctionData(functionFragment: 'getVestingEntry', values: [BigNumberish]): string
+	encodeFunctionData(functionFragment: 'getVestingEntryClaimable', values: [BigNumberish]): string
+	encodeFunctionData(functionFragment: 'getVestingQuantity', values: [BigNumberish[]]): string
+	encodeFunctionData(
+		functionFragment: 'getVestingSchedules',
+		values: [string, BigNumberish, BigNumberish]
+	): string
+	encodeFunctionData(
+		functionFragment: 'importEscrowEntry',
+		values: [string, IRewardEscrowV2.VestingEntryStruct]
+	): string
+	encodeFunctionData(functionFragment: 'initialize', values: [string]): string
+	encodeFunctionData(functionFragment: 'isApprovedForAll', values: [string, string]): string
+	encodeFunctionData(functionFragment: 'kwenta', values?: undefined): string
+	encodeFunctionData(functionFragment: 'name', values?: undefined): string
+	encodeFunctionData(functionFragment: 'nextEntryId', values?: undefined): string
+	encodeFunctionData(functionFragment: 'owner', values?: undefined): string
+	encodeFunctionData(functionFragment: 'ownerOf', values: [BigNumberish]): string
+	encodeFunctionData(functionFragment: 'pauseRewardEscrow', values?: undefined): string
+	encodeFunctionData(functionFragment: 'paused', values?: undefined): string
+	encodeFunctionData(functionFragment: 'pendingOwner', values?: undefined): string
+	encodeFunctionData(functionFragment: 'proxiableUUID', values?: undefined): string
+	encodeFunctionData(functionFragment: 'renounceOwnership', values?: undefined): string
+	encodeFunctionData(functionFragment: 'rewardsNotifier', values?: undefined): string
+	encodeFunctionData(
+		functionFragment: 'safeTransferFrom(address,address,uint256)',
+		values: [string, string, BigNumberish]
+	): string
+	encodeFunctionData(
+		functionFragment: 'safeTransferFrom(address,address,uint256,bytes)',
+		values: [string, string, BigNumberish, BytesLike]
+	): string
+	encodeFunctionData(functionFragment: 'setApprovalForAll', values: [string, boolean]): string
+	encodeFunctionData(functionFragment: 'setEscrowMigrator', values: [string]): string
+	encodeFunctionData(functionFragment: 'setStakingRewards', values: [string]): string
+	encodeFunctionData(functionFragment: 'setTreasuryDAO', values: [string]): string
+	encodeFunctionData(functionFragment: 'stakingRewards', values?: undefined): string
+	encodeFunctionData(functionFragment: 'supportsInterface', values: [BytesLike]): string
+	encodeFunctionData(functionFragment: 'symbol', values?: undefined): string
+	encodeFunctionData(functionFragment: 'tokenByIndex', values: [BigNumberish]): string
+	encodeFunctionData(
+		functionFragment: 'tokenOfOwnerByIndex',
+		values: [string, BigNumberish]
+	): string
+	encodeFunctionData(functionFragment: 'tokenURI', values: [BigNumberish]): string
+	encodeFunctionData(functionFragment: 'totalEscrowedAccountBalance', values: [string]): string
+	encodeFunctionData(functionFragment: 'totalEscrowedBalance', values?: undefined): string
+	encodeFunctionData(functionFragment: 'totalSupply', values?: undefined): string
+	encodeFunctionData(functionFragment: 'totalVestedAccountBalance', values: [string]): string
+	encodeFunctionData(
+		functionFragment: 'transferFrom',
+		values: [string, string, BigNumberish]
+	): string
+	encodeFunctionData(functionFragment: 'transferOwnership', values: [string]): string
+	encodeFunctionData(functionFragment: 'treasuryDAO', values?: undefined): string
+	encodeFunctionData(functionFragment: 'unpauseRewardEscrow', values?: undefined): string
+	encodeFunctionData(functionFragment: 'unstakedEscrowedBalanceOf', values: [string]): string
+	encodeFunctionData(functionFragment: 'upgradeTo', values: [string]): string
+	encodeFunctionData(functionFragment: 'upgradeToAndCall', values: [string, BytesLike]): string
+	encodeFunctionData(functionFragment: 'vest', values: [BigNumberish[]]): string
+	encodeFunctionData(functionFragment: 'vestingSchedules', values: [BigNumberish]): string
 
-  decodeFunctionResult(
-    functionFragment: "DEFAULT_DURATION",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "DEFAULT_EARLY_VESTING_FEE",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "MAXIMUM_EARLY_VESTING_FEE",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "MAX_DURATION",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "MINIMUM_EARLY_VESTING_FEE",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "acceptOwnership",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "appendVestingEntry",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "bulkTransferFrom",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "createEscrowEntry",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "escrowMigrator",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "escrowedBalanceOf",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getAccountVestingEntryIDs",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getApproved",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getKwentaAddress",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getVestingEntry",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getVestingEntryClaimable",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getVestingQuantity",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getVestingSchedules",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "importEscrowEntry",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "isApprovedForAll",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "kwenta", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "nextEntryId",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "ownerOf", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "pauseRewardEscrow",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "pendingOwner",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "proxiableUUID",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "renounceOwnership",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "rewardsNotifier",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "safeTransferFrom(address,address,uint256)",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "safeTransferFrom(address,address,uint256,bytes)",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setApprovalForAll",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setEscrowMigrator",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setStakingRewards",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setTreasuryDAO",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "stakingRewards",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "supportsInterface",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "symbol", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "tokenByIndex",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "tokenOfOwnerByIndex",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "tokenURI", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "totalEscrowedAccountBalance",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "totalEscrowedBalance",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "totalSupply",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "totalVestedAccountBalance",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "transferFrom",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "transferOwnership",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "treasuryDAO",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "unpauseRewardEscrow",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "unstakedEscrowedBalanceOf",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "upgradeTo", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "upgradeToAndCall",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "vest", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "vestingSchedules",
-    data: BytesLike
-  ): Result;
+	decodeFunctionResult(functionFragment: 'DEFAULT_DURATION', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'DEFAULT_EARLY_VESTING_FEE', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'MAXIMUM_EARLY_VESTING_FEE', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'MAX_DURATION', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'MINIMUM_EARLY_VESTING_FEE', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'acceptOwnership', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'appendVestingEntry', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'approve', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'balanceOf', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'bulkTransferFrom', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'createEscrowEntry', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'escrowMigrator', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'escrowedBalanceOf', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'getAccountVestingEntryIDs', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'getApproved', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'getKwentaAddress', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'getVestingEntry', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'getVestingEntryClaimable', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'getVestingQuantity', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'getVestingSchedules', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'importEscrowEntry', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'initialize', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'isApprovedForAll', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'kwenta', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'name', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'nextEntryId', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'owner', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'ownerOf', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'pauseRewardEscrow', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'paused', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'pendingOwner', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'proxiableUUID', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'renounceOwnership', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'rewardsNotifier', data: BytesLike): Result
+	decodeFunctionResult(
+		functionFragment: 'safeTransferFrom(address,address,uint256)',
+		data: BytesLike
+	): Result
+	decodeFunctionResult(
+		functionFragment: 'safeTransferFrom(address,address,uint256,bytes)',
+		data: BytesLike
+	): Result
+	decodeFunctionResult(functionFragment: 'setApprovalForAll', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'setEscrowMigrator', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'setStakingRewards', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'setTreasuryDAO', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'stakingRewards', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'supportsInterface', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'symbol', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'tokenByIndex', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'tokenOfOwnerByIndex', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'tokenURI', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'totalEscrowedAccountBalance', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'totalEscrowedBalance', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'totalSupply', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'totalVestedAccountBalance', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'transferFrom', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'transferOwnership', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'treasuryDAO', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'unpauseRewardEscrow', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'unstakedEscrowedBalanceOf', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'upgradeTo', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'upgradeToAndCall', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'vest', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'vestingSchedules', data: BytesLike): Result
 
-  events: {
-    "AdminChanged(address,address)": EventFragment;
-    "Approval(address,address,uint256)": EventFragment;
-    "ApprovalForAll(address,address,bool)": EventFragment;
-    "BeaconUpgraded(address)": EventFragment;
-    "EarlyVestFeeSent(uint256,uint256)": EventFragment;
-    "EscrowMigratorSet(address)": EventFragment;
-    "Initialized(uint8)": EventFragment;
-    "OwnershipTransferStarted(address,address)": EventFragment;
-    "OwnershipTransferred(address,address)": EventFragment;
-    "Paused(address)": EventFragment;
-    "StakingRewardsSet(address)": EventFragment;
-    "Transfer(address,address,uint256)": EventFragment;
-    "TreasuryDAOSet(address)": EventFragment;
-    "Unpaused(address)": EventFragment;
-    "Upgraded(address)": EventFragment;
-    "Vested(address,uint256)": EventFragment;
-    "VestingEntryCreated(address,uint256,uint256,uint256,uint8)": EventFragment;
-  };
+	events: {
+		'AdminChanged(address,address)': EventFragment
+		'Approval(address,address,uint256)': EventFragment
+		'ApprovalForAll(address,address,bool)': EventFragment
+		'BeaconUpgraded(address)': EventFragment
+		'EarlyVestFeeSent(uint256,uint256)': EventFragment
+		'EscrowMigratorSet(address)': EventFragment
+		'Initialized(uint8)': EventFragment
+		'OwnershipTransferStarted(address,address)': EventFragment
+		'OwnershipTransferred(address,address)': EventFragment
+		'Paused(address)': EventFragment
+		'StakingRewardsSet(address)': EventFragment
+		'Transfer(address,address,uint256)': EventFragment
+		'TreasuryDAOSet(address)': EventFragment
+		'Unpaused(address)': EventFragment
+		'Upgraded(address)': EventFragment
+		'Vested(address,uint256)': EventFragment
+		'VestingEntryCreated(address,uint256,uint256,uint256,uint8)': EventFragment
+	}
 
-  getEvent(nameOrSignatureOrTopic: "AdminChanged"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Approval"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "ApprovalForAll"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "BeaconUpgraded"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "EarlyVestFeeSent"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "EscrowMigratorSet"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "OwnershipTransferStarted"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "StakingRewardsSet"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Transfer"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "TreasuryDAOSet"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Unpaused"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Upgraded"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Vested"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "VestingEntryCreated"): EventFragment;
+	getEvent(nameOrSignatureOrTopic: 'AdminChanged'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'Approval'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'ApprovalForAll'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'BeaconUpgraded'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'EarlyVestFeeSent'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'EscrowMigratorSet'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'Initialized'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'OwnershipTransferStarted'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'OwnershipTransferred'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'Paused'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'StakingRewardsSet'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'Transfer'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'TreasuryDAOSet'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'Unpaused'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'Upgraded'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'Vested'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'VestingEntryCreated'): EventFragment
 }
 
 export interface AdminChangedEventObject {
-  previousAdmin: string;
-  newAdmin: string;
+	previousAdmin: string
+	newAdmin: string
 }
-export type AdminChangedEvent = TypedEvent<
-  [string, string],
-  AdminChangedEventObject
->;
+export type AdminChangedEvent = TypedEvent<[string, string], AdminChangedEventObject>
 
-export type AdminChangedEventFilter = TypedEventFilter<AdminChangedEvent>;
+export type AdminChangedEventFilter = TypedEventFilter<AdminChangedEvent>
 
 export interface ApprovalEventObject {
-  owner: string;
-  approved: string;
-  tokenId: BigNumber;
+	owner: string
+	approved: string
+	tokenId: BigNumber
 }
-export type ApprovalEvent = TypedEvent<
-  [string, string, BigNumber],
-  ApprovalEventObject
->;
+export type ApprovalEvent = TypedEvent<[string, string, BigNumber], ApprovalEventObject>
 
-export type ApprovalEventFilter = TypedEventFilter<ApprovalEvent>;
+export type ApprovalEventFilter = TypedEventFilter<ApprovalEvent>
 
 export interface ApprovalForAllEventObject {
-  owner: string;
-  operator: string;
-  approved: boolean;
+	owner: string
+	operator: string
+	approved: boolean
 }
-export type ApprovalForAllEvent = TypedEvent<
-  [string, string, boolean],
-  ApprovalForAllEventObject
->;
+export type ApprovalForAllEvent = TypedEvent<[string, string, boolean], ApprovalForAllEventObject>
 
-export type ApprovalForAllEventFilter = TypedEventFilter<ApprovalForAllEvent>;
+export type ApprovalForAllEventFilter = TypedEventFilter<ApprovalForAllEvent>
 
 export interface BeaconUpgradedEventObject {
-  beacon: string;
+	beacon: string
 }
-export type BeaconUpgradedEvent = TypedEvent<
-  [string],
-  BeaconUpgradedEventObject
->;
+export type BeaconUpgradedEvent = TypedEvent<[string], BeaconUpgradedEventObject>
 
-export type BeaconUpgradedEventFilter = TypedEventFilter<BeaconUpgradedEvent>;
+export type BeaconUpgradedEventFilter = TypedEventFilter<BeaconUpgradedEvent>
 
 export interface EarlyVestFeeSentEventObject {
-  amountToTreasury: BigNumber;
-  amountToNotifier: BigNumber;
+	amountToTreasury: BigNumber
+	amountToNotifier: BigNumber
 }
-export type EarlyVestFeeSentEvent = TypedEvent<
-  [BigNumber, BigNumber],
-  EarlyVestFeeSentEventObject
->;
+export type EarlyVestFeeSentEvent = TypedEvent<[BigNumber, BigNumber], EarlyVestFeeSentEventObject>
 
-export type EarlyVestFeeSentEventFilter =
-  TypedEventFilter<EarlyVestFeeSentEvent>;
+export type EarlyVestFeeSentEventFilter = TypedEventFilter<EarlyVestFeeSentEvent>
 
 export interface EscrowMigratorSetEventObject {
-  escrowMigrator: string;
+	escrowMigrator: string
 }
-export type EscrowMigratorSetEvent = TypedEvent<
-  [string],
-  EscrowMigratorSetEventObject
->;
+export type EscrowMigratorSetEvent = TypedEvent<[string], EscrowMigratorSetEventObject>
 
-export type EscrowMigratorSetEventFilter =
-  TypedEventFilter<EscrowMigratorSetEvent>;
+export type EscrowMigratorSetEventFilter = TypedEventFilter<EscrowMigratorSetEvent>
 
 export interface InitializedEventObject {
-  version: number;
+	version: number
 }
-export type InitializedEvent = TypedEvent<[number], InitializedEventObject>;
+export type InitializedEvent = TypedEvent<[number], InitializedEventObject>
 
-export type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
+export type InitializedEventFilter = TypedEventFilter<InitializedEvent>
 
 export interface OwnershipTransferStartedEventObject {
-  previousOwner: string;
-  newOwner: string;
+	previousOwner: string
+	newOwner: string
 }
 export type OwnershipTransferStartedEvent = TypedEvent<
-  [string, string],
-  OwnershipTransferStartedEventObject
->;
+	[string, string],
+	OwnershipTransferStartedEventObject
+>
 
-export type OwnershipTransferStartedEventFilter =
-  TypedEventFilter<OwnershipTransferStartedEvent>;
+export type OwnershipTransferStartedEventFilter = TypedEventFilter<OwnershipTransferStartedEvent>
 
 export interface OwnershipTransferredEventObject {
-  previousOwner: string;
-  newOwner: string;
+	previousOwner: string
+	newOwner: string
 }
 export type OwnershipTransferredEvent = TypedEvent<
-  [string, string],
-  OwnershipTransferredEventObject
->;
+	[string, string],
+	OwnershipTransferredEventObject
+>
 
-export type OwnershipTransferredEventFilter =
-  TypedEventFilter<OwnershipTransferredEvent>;
+export type OwnershipTransferredEventFilter = TypedEventFilter<OwnershipTransferredEvent>
 
 export interface PausedEventObject {
-  account: string;
+	account: string
 }
-export type PausedEvent = TypedEvent<[string], PausedEventObject>;
+export type PausedEvent = TypedEvent<[string], PausedEventObject>
 
-export type PausedEventFilter = TypedEventFilter<PausedEvent>;
+export type PausedEventFilter = TypedEventFilter<PausedEvent>
 
 export interface StakingRewardsSetEventObject {
-  stakingRewards: string;
+	stakingRewards: string
 }
-export type StakingRewardsSetEvent = TypedEvent<
-  [string],
-  StakingRewardsSetEventObject
->;
+export type StakingRewardsSetEvent = TypedEvent<[string], StakingRewardsSetEventObject>
 
-export type StakingRewardsSetEventFilter =
-  TypedEventFilter<StakingRewardsSetEvent>;
+export type StakingRewardsSetEventFilter = TypedEventFilter<StakingRewardsSetEvent>
 
 export interface TransferEventObject {
-  from: string;
-  to: string;
-  tokenId: BigNumber;
+	from: string
+	to: string
+	tokenId: BigNumber
 }
-export type TransferEvent = TypedEvent<
-  [string, string, BigNumber],
-  TransferEventObject
->;
+export type TransferEvent = TypedEvent<[string, string, BigNumber], TransferEventObject>
 
-export type TransferEventFilter = TypedEventFilter<TransferEvent>;
+export type TransferEventFilter = TypedEventFilter<TransferEvent>
 
 export interface TreasuryDAOSetEventObject {
-  treasuryDAO: string;
+	treasuryDAO: string
 }
-export type TreasuryDAOSetEvent = TypedEvent<
-  [string],
-  TreasuryDAOSetEventObject
->;
+export type TreasuryDAOSetEvent = TypedEvent<[string], TreasuryDAOSetEventObject>
 
-export type TreasuryDAOSetEventFilter = TypedEventFilter<TreasuryDAOSetEvent>;
+export type TreasuryDAOSetEventFilter = TypedEventFilter<TreasuryDAOSetEvent>
 
 export interface UnpausedEventObject {
-  account: string;
+	account: string
 }
-export type UnpausedEvent = TypedEvent<[string], UnpausedEventObject>;
+export type UnpausedEvent = TypedEvent<[string], UnpausedEventObject>
 
-export type UnpausedEventFilter = TypedEventFilter<UnpausedEvent>;
+export type UnpausedEventFilter = TypedEventFilter<UnpausedEvent>
 
 export interface UpgradedEventObject {
-  implementation: string;
+	implementation: string
 }
-export type UpgradedEvent = TypedEvent<[string], UpgradedEventObject>;
+export type UpgradedEvent = TypedEvent<[string], UpgradedEventObject>
 
-export type UpgradedEventFilter = TypedEventFilter<UpgradedEvent>;
+export type UpgradedEventFilter = TypedEventFilter<UpgradedEvent>
 
 export interface VestedEventObject {
-  beneficiary: string;
-  value: BigNumber;
+	beneficiary: string
+	value: BigNumber
 }
-export type VestedEvent = TypedEvent<[string, BigNumber], VestedEventObject>;
+export type VestedEvent = TypedEvent<[string, BigNumber], VestedEventObject>
 
-export type VestedEventFilter = TypedEventFilter<VestedEvent>;
+export type VestedEventFilter = TypedEventFilter<VestedEvent>
 
 export interface VestingEntryCreatedEventObject {
-  beneficiary: string;
-  value: BigNumber;
-  duration: BigNumber;
-  entryID: BigNumber;
-  earlyVestingFee: number;
+	beneficiary: string
+	value: BigNumber
+	duration: BigNumber
+	entryID: BigNumber
+	earlyVestingFee: number
 }
 export type VestingEntryCreatedEvent = TypedEvent<
-  [string, BigNumber, BigNumber, BigNumber, number],
-  VestingEntryCreatedEventObject
->;
+	[string, BigNumber, BigNumber, BigNumber, number],
+	VestingEntryCreatedEventObject
+>
 
-export type VestingEntryCreatedEventFilter =
-  TypedEventFilter<VestingEntryCreatedEvent>;
+export type VestingEntryCreatedEventFilter = TypedEventFilter<VestingEntryCreatedEvent>
 
 export interface RewardEscrowV2 extends BaseContract {
-  connect(signerOrProvider: Signer | Provider | string): this;
-  attach(addressOrName: string): this;
-  deployed(): Promise<this>;
-
-  interface: RewardEscrowV2Interface;
-
-  queryFilter<TEvent extends TypedEvent>(
-    event: TypedEventFilter<TEvent>,
-    fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined
-  ): Promise<Array<TEvent>>;
-
-  listeners<TEvent extends TypedEvent>(
-    eventFilter?: TypedEventFilter<TEvent>
-  ): Array<TypedListener<TEvent>>;
-  listeners(eventName?: string): Array<Listener>;
-  removeAllListeners<TEvent extends TypedEvent>(
-    eventFilter: TypedEventFilter<TEvent>
-  ): this;
-  removeAllListeners(eventName?: string): this;
-  off: OnEvent<this>;
-  on: OnEvent<this>;
-  once: OnEvent<this>;
-  removeListener: OnEvent<this>;
-
-  functions: {
-    DEFAULT_DURATION(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    DEFAULT_EARLY_VESTING_FEE(overrides?: CallOverrides): Promise<[number]>;
-
-    MAXIMUM_EARLY_VESTING_FEE(overrides?: CallOverrides): Promise<[number]>;
-
-    MAX_DURATION(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    MINIMUM_EARLY_VESTING_FEE(overrides?: CallOverrides): Promise<[number]>;
-
-    acceptOwnership(
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    appendVestingEntry(
-      _account: string,
-      _quantity: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    approve(
-      to: string,
-      tokenId: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    balanceOf(owner: string, overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    bulkTransferFrom(
-      _from: string,
-      _to: string,
-      _entryIDs: BigNumberish[],
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    createEscrowEntry(
-      _beneficiary: string,
-      _deposit: BigNumberish,
-      _duration: BigNumberish,
-      _earlyVestingFee: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    escrowMigrator(overrides?: CallOverrides): Promise<[string]>;
-
-    escrowedBalanceOf(
-      _account: string,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    getAccountVestingEntryIDs(
-      _account: string,
-      _index: BigNumberish,
-      _pageSize: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber[]]>;
-
-    getApproved(
-      tokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
-    getKwentaAddress(overrides?: CallOverrides): Promise<[string]>;
-
-    getVestingEntry(
-      _entryID: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber, BigNumber, number] & {
-        endTime: BigNumber;
-        escrowAmount: BigNumber;
-        duration: BigNumber;
-        earlyVestingFee: number;
-      }
-    >;
-
-    getVestingEntryClaimable(
-      _entryID: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber] & { quantity: BigNumber; fee: BigNumber }
-    >;
-
-    getVestingQuantity(
-      _entryIDs: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber] & { total: BigNumber; totalFee: BigNumber }
-    >;
-
-    getVestingSchedules(
-      _account: string,
-      _index: BigNumberish,
-      _pageSize: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[IRewardEscrowV2.VestingEntryWithIDStructOutput[]]>;
-
-    importEscrowEntry(
-      _account: string,
-      _entry: IRewardEscrowV2.VestingEntryStruct,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    initialize(
-      _contractOwner: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    isApprovedForAll(
-      owner: string,
-      operator: string,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-
-    kwenta(overrides?: CallOverrides): Promise<[string]>;
-
-    name(overrides?: CallOverrides): Promise<[string]>;
-
-    nextEntryId(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    owner(overrides?: CallOverrides): Promise<[string]>;
-
-    ownerOf(
-      tokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
-    pauseRewardEscrow(
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    paused(overrides?: CallOverrides): Promise<[boolean]>;
-
-    pendingOwner(overrides?: CallOverrides): Promise<[string]>;
-
-    proxiableUUID(overrides?: CallOverrides): Promise<[string]>;
-
-    renounceOwnership(
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    rewardsNotifier(overrides?: CallOverrides): Promise<[string]>;
-
-    "safeTransferFrom(address,address,uint256)"(
-      from: string,
-      to: string,
-      tokenId: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    "safeTransferFrom(address,address,uint256,bytes)"(
-      from: string,
-      to: string,
-      tokenId: BigNumberish,
-      data: BytesLike,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    setApprovalForAll(
-      operator: string,
-      approved: boolean,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    setEscrowMigrator(
-      _escrowMigrator: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    setStakingRewards(
-      _stakingRewards: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    setTreasuryDAO(
-      _treasuryDAO: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    stakingRewards(overrides?: CallOverrides): Promise<[string]>;
-
-    supportsInterface(
-      interfaceId: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-
-    symbol(overrides?: CallOverrides): Promise<[string]>;
-
-    tokenByIndex(
-      index: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    tokenOfOwnerByIndex(
-      owner: string,
-      index: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    tokenURI(
-      tokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
-    totalEscrowedAccountBalance(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    totalEscrowedBalance(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    totalSupply(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    totalVestedAccountBalance(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    transferFrom(
-      from: string,
-      to: string,
-      tokenId: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    transferOwnership(
-      newOwner: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    treasuryDAO(overrides?: CallOverrides): Promise<[string]>;
-
-    unpauseRewardEscrow(
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    unstakedEscrowedBalanceOf(
-      _account: string,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    upgradeTo(
-      newImplementation: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    upgradeToAndCall(
-      newImplementation: string,
-      data: BytesLike,
-      overrides?: PayableOverrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    vest(
-      _entryIDs: BigNumberish[],
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    vestingSchedules(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, number, BigNumber, number] & {
-        escrowAmount: BigNumber;
-        duration: number;
-        endTime: BigNumber;
-        earlyVestingFee: number;
-      }
-    >;
-  };
-
-  DEFAULT_DURATION(overrides?: CallOverrides): Promise<BigNumber>;
-
-  DEFAULT_EARLY_VESTING_FEE(overrides?: CallOverrides): Promise<number>;
-
-  MAXIMUM_EARLY_VESTING_FEE(overrides?: CallOverrides): Promise<number>;
-
-  MAX_DURATION(overrides?: CallOverrides): Promise<BigNumber>;
-
-  MINIMUM_EARLY_VESTING_FEE(overrides?: CallOverrides): Promise<number>;
-
-  acceptOwnership(
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  appendVestingEntry(
-    _account: string,
-    _quantity: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  approve(
-    to: string,
-    tokenId: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  balanceOf(owner: string, overrides?: CallOverrides): Promise<BigNumber>;
-
-  bulkTransferFrom(
-    _from: string,
-    _to: string,
-    _entryIDs: BigNumberish[],
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  createEscrowEntry(
-    _beneficiary: string,
-    _deposit: BigNumberish,
-    _duration: BigNumberish,
-    _earlyVestingFee: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  escrowMigrator(overrides?: CallOverrides): Promise<string>;
-
-  escrowedBalanceOf(
-    _account: string,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  getAccountVestingEntryIDs(
-    _account: string,
-    _index: BigNumberish,
-    _pageSize: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber[]>;
-
-  getApproved(
-    tokenId: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<string>;
-
-  getKwentaAddress(overrides?: CallOverrides): Promise<string>;
-
-  getVestingEntry(
-    _entryID: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<
-    [BigNumber, BigNumber, BigNumber, number] & {
-      endTime: BigNumber;
-      escrowAmount: BigNumber;
-      duration: BigNumber;
-      earlyVestingFee: number;
-    }
-  >;
-
-  getVestingEntryClaimable(
-    _entryID: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<[BigNumber, BigNumber] & { quantity: BigNumber; fee: BigNumber }>;
-
-  getVestingQuantity(
-    _entryIDs: BigNumberish[],
-    overrides?: CallOverrides
-  ): Promise<
-    [BigNumber, BigNumber] & { total: BigNumber; totalFee: BigNumber }
-  >;
-
-  getVestingSchedules(
-    _account: string,
-    _index: BigNumberish,
-    _pageSize: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<IRewardEscrowV2.VestingEntryWithIDStructOutput[]>;
-
-  importEscrowEntry(
-    _account: string,
-    _entry: IRewardEscrowV2.VestingEntryStruct,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  initialize(
-    _contractOwner: string,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  isApprovedForAll(
-    owner: string,
-    operator: string,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
-  kwenta(overrides?: CallOverrides): Promise<string>;
-
-  name(overrides?: CallOverrides): Promise<string>;
-
-  nextEntryId(overrides?: CallOverrides): Promise<BigNumber>;
-
-  owner(overrides?: CallOverrides): Promise<string>;
-
-  ownerOf(tokenId: BigNumberish, overrides?: CallOverrides): Promise<string>;
-
-  pauseRewardEscrow(
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  paused(overrides?: CallOverrides): Promise<boolean>;
-
-  pendingOwner(overrides?: CallOverrides): Promise<string>;
-
-  proxiableUUID(overrides?: CallOverrides): Promise<string>;
-
-  renounceOwnership(
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  rewardsNotifier(overrides?: CallOverrides): Promise<string>;
-
-  "safeTransferFrom(address,address,uint256)"(
-    from: string,
-    to: string,
-    tokenId: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  "safeTransferFrom(address,address,uint256,bytes)"(
-    from: string,
-    to: string,
-    tokenId: BigNumberish,
-    data: BytesLike,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  setApprovalForAll(
-    operator: string,
-    approved: boolean,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  setEscrowMigrator(
-    _escrowMigrator: string,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  setStakingRewards(
-    _stakingRewards: string,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  setTreasuryDAO(
-    _treasuryDAO: string,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  stakingRewards(overrides?: CallOverrides): Promise<string>;
-
-  supportsInterface(
-    interfaceId: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
-  symbol(overrides?: CallOverrides): Promise<string>;
-
-  tokenByIndex(
-    index: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  tokenOfOwnerByIndex(
-    owner: string,
-    index: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  tokenURI(tokenId: BigNumberish, overrides?: CallOverrides): Promise<string>;
-
-  totalEscrowedAccountBalance(
-    arg0: string,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  totalEscrowedBalance(overrides?: CallOverrides): Promise<BigNumber>;
-
-  totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
-
-  totalVestedAccountBalance(
-    arg0: string,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  transferFrom(
-    from: string,
-    to: string,
-    tokenId: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  transferOwnership(
-    newOwner: string,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  treasuryDAO(overrides?: CallOverrides): Promise<string>;
-
-  unpauseRewardEscrow(
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  unstakedEscrowedBalanceOf(
-    _account: string,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  upgradeTo(
-    newImplementation: string,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  upgradeToAndCall(
-    newImplementation: string,
-    data: BytesLike,
-    overrides?: PayableOverrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  vest(
-    _entryIDs: BigNumberish[],
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  vestingSchedules(
-    arg0: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<
-    [BigNumber, number, BigNumber, number] & {
-      escrowAmount: BigNumber;
-      duration: number;
-      endTime: BigNumber;
-      earlyVestingFee: number;
-    }
-  >;
-
-  callStatic: {
-    DEFAULT_DURATION(overrides?: CallOverrides): Promise<BigNumber>;
-
-    DEFAULT_EARLY_VESTING_FEE(overrides?: CallOverrides): Promise<number>;
-
-    MAXIMUM_EARLY_VESTING_FEE(overrides?: CallOverrides): Promise<number>;
-
-    MAX_DURATION(overrides?: CallOverrides): Promise<BigNumber>;
-
-    MINIMUM_EARLY_VESTING_FEE(overrides?: CallOverrides): Promise<number>;
-
-    acceptOwnership(overrides?: CallOverrides): Promise<void>;
-
-    appendVestingEntry(
-      _account: string,
-      _quantity: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    approve(
-      to: string,
-      tokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    balanceOf(owner: string, overrides?: CallOverrides): Promise<BigNumber>;
-
-    bulkTransferFrom(
-      _from: string,
-      _to: string,
-      _entryIDs: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    createEscrowEntry(
-      _beneficiary: string,
-      _deposit: BigNumberish,
-      _duration: BigNumberish,
-      _earlyVestingFee: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    escrowMigrator(overrides?: CallOverrides): Promise<string>;
-
-    escrowedBalanceOf(
-      _account: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getAccountVestingEntryIDs(
-      _account: string,
-      _index: BigNumberish,
-      _pageSize: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber[]>;
-
-    getApproved(
-      tokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
-    getKwentaAddress(overrides?: CallOverrides): Promise<string>;
-
-    getVestingEntry(
-      _entryID: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber, BigNumber, number] & {
-        endTime: BigNumber;
-        escrowAmount: BigNumber;
-        duration: BigNumber;
-        earlyVestingFee: number;
-      }
-    >;
-
-    getVestingEntryClaimable(
-      _entryID: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber] & { quantity: BigNumber; fee: BigNumber }
-    >;
-
-    getVestingQuantity(
-      _entryIDs: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber] & { total: BigNumber; totalFee: BigNumber }
-    >;
-
-    getVestingSchedules(
-      _account: string,
-      _index: BigNumberish,
-      _pageSize: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<IRewardEscrowV2.VestingEntryWithIDStructOutput[]>;
-
-    importEscrowEntry(
-      _account: string,
-      _entry: IRewardEscrowV2.VestingEntryStruct,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    initialize(
-      _contractOwner: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    isApprovedForAll(
-      owner: string,
-      operator: string,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    kwenta(overrides?: CallOverrides): Promise<string>;
-
-    name(overrides?: CallOverrides): Promise<string>;
-
-    nextEntryId(overrides?: CallOverrides): Promise<BigNumber>;
-
-    owner(overrides?: CallOverrides): Promise<string>;
-
-    ownerOf(tokenId: BigNumberish, overrides?: CallOverrides): Promise<string>;
-
-    pauseRewardEscrow(overrides?: CallOverrides): Promise<void>;
-
-    paused(overrides?: CallOverrides): Promise<boolean>;
-
-    pendingOwner(overrides?: CallOverrides): Promise<string>;
-
-    proxiableUUID(overrides?: CallOverrides): Promise<string>;
-
-    renounceOwnership(overrides?: CallOverrides): Promise<void>;
-
-    rewardsNotifier(overrides?: CallOverrides): Promise<string>;
-
-    "safeTransferFrom(address,address,uint256)"(
-      from: string,
-      to: string,
-      tokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "safeTransferFrom(address,address,uint256,bytes)"(
-      from: string,
-      to: string,
-      tokenId: BigNumberish,
-      data: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setApprovalForAll(
-      operator: string,
-      approved: boolean,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setEscrowMigrator(
-      _escrowMigrator: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setStakingRewards(
-      _stakingRewards: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setTreasuryDAO(
-      _treasuryDAO: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    stakingRewards(overrides?: CallOverrides): Promise<string>;
-
-    supportsInterface(
-      interfaceId: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    symbol(overrides?: CallOverrides): Promise<string>;
-
-    tokenByIndex(
-      index: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    tokenOfOwnerByIndex(
-      owner: string,
-      index: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    tokenURI(tokenId: BigNumberish, overrides?: CallOverrides): Promise<string>;
-
-    totalEscrowedAccountBalance(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    totalEscrowedBalance(overrides?: CallOverrides): Promise<BigNumber>;
-
-    totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
-
-    totalVestedAccountBalance(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    transferFrom(
-      from: string,
-      to: string,
-      tokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    transferOwnership(
-      newOwner: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    treasuryDAO(overrides?: CallOverrides): Promise<string>;
-
-    unpauseRewardEscrow(overrides?: CallOverrides): Promise<void>;
-
-    unstakedEscrowedBalanceOf(
-      _account: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    upgradeTo(
-      newImplementation: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    upgradeToAndCall(
-      newImplementation: string,
-      data: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    vest(_entryIDs: BigNumberish[], overrides?: CallOverrides): Promise<void>;
-
-    vestingSchedules(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, number, BigNumber, number] & {
-        escrowAmount: BigNumber;
-        duration: number;
-        endTime: BigNumber;
-        earlyVestingFee: number;
-      }
-    >;
-  };
-
-  filters: {
-    "AdminChanged(address,address)"(
-      previousAdmin?: null,
-      newAdmin?: null
-    ): AdminChangedEventFilter;
-    AdminChanged(
-      previousAdmin?: null,
-      newAdmin?: null
-    ): AdminChangedEventFilter;
-
-    "Approval(address,address,uint256)"(
-      owner?: string | null,
-      approved?: string | null,
-      tokenId?: BigNumberish | null
-    ): ApprovalEventFilter;
-    Approval(
-      owner?: string | null,
-      approved?: string | null,
-      tokenId?: BigNumberish | null
-    ): ApprovalEventFilter;
-
-    "ApprovalForAll(address,address,bool)"(
-      owner?: string | null,
-      operator?: string | null,
-      approved?: null
-    ): ApprovalForAllEventFilter;
-    ApprovalForAll(
-      owner?: string | null,
-      operator?: string | null,
-      approved?: null
-    ): ApprovalForAllEventFilter;
-
-    "BeaconUpgraded(address)"(
-      beacon?: string | null
-    ): BeaconUpgradedEventFilter;
-    BeaconUpgraded(beacon?: string | null): BeaconUpgradedEventFilter;
-
-    "EarlyVestFeeSent(uint256,uint256)"(
-      amountToTreasury?: null,
-      amountToNotifier?: null
-    ): EarlyVestFeeSentEventFilter;
-    EarlyVestFeeSent(
-      amountToTreasury?: null,
-      amountToNotifier?: null
-    ): EarlyVestFeeSentEventFilter;
-
-    "EscrowMigratorSet(address)"(
-      escrowMigrator?: null
-    ): EscrowMigratorSetEventFilter;
-    EscrowMigratorSet(escrowMigrator?: null): EscrowMigratorSetEventFilter;
-
-    "Initialized(uint8)"(version?: null): InitializedEventFilter;
-    Initialized(version?: null): InitializedEventFilter;
-
-    "OwnershipTransferStarted(address,address)"(
-      previousOwner?: string | null,
-      newOwner?: string | null
-    ): OwnershipTransferStartedEventFilter;
-    OwnershipTransferStarted(
-      previousOwner?: string | null,
-      newOwner?: string | null
-    ): OwnershipTransferStartedEventFilter;
-
-    "OwnershipTransferred(address,address)"(
-      previousOwner?: string | null,
-      newOwner?: string | null
-    ): OwnershipTransferredEventFilter;
-    OwnershipTransferred(
-      previousOwner?: string | null,
-      newOwner?: string | null
-    ): OwnershipTransferredEventFilter;
-
-    "Paused(address)"(account?: null): PausedEventFilter;
-    Paused(account?: null): PausedEventFilter;
-
-    "StakingRewardsSet(address)"(
-      stakingRewards?: null
-    ): StakingRewardsSetEventFilter;
-    StakingRewardsSet(stakingRewards?: null): StakingRewardsSetEventFilter;
-
-    "Transfer(address,address,uint256)"(
-      from?: string | null,
-      to?: string | null,
-      tokenId?: BigNumberish | null
-    ): TransferEventFilter;
-    Transfer(
-      from?: string | null,
-      to?: string | null,
-      tokenId?: BigNumberish | null
-    ): TransferEventFilter;
-
-    "TreasuryDAOSet(address)"(treasuryDAO?: null): TreasuryDAOSetEventFilter;
-    TreasuryDAOSet(treasuryDAO?: null): TreasuryDAOSetEventFilter;
-
-    "Unpaused(address)"(account?: null): UnpausedEventFilter;
-    Unpaused(account?: null): UnpausedEventFilter;
-
-    "Upgraded(address)"(implementation?: string | null): UpgradedEventFilter;
-    Upgraded(implementation?: string | null): UpgradedEventFilter;
-
-    "Vested(address,uint256)"(
-      beneficiary?: string | null,
-      value?: null
-    ): VestedEventFilter;
-    Vested(beneficiary?: string | null, value?: null): VestedEventFilter;
-
-    "VestingEntryCreated(address,uint256,uint256,uint256,uint8)"(
-      beneficiary?: string | null,
-      value?: null,
-      duration?: null,
-      entryID?: null,
-      earlyVestingFee?: null
-    ): VestingEntryCreatedEventFilter;
-    VestingEntryCreated(
-      beneficiary?: string | null,
-      value?: null,
-      duration?: null,
-      entryID?: null,
-      earlyVestingFee?: null
-    ): VestingEntryCreatedEventFilter;
-  };
-
-  estimateGas: {
-    DEFAULT_DURATION(overrides?: CallOverrides): Promise<BigNumber>;
-
-    DEFAULT_EARLY_VESTING_FEE(overrides?: CallOverrides): Promise<BigNumber>;
-
-    MAXIMUM_EARLY_VESTING_FEE(overrides?: CallOverrides): Promise<BigNumber>;
-
-    MAX_DURATION(overrides?: CallOverrides): Promise<BigNumber>;
-
-    MINIMUM_EARLY_VESTING_FEE(overrides?: CallOverrides): Promise<BigNumber>;
-
-    acceptOwnership(
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    appendVestingEntry(
-      _account: string,
-      _quantity: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    approve(
-      to: string,
-      tokenId: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    balanceOf(owner: string, overrides?: CallOverrides): Promise<BigNumber>;
-
-    bulkTransferFrom(
-      _from: string,
-      _to: string,
-      _entryIDs: BigNumberish[],
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    createEscrowEntry(
-      _beneficiary: string,
-      _deposit: BigNumberish,
-      _duration: BigNumberish,
-      _earlyVestingFee: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    escrowMigrator(overrides?: CallOverrides): Promise<BigNumber>;
-
-    escrowedBalanceOf(
-      _account: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getAccountVestingEntryIDs(
-      _account: string,
-      _index: BigNumberish,
-      _pageSize: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getApproved(
-      tokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getKwentaAddress(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getVestingEntry(
-      _entryID: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getVestingEntryClaimable(
-      _entryID: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getVestingQuantity(
-      _entryIDs: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getVestingSchedules(
-      _account: string,
-      _index: BigNumberish,
-      _pageSize: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    importEscrowEntry(
-      _account: string,
-      _entry: IRewardEscrowV2.VestingEntryStruct,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    initialize(
-      _contractOwner: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    isApprovedForAll(
-      owner: string,
-      operator: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    kwenta(overrides?: CallOverrides): Promise<BigNumber>;
-
-    name(overrides?: CallOverrides): Promise<BigNumber>;
-
-    nextEntryId(overrides?: CallOverrides): Promise<BigNumber>;
-
-    owner(overrides?: CallOverrides): Promise<BigNumber>;
-
-    ownerOf(
-      tokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    pauseRewardEscrow(
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    paused(overrides?: CallOverrides): Promise<BigNumber>;
-
-    pendingOwner(overrides?: CallOverrides): Promise<BigNumber>;
-
-    proxiableUUID(overrides?: CallOverrides): Promise<BigNumber>;
-
-    renounceOwnership(
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    rewardsNotifier(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "safeTransferFrom(address,address,uint256)"(
-      from: string,
-      to: string,
-      tokenId: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    "safeTransferFrom(address,address,uint256,bytes)"(
-      from: string,
-      to: string,
-      tokenId: BigNumberish,
-      data: BytesLike,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    setApprovalForAll(
-      operator: string,
-      approved: boolean,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    setEscrowMigrator(
-      _escrowMigrator: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    setStakingRewards(
-      _stakingRewards: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    setTreasuryDAO(
-      _treasuryDAO: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    stakingRewards(overrides?: CallOverrides): Promise<BigNumber>;
-
-    supportsInterface(
-      interfaceId: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    symbol(overrides?: CallOverrides): Promise<BigNumber>;
-
-    tokenByIndex(
-      index: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    tokenOfOwnerByIndex(
-      owner: string,
-      index: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    tokenURI(
-      tokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    totalEscrowedAccountBalance(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    totalEscrowedBalance(overrides?: CallOverrides): Promise<BigNumber>;
-
-    totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
-
-    totalVestedAccountBalance(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    transferFrom(
-      from: string,
-      to: string,
-      tokenId: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    transferOwnership(
-      newOwner: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    treasuryDAO(overrides?: CallOverrides): Promise<BigNumber>;
-
-    unpauseRewardEscrow(
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    unstakedEscrowedBalanceOf(
-      _account: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    upgradeTo(
-      newImplementation: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    upgradeToAndCall(
-      newImplementation: string,
-      data: BytesLike,
-      overrides?: PayableOverrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    vest(
-      _entryIDs: BigNumberish[],
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    vestingSchedules(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-  };
-
-  populateTransaction: {
-    DEFAULT_DURATION(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    DEFAULT_EARLY_VESTING_FEE(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    MAXIMUM_EARLY_VESTING_FEE(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    MAX_DURATION(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    MINIMUM_EARLY_VESTING_FEE(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    acceptOwnership(
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    appendVestingEntry(
-      _account: string,
-      _quantity: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    approve(
-      to: string,
-      tokenId: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    balanceOf(
-      owner: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    bulkTransferFrom(
-      _from: string,
-      _to: string,
-      _entryIDs: BigNumberish[],
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    createEscrowEntry(
-      _beneficiary: string,
-      _deposit: BigNumberish,
-      _duration: BigNumberish,
-      _earlyVestingFee: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    escrowMigrator(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    escrowedBalanceOf(
-      _account: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getAccountVestingEntryIDs(
-      _account: string,
-      _index: BigNumberish,
-      _pageSize: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getApproved(
-      tokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getKwentaAddress(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    getVestingEntry(
-      _entryID: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getVestingEntryClaimable(
-      _entryID: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getVestingQuantity(
-      _entryIDs: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getVestingSchedules(
-      _account: string,
-      _index: BigNumberish,
-      _pageSize: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    importEscrowEntry(
-      _account: string,
-      _entry: IRewardEscrowV2.VestingEntryStruct,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    initialize(
-      _contractOwner: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    isApprovedForAll(
-      owner: string,
-      operator: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    kwenta(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    nextEntryId(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    ownerOf(
-      tokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    pauseRewardEscrow(
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    paused(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    pendingOwner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    proxiableUUID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    renounceOwnership(
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    rewardsNotifier(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    "safeTransferFrom(address,address,uint256)"(
-      from: string,
-      to: string,
-      tokenId: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    "safeTransferFrom(address,address,uint256,bytes)"(
-      from: string,
-      to: string,
-      tokenId: BigNumberish,
-      data: BytesLike,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    setApprovalForAll(
-      operator: string,
-      approved: boolean,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    setEscrowMigrator(
-      _escrowMigrator: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    setStakingRewards(
-      _stakingRewards: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    setTreasuryDAO(
-      _treasuryDAO: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    stakingRewards(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    supportsInterface(
-      interfaceId: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    symbol(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    tokenByIndex(
-      index: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    tokenOfOwnerByIndex(
-      owner: string,
-      index: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    tokenURI(
-      tokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    totalEscrowedAccountBalance(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    totalEscrowedBalance(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    totalSupply(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    totalVestedAccountBalance(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    transferFrom(
-      from: string,
-      to: string,
-      tokenId: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    transferOwnership(
-      newOwner: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    treasuryDAO(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    unpauseRewardEscrow(
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    unstakedEscrowedBalanceOf(
-      _account: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    upgradeTo(
-      newImplementation: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    upgradeToAndCall(
-      newImplementation: string,
-      data: BytesLike,
-      overrides?: PayableOverrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    vest(
-      _entryIDs: BigNumberish[],
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    vestingSchedules(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-  };
+	connect(signerOrProvider: Signer | Provider | string): this
+	attach(addressOrName: string): this
+	deployed(): Promise<this>
+
+	interface: RewardEscrowV2Interface
+
+	queryFilter<TEvent extends TypedEvent>(
+		event: TypedEventFilter<TEvent>,
+		fromBlockOrBlockhash?: string | number | undefined,
+		toBlock?: string | number | undefined
+	): Promise<Array<TEvent>>
+
+	listeners<TEvent extends TypedEvent>(
+		eventFilter?: TypedEventFilter<TEvent>
+	): Array<TypedListener<TEvent>>
+	listeners(eventName?: string): Array<Listener>
+	removeAllListeners<TEvent extends TypedEvent>(eventFilter: TypedEventFilter<TEvent>): this
+	removeAllListeners(eventName?: string): this
+	off: OnEvent<this>
+	on: OnEvent<this>
+	once: OnEvent<this>
+	removeListener: OnEvent<this>
+
+	functions: {
+		DEFAULT_DURATION(overrides?: CallOverrides): Promise<[BigNumber]>
+
+		DEFAULT_EARLY_VESTING_FEE(overrides?: CallOverrides): Promise<[number]>
+
+		MAXIMUM_EARLY_VESTING_FEE(overrides?: CallOverrides): Promise<[number]>
+
+		MAX_DURATION(overrides?: CallOverrides): Promise<[BigNumber]>
+
+		MINIMUM_EARLY_VESTING_FEE(overrides?: CallOverrides): Promise<[number]>
+
+		acceptOwnership(overrides?: Overrides & { from?: string }): Promise<ContractTransaction>
+
+		appendVestingEntry(
+			_account: string,
+			_quantity: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
+
+		approve(
+			to: string,
+			tokenId: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
+
+		balanceOf(owner: string, overrides?: CallOverrides): Promise<[BigNumber]>
+
+		bulkTransferFrom(
+			_from: string,
+			_to: string,
+			_entryIDs: BigNumberish[],
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
+
+		createEscrowEntry(
+			_beneficiary: string,
+			_deposit: BigNumberish,
+			_duration: BigNumberish,
+			_earlyVestingFee: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
+
+		escrowMigrator(overrides?: CallOverrides): Promise<[string]>
+
+		escrowedBalanceOf(_account: string, overrides?: CallOverrides): Promise<[BigNumber]>
+
+		getAccountVestingEntryIDs(
+			_account: string,
+			_index: BigNumberish,
+			_pageSize: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<[BigNumber[]]>
+
+		getApproved(tokenId: BigNumberish, overrides?: CallOverrides): Promise<[string]>
+
+		getKwentaAddress(overrides?: CallOverrides): Promise<[string]>
+
+		getVestingEntry(
+			_entryID: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<
+			[BigNumber, BigNumber, BigNumber, number] & {
+				endTime: BigNumber
+				escrowAmount: BigNumber
+				duration: BigNumber
+				earlyVestingFee: number
+			}
+		>
+
+		getVestingEntryClaimable(
+			_entryID: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<[BigNumber, BigNumber] & { quantity: BigNumber; fee: BigNumber }>
+
+		getVestingQuantity(
+			_entryIDs: BigNumberish[],
+			overrides?: CallOverrides
+		): Promise<[BigNumber, BigNumber] & { total: BigNumber; totalFee: BigNumber }>
+
+		getVestingSchedules(
+			_account: string,
+			_index: BigNumberish,
+			_pageSize: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<[IRewardEscrowV2.VestingEntryWithIDStructOutput[]]>
+
+		importEscrowEntry(
+			_account: string,
+			_entry: IRewardEscrowV2.VestingEntryStruct,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
+
+		initialize(
+			_contractOwner: string,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
+
+		isApprovedForAll(owner: string, operator: string, overrides?: CallOverrides): Promise<[boolean]>
+
+		kwenta(overrides?: CallOverrides): Promise<[string]>
+
+		name(overrides?: CallOverrides): Promise<[string]>
+
+		nextEntryId(overrides?: CallOverrides): Promise<[BigNumber]>
+
+		owner(overrides?: CallOverrides): Promise<[string]>
+
+		ownerOf(tokenId: BigNumberish, overrides?: CallOverrides): Promise<[string]>
+
+		pauseRewardEscrow(overrides?: Overrides & { from?: string }): Promise<ContractTransaction>
+
+		paused(overrides?: CallOverrides): Promise<[boolean]>
+
+		pendingOwner(overrides?: CallOverrides): Promise<[string]>
+
+		proxiableUUID(overrides?: CallOverrides): Promise<[string]>
+
+		renounceOwnership(overrides?: Overrides & { from?: string }): Promise<ContractTransaction>
+
+		rewardsNotifier(overrides?: CallOverrides): Promise<[string]>
+
+		'safeTransferFrom(address,address,uint256)'(
+			from: string,
+			to: string,
+			tokenId: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
+
+		'safeTransferFrom(address,address,uint256,bytes)'(
+			from: string,
+			to: string,
+			tokenId: BigNumberish,
+			data: BytesLike,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
+
+		setApprovalForAll(
+			operator: string,
+			approved: boolean,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
+
+		setEscrowMigrator(
+			_escrowMigrator: string,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
+
+		setStakingRewards(
+			_stakingRewards: string,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
+
+		setTreasuryDAO(
+			_treasuryDAO: string,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
+
+		stakingRewards(overrides?: CallOverrides): Promise<[string]>
+
+		supportsInterface(interfaceId: BytesLike, overrides?: CallOverrides): Promise<[boolean]>
+
+		symbol(overrides?: CallOverrides): Promise<[string]>
+
+		tokenByIndex(index: BigNumberish, overrides?: CallOverrides): Promise<[BigNumber]>
+
+		tokenOfOwnerByIndex(
+			owner: string,
+			index: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<[BigNumber]>
+
+		tokenURI(tokenId: BigNumberish, overrides?: CallOverrides): Promise<[string]>
+
+		totalEscrowedAccountBalance(arg0: string, overrides?: CallOverrides): Promise<[BigNumber]>
+
+		totalEscrowedBalance(overrides?: CallOverrides): Promise<[BigNumber]>
+
+		totalSupply(overrides?: CallOverrides): Promise<[BigNumber]>
+
+		totalVestedAccountBalance(arg0: string, overrides?: CallOverrides): Promise<[BigNumber]>
+
+		transferFrom(
+			from: string,
+			to: string,
+			tokenId: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
+
+		transferOwnership(
+			newOwner: string,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
+
+		treasuryDAO(overrides?: CallOverrides): Promise<[string]>
+
+		unpauseRewardEscrow(overrides?: Overrides & { from?: string }): Promise<ContractTransaction>
+
+		unstakedEscrowedBalanceOf(_account: string, overrides?: CallOverrides): Promise<[BigNumber]>
+
+		upgradeTo(
+			newImplementation: string,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
+
+		upgradeToAndCall(
+			newImplementation: string,
+			data: BytesLike,
+			overrides?: PayableOverrides & { from?: string }
+		): Promise<ContractTransaction>
+
+		vest(
+			_entryIDs: BigNumberish[],
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
+
+		vestingSchedules(
+			arg0: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<
+			[BigNumber, number, BigNumber, number] & {
+				escrowAmount: BigNumber
+				duration: number
+				endTime: BigNumber
+				earlyVestingFee: number
+			}
+		>
+	}
+
+	DEFAULT_DURATION(overrides?: CallOverrides): Promise<BigNumber>
+
+	DEFAULT_EARLY_VESTING_FEE(overrides?: CallOverrides): Promise<number>
+
+	MAXIMUM_EARLY_VESTING_FEE(overrides?: CallOverrides): Promise<number>
+
+	MAX_DURATION(overrides?: CallOverrides): Promise<BigNumber>
+
+	MINIMUM_EARLY_VESTING_FEE(overrides?: CallOverrides): Promise<number>
+
+	acceptOwnership(overrides?: Overrides & { from?: string }): Promise<ContractTransaction>
+
+	appendVestingEntry(
+		_account: string,
+		_quantity: BigNumberish,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
+
+	approve(
+		to: string,
+		tokenId: BigNumberish,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
+
+	balanceOf(owner: string, overrides?: CallOverrides): Promise<BigNumber>
+
+	bulkTransferFrom(
+		_from: string,
+		_to: string,
+		_entryIDs: BigNumberish[],
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
+
+	createEscrowEntry(
+		_beneficiary: string,
+		_deposit: BigNumberish,
+		_duration: BigNumberish,
+		_earlyVestingFee: BigNumberish,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
+
+	escrowMigrator(overrides?: CallOverrides): Promise<string>
+
+	escrowedBalanceOf(_account: string, overrides?: CallOverrides): Promise<BigNumber>
+
+	getAccountVestingEntryIDs(
+		_account: string,
+		_index: BigNumberish,
+		_pageSize: BigNumberish,
+		overrides?: CallOverrides
+	): Promise<BigNumber[]>
+
+	getApproved(tokenId: BigNumberish, overrides?: CallOverrides): Promise<string>
+
+	getKwentaAddress(overrides?: CallOverrides): Promise<string>
+
+	getVestingEntry(
+		_entryID: BigNumberish,
+		overrides?: CallOverrides
+	): Promise<
+		[BigNumber, BigNumber, BigNumber, number] & {
+			endTime: BigNumber
+			escrowAmount: BigNumber
+			duration: BigNumber
+			earlyVestingFee: number
+		}
+	>
+
+	getVestingEntryClaimable(
+		_entryID: BigNumberish,
+		overrides?: CallOverrides
+	): Promise<[BigNumber, BigNumber] & { quantity: BigNumber; fee: BigNumber }>
+
+	getVestingQuantity(
+		_entryIDs: BigNumberish[],
+		overrides?: CallOverrides
+	): Promise<[BigNumber, BigNumber] & { total: BigNumber; totalFee: BigNumber }>
+
+	getVestingSchedules(
+		_account: string,
+		_index: BigNumberish,
+		_pageSize: BigNumberish,
+		overrides?: CallOverrides
+	): Promise<IRewardEscrowV2.VestingEntryWithIDStructOutput[]>
+
+	importEscrowEntry(
+		_account: string,
+		_entry: IRewardEscrowV2.VestingEntryStruct,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
+
+	initialize(
+		_contractOwner: string,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
+
+	isApprovedForAll(owner: string, operator: string, overrides?: CallOverrides): Promise<boolean>
+
+	kwenta(overrides?: CallOverrides): Promise<string>
+
+	name(overrides?: CallOverrides): Promise<string>
+
+	nextEntryId(overrides?: CallOverrides): Promise<BigNumber>
+
+	owner(overrides?: CallOverrides): Promise<string>
+
+	ownerOf(tokenId: BigNumberish, overrides?: CallOverrides): Promise<string>
+
+	pauseRewardEscrow(overrides?: Overrides & { from?: string }): Promise<ContractTransaction>
+
+	paused(overrides?: CallOverrides): Promise<boolean>
+
+	pendingOwner(overrides?: CallOverrides): Promise<string>
+
+	proxiableUUID(overrides?: CallOverrides): Promise<string>
+
+	renounceOwnership(overrides?: Overrides & { from?: string }): Promise<ContractTransaction>
+
+	rewardsNotifier(overrides?: CallOverrides): Promise<string>
+
+	'safeTransferFrom(address,address,uint256)'(
+		from: string,
+		to: string,
+		tokenId: BigNumberish,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
+
+	'safeTransferFrom(address,address,uint256,bytes)'(
+		from: string,
+		to: string,
+		tokenId: BigNumberish,
+		data: BytesLike,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
+
+	setApprovalForAll(
+		operator: string,
+		approved: boolean,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
+
+	setEscrowMigrator(
+		_escrowMigrator: string,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
+
+	setStakingRewards(
+		_stakingRewards: string,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
+
+	setTreasuryDAO(
+		_treasuryDAO: string,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
+
+	stakingRewards(overrides?: CallOverrides): Promise<string>
+
+	supportsInterface(interfaceId: BytesLike, overrides?: CallOverrides): Promise<boolean>
+
+	symbol(overrides?: CallOverrides): Promise<string>
+
+	tokenByIndex(index: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
+
+	tokenOfOwnerByIndex(
+		owner: string,
+		index: BigNumberish,
+		overrides?: CallOverrides
+	): Promise<BigNumber>
+
+	tokenURI(tokenId: BigNumberish, overrides?: CallOverrides): Promise<string>
+
+	totalEscrowedAccountBalance(arg0: string, overrides?: CallOverrides): Promise<BigNumber>
+
+	totalEscrowedBalance(overrides?: CallOverrides): Promise<BigNumber>
+
+	totalSupply(overrides?: CallOverrides): Promise<BigNumber>
+
+	totalVestedAccountBalance(arg0: string, overrides?: CallOverrides): Promise<BigNumber>
+
+	transferFrom(
+		from: string,
+		to: string,
+		tokenId: BigNumberish,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
+
+	transferOwnership(
+		newOwner: string,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
+
+	treasuryDAO(overrides?: CallOverrides): Promise<string>
+
+	unpauseRewardEscrow(overrides?: Overrides & { from?: string }): Promise<ContractTransaction>
+
+	unstakedEscrowedBalanceOf(_account: string, overrides?: CallOverrides): Promise<BigNumber>
+
+	upgradeTo(
+		newImplementation: string,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
+
+	upgradeToAndCall(
+		newImplementation: string,
+		data: BytesLike,
+		overrides?: PayableOverrides & { from?: string }
+	): Promise<ContractTransaction>
+
+	vest(
+		_entryIDs: BigNumberish[],
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
+
+	vestingSchedules(
+		arg0: BigNumberish,
+		overrides?: CallOverrides
+	): Promise<
+		[BigNumber, number, BigNumber, number] & {
+			escrowAmount: BigNumber
+			duration: number
+			endTime: BigNumber
+			earlyVestingFee: number
+		}
+	>
+
+	callStatic: {
+		DEFAULT_DURATION(overrides?: CallOverrides): Promise<BigNumber>
+
+		DEFAULT_EARLY_VESTING_FEE(overrides?: CallOverrides): Promise<number>
+
+		MAXIMUM_EARLY_VESTING_FEE(overrides?: CallOverrides): Promise<number>
+
+		MAX_DURATION(overrides?: CallOverrides): Promise<BigNumber>
+
+		MINIMUM_EARLY_VESTING_FEE(overrides?: CallOverrides): Promise<number>
+
+		acceptOwnership(overrides?: CallOverrides): Promise<void>
+
+		appendVestingEntry(
+			_account: string,
+			_quantity: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<void>
+
+		approve(to: string, tokenId: BigNumberish, overrides?: CallOverrides): Promise<void>
+
+		balanceOf(owner: string, overrides?: CallOverrides): Promise<BigNumber>
+
+		bulkTransferFrom(
+			_from: string,
+			_to: string,
+			_entryIDs: BigNumberish[],
+			overrides?: CallOverrides
+		): Promise<void>
+
+		createEscrowEntry(
+			_beneficiary: string,
+			_deposit: BigNumberish,
+			_duration: BigNumberish,
+			_earlyVestingFee: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<void>
+
+		escrowMigrator(overrides?: CallOverrides): Promise<string>
+
+		escrowedBalanceOf(_account: string, overrides?: CallOverrides): Promise<BigNumber>
+
+		getAccountVestingEntryIDs(
+			_account: string,
+			_index: BigNumberish,
+			_pageSize: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<BigNumber[]>
+
+		getApproved(tokenId: BigNumberish, overrides?: CallOverrides): Promise<string>
+
+		getKwentaAddress(overrides?: CallOverrides): Promise<string>
+
+		getVestingEntry(
+			_entryID: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<
+			[BigNumber, BigNumber, BigNumber, number] & {
+				endTime: BigNumber
+				escrowAmount: BigNumber
+				duration: BigNumber
+				earlyVestingFee: number
+			}
+		>
+
+		getVestingEntryClaimable(
+			_entryID: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<[BigNumber, BigNumber] & { quantity: BigNumber; fee: BigNumber }>
+
+		getVestingQuantity(
+			_entryIDs: BigNumberish[],
+			overrides?: CallOverrides
+		): Promise<[BigNumber, BigNumber] & { total: BigNumber; totalFee: BigNumber }>
+
+		getVestingSchedules(
+			_account: string,
+			_index: BigNumberish,
+			_pageSize: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<IRewardEscrowV2.VestingEntryWithIDStructOutput[]>
+
+		importEscrowEntry(
+			_account: string,
+			_entry: IRewardEscrowV2.VestingEntryStruct,
+			overrides?: CallOverrides
+		): Promise<void>
+
+		initialize(_contractOwner: string, overrides?: CallOverrides): Promise<void>
+
+		isApprovedForAll(owner: string, operator: string, overrides?: CallOverrides): Promise<boolean>
+
+		kwenta(overrides?: CallOverrides): Promise<string>
+
+		name(overrides?: CallOverrides): Promise<string>
+
+		nextEntryId(overrides?: CallOverrides): Promise<BigNumber>
+
+		owner(overrides?: CallOverrides): Promise<string>
+
+		ownerOf(tokenId: BigNumberish, overrides?: CallOverrides): Promise<string>
+
+		pauseRewardEscrow(overrides?: CallOverrides): Promise<void>
+
+		paused(overrides?: CallOverrides): Promise<boolean>
+
+		pendingOwner(overrides?: CallOverrides): Promise<string>
+
+		proxiableUUID(overrides?: CallOverrides): Promise<string>
+
+		renounceOwnership(overrides?: CallOverrides): Promise<void>
+
+		rewardsNotifier(overrides?: CallOverrides): Promise<string>
+
+		'safeTransferFrom(address,address,uint256)'(
+			from: string,
+			to: string,
+			tokenId: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<void>
+
+		'safeTransferFrom(address,address,uint256,bytes)'(
+			from: string,
+			to: string,
+			tokenId: BigNumberish,
+			data: BytesLike,
+			overrides?: CallOverrides
+		): Promise<void>
+
+		setApprovalForAll(operator: string, approved: boolean, overrides?: CallOverrides): Promise<void>
+
+		setEscrowMigrator(_escrowMigrator: string, overrides?: CallOverrides): Promise<void>
+
+		setStakingRewards(_stakingRewards: string, overrides?: CallOverrides): Promise<void>
+
+		setTreasuryDAO(_treasuryDAO: string, overrides?: CallOverrides): Promise<void>
+
+		stakingRewards(overrides?: CallOverrides): Promise<string>
+
+		supportsInterface(interfaceId: BytesLike, overrides?: CallOverrides): Promise<boolean>
+
+		symbol(overrides?: CallOverrides): Promise<string>
+
+		tokenByIndex(index: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
+
+		tokenOfOwnerByIndex(
+			owner: string,
+			index: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<BigNumber>
+
+		tokenURI(tokenId: BigNumberish, overrides?: CallOverrides): Promise<string>
+
+		totalEscrowedAccountBalance(arg0: string, overrides?: CallOverrides): Promise<BigNumber>
+
+		totalEscrowedBalance(overrides?: CallOverrides): Promise<BigNumber>
+
+		totalSupply(overrides?: CallOverrides): Promise<BigNumber>
+
+		totalVestedAccountBalance(arg0: string, overrides?: CallOverrides): Promise<BigNumber>
+
+		transferFrom(
+			from: string,
+			to: string,
+			tokenId: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<void>
+
+		transferOwnership(newOwner: string, overrides?: CallOverrides): Promise<void>
+
+		treasuryDAO(overrides?: CallOverrides): Promise<string>
+
+		unpauseRewardEscrow(overrides?: CallOverrides): Promise<void>
+
+		unstakedEscrowedBalanceOf(_account: string, overrides?: CallOverrides): Promise<BigNumber>
+
+		upgradeTo(newImplementation: string, overrides?: CallOverrides): Promise<void>
+
+		upgradeToAndCall(
+			newImplementation: string,
+			data: BytesLike,
+			overrides?: CallOverrides
+		): Promise<void>
+
+		vest(_entryIDs: BigNumberish[], overrides?: CallOverrides): Promise<void>
+
+		vestingSchedules(
+			arg0: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<
+			[BigNumber, number, BigNumber, number] & {
+				escrowAmount: BigNumber
+				duration: number
+				endTime: BigNumber
+				earlyVestingFee: number
+			}
+		>
+	}
+
+	filters: {
+		'AdminChanged(address,address)'(previousAdmin?: null, newAdmin?: null): AdminChangedEventFilter
+		AdminChanged(previousAdmin?: null, newAdmin?: null): AdminChangedEventFilter
+
+		'Approval(address,address,uint256)'(
+			owner?: string | null,
+			approved?: string | null,
+			tokenId?: BigNumberish | null
+		): ApprovalEventFilter
+		Approval(
+			owner?: string | null,
+			approved?: string | null,
+			tokenId?: BigNumberish | null
+		): ApprovalEventFilter
+
+		'ApprovalForAll(address,address,bool)'(
+			owner?: string | null,
+			operator?: string | null,
+			approved?: null
+		): ApprovalForAllEventFilter
+		ApprovalForAll(
+			owner?: string | null,
+			operator?: string | null,
+			approved?: null
+		): ApprovalForAllEventFilter
+
+		'BeaconUpgraded(address)'(beacon?: string | null): BeaconUpgradedEventFilter
+		BeaconUpgraded(beacon?: string | null): BeaconUpgradedEventFilter
+
+		'EarlyVestFeeSent(uint256,uint256)'(
+			amountToTreasury?: null,
+			amountToNotifier?: null
+		): EarlyVestFeeSentEventFilter
+		EarlyVestFeeSent(amountToTreasury?: null, amountToNotifier?: null): EarlyVestFeeSentEventFilter
+
+		'EscrowMigratorSet(address)'(escrowMigrator?: null): EscrowMigratorSetEventFilter
+		EscrowMigratorSet(escrowMigrator?: null): EscrowMigratorSetEventFilter
+
+		'Initialized(uint8)'(version?: null): InitializedEventFilter
+		Initialized(version?: null): InitializedEventFilter
+
+		'OwnershipTransferStarted(address,address)'(
+			previousOwner?: string | null,
+			newOwner?: string | null
+		): OwnershipTransferStartedEventFilter
+		OwnershipTransferStarted(
+			previousOwner?: string | null,
+			newOwner?: string | null
+		): OwnershipTransferStartedEventFilter
+
+		'OwnershipTransferred(address,address)'(
+			previousOwner?: string | null,
+			newOwner?: string | null
+		): OwnershipTransferredEventFilter
+		OwnershipTransferred(
+			previousOwner?: string | null,
+			newOwner?: string | null
+		): OwnershipTransferredEventFilter
+
+		'Paused(address)'(account?: null): PausedEventFilter
+		Paused(account?: null): PausedEventFilter
+
+		'StakingRewardsSet(address)'(stakingRewards?: null): StakingRewardsSetEventFilter
+		StakingRewardsSet(stakingRewards?: null): StakingRewardsSetEventFilter
+
+		'Transfer(address,address,uint256)'(
+			from?: string | null,
+			to?: string | null,
+			tokenId?: BigNumberish | null
+		): TransferEventFilter
+		Transfer(
+			from?: string | null,
+			to?: string | null,
+			tokenId?: BigNumberish | null
+		): TransferEventFilter
+
+		'TreasuryDAOSet(address)'(treasuryDAO?: null): TreasuryDAOSetEventFilter
+		TreasuryDAOSet(treasuryDAO?: null): TreasuryDAOSetEventFilter
+
+		'Unpaused(address)'(account?: null): UnpausedEventFilter
+		Unpaused(account?: null): UnpausedEventFilter
+
+		'Upgraded(address)'(implementation?: string | null): UpgradedEventFilter
+		Upgraded(implementation?: string | null): UpgradedEventFilter
+
+		'Vested(address,uint256)'(beneficiary?: string | null, value?: null): VestedEventFilter
+		Vested(beneficiary?: string | null, value?: null): VestedEventFilter
+
+		'VestingEntryCreated(address,uint256,uint256,uint256,uint8)'(
+			beneficiary?: string | null,
+			value?: null,
+			duration?: null,
+			entryID?: null,
+			earlyVestingFee?: null
+		): VestingEntryCreatedEventFilter
+		VestingEntryCreated(
+			beneficiary?: string | null,
+			value?: null,
+			duration?: null,
+			entryID?: null,
+			earlyVestingFee?: null
+		): VestingEntryCreatedEventFilter
+	}
+
+	estimateGas: {
+		DEFAULT_DURATION(overrides?: CallOverrides): Promise<BigNumber>
+
+		DEFAULT_EARLY_VESTING_FEE(overrides?: CallOverrides): Promise<BigNumber>
+
+		MAXIMUM_EARLY_VESTING_FEE(overrides?: CallOverrides): Promise<BigNumber>
+
+		MAX_DURATION(overrides?: CallOverrides): Promise<BigNumber>
+
+		MINIMUM_EARLY_VESTING_FEE(overrides?: CallOverrides): Promise<BigNumber>
+
+		acceptOwnership(overrides?: Overrides & { from?: string }): Promise<BigNumber>
+
+		appendVestingEntry(
+			_account: string,
+			_quantity: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<BigNumber>
+
+		approve(
+			to: string,
+			tokenId: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<BigNumber>
+
+		balanceOf(owner: string, overrides?: CallOverrides): Promise<BigNumber>
+
+		bulkTransferFrom(
+			_from: string,
+			_to: string,
+			_entryIDs: BigNumberish[],
+			overrides?: Overrides & { from?: string }
+		): Promise<BigNumber>
+
+		createEscrowEntry(
+			_beneficiary: string,
+			_deposit: BigNumberish,
+			_duration: BigNumberish,
+			_earlyVestingFee: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<BigNumber>
+
+		escrowMigrator(overrides?: CallOverrides): Promise<BigNumber>
+
+		escrowedBalanceOf(_account: string, overrides?: CallOverrides): Promise<BigNumber>
+
+		getAccountVestingEntryIDs(
+			_account: string,
+			_index: BigNumberish,
+			_pageSize: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<BigNumber>
+
+		getApproved(tokenId: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
+
+		getKwentaAddress(overrides?: CallOverrides): Promise<BigNumber>
+
+		getVestingEntry(_entryID: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
+
+		getVestingEntryClaimable(_entryID: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
+
+		getVestingQuantity(_entryIDs: BigNumberish[], overrides?: CallOverrides): Promise<BigNumber>
+
+		getVestingSchedules(
+			_account: string,
+			_index: BigNumberish,
+			_pageSize: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<BigNumber>
+
+		importEscrowEntry(
+			_account: string,
+			_entry: IRewardEscrowV2.VestingEntryStruct,
+			overrides?: Overrides & { from?: string }
+		): Promise<BigNumber>
+
+		initialize(
+			_contractOwner: string,
+			overrides?: Overrides & { from?: string }
+		): Promise<BigNumber>
+
+		isApprovedForAll(owner: string, operator: string, overrides?: CallOverrides): Promise<BigNumber>
+
+		kwenta(overrides?: CallOverrides): Promise<BigNumber>
+
+		name(overrides?: CallOverrides): Promise<BigNumber>
+
+		nextEntryId(overrides?: CallOverrides): Promise<BigNumber>
+
+		owner(overrides?: CallOverrides): Promise<BigNumber>
+
+		ownerOf(tokenId: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
+
+		pauseRewardEscrow(overrides?: Overrides & { from?: string }): Promise<BigNumber>
+
+		paused(overrides?: CallOverrides): Promise<BigNumber>
+
+		pendingOwner(overrides?: CallOverrides): Promise<BigNumber>
+
+		proxiableUUID(overrides?: CallOverrides): Promise<BigNumber>
+
+		renounceOwnership(overrides?: Overrides & { from?: string }): Promise<BigNumber>
+
+		rewardsNotifier(overrides?: CallOverrides): Promise<BigNumber>
+
+		'safeTransferFrom(address,address,uint256)'(
+			from: string,
+			to: string,
+			tokenId: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<BigNumber>
+
+		'safeTransferFrom(address,address,uint256,bytes)'(
+			from: string,
+			to: string,
+			tokenId: BigNumberish,
+			data: BytesLike,
+			overrides?: Overrides & { from?: string }
+		): Promise<BigNumber>
+
+		setApprovalForAll(
+			operator: string,
+			approved: boolean,
+			overrides?: Overrides & { from?: string }
+		): Promise<BigNumber>
+
+		setEscrowMigrator(
+			_escrowMigrator: string,
+			overrides?: Overrides & { from?: string }
+		): Promise<BigNumber>
+
+		setStakingRewards(
+			_stakingRewards: string,
+			overrides?: Overrides & { from?: string }
+		): Promise<BigNumber>
+
+		setTreasuryDAO(
+			_treasuryDAO: string,
+			overrides?: Overrides & { from?: string }
+		): Promise<BigNumber>
+
+		stakingRewards(overrides?: CallOverrides): Promise<BigNumber>
+
+		supportsInterface(interfaceId: BytesLike, overrides?: CallOverrides): Promise<BigNumber>
+
+		symbol(overrides?: CallOverrides): Promise<BigNumber>
+
+		tokenByIndex(index: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
+
+		tokenOfOwnerByIndex(
+			owner: string,
+			index: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<BigNumber>
+
+		tokenURI(tokenId: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
+
+		totalEscrowedAccountBalance(arg0: string, overrides?: CallOverrides): Promise<BigNumber>
+
+		totalEscrowedBalance(overrides?: CallOverrides): Promise<BigNumber>
+
+		totalSupply(overrides?: CallOverrides): Promise<BigNumber>
+
+		totalVestedAccountBalance(arg0: string, overrides?: CallOverrides): Promise<BigNumber>
+
+		transferFrom(
+			from: string,
+			to: string,
+			tokenId: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<BigNumber>
+
+		transferOwnership(
+			newOwner: string,
+			overrides?: Overrides & { from?: string }
+		): Promise<BigNumber>
+
+		treasuryDAO(overrides?: CallOverrides): Promise<BigNumber>
+
+		unpauseRewardEscrow(overrides?: Overrides & { from?: string }): Promise<BigNumber>
+
+		unstakedEscrowedBalanceOf(_account: string, overrides?: CallOverrides): Promise<BigNumber>
+
+		upgradeTo(
+			newImplementation: string,
+			overrides?: Overrides & { from?: string }
+		): Promise<BigNumber>
+
+		upgradeToAndCall(
+			newImplementation: string,
+			data: BytesLike,
+			overrides?: PayableOverrides & { from?: string }
+		): Promise<BigNumber>
+
+		vest(_entryIDs: BigNumberish[], overrides?: Overrides & { from?: string }): Promise<BigNumber>
+
+		vestingSchedules(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
+	}
+
+	populateTransaction: {
+		DEFAULT_DURATION(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		DEFAULT_EARLY_VESTING_FEE(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		MAXIMUM_EARLY_VESTING_FEE(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		MAX_DURATION(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		MINIMUM_EARLY_VESTING_FEE(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		acceptOwnership(overrides?: Overrides & { from?: string }): Promise<PopulatedTransaction>
+
+		appendVestingEntry(
+			_account: string,
+			_quantity: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		approve(
+			to: string,
+			tokenId: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		balanceOf(owner: string, overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		bulkTransferFrom(
+			_from: string,
+			_to: string,
+			_entryIDs: BigNumberish[],
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		createEscrowEntry(
+			_beneficiary: string,
+			_deposit: BigNumberish,
+			_duration: BigNumberish,
+			_earlyVestingFee: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		escrowMigrator(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		escrowedBalanceOf(_account: string, overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		getAccountVestingEntryIDs(
+			_account: string,
+			_index: BigNumberish,
+			_pageSize: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<PopulatedTransaction>
+
+		getApproved(tokenId: BigNumberish, overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		getKwentaAddress(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		getVestingEntry(
+			_entryID: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<PopulatedTransaction>
+
+		getVestingEntryClaimable(
+			_entryID: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<PopulatedTransaction>
+
+		getVestingQuantity(
+			_entryIDs: BigNumberish[],
+			overrides?: CallOverrides
+		): Promise<PopulatedTransaction>
+
+		getVestingSchedules(
+			_account: string,
+			_index: BigNumberish,
+			_pageSize: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<PopulatedTransaction>
+
+		importEscrowEntry(
+			_account: string,
+			_entry: IRewardEscrowV2.VestingEntryStruct,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		initialize(
+			_contractOwner: string,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		isApprovedForAll(
+			owner: string,
+			operator: string,
+			overrides?: CallOverrides
+		): Promise<PopulatedTransaction>
+
+		kwenta(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		name(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		nextEntryId(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		owner(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		ownerOf(tokenId: BigNumberish, overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		pauseRewardEscrow(overrides?: Overrides & { from?: string }): Promise<PopulatedTransaction>
+
+		paused(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		pendingOwner(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		proxiableUUID(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		renounceOwnership(overrides?: Overrides & { from?: string }): Promise<PopulatedTransaction>
+
+		rewardsNotifier(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		'safeTransferFrom(address,address,uint256)'(
+			from: string,
+			to: string,
+			tokenId: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		'safeTransferFrom(address,address,uint256,bytes)'(
+			from: string,
+			to: string,
+			tokenId: BigNumberish,
+			data: BytesLike,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		setApprovalForAll(
+			operator: string,
+			approved: boolean,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		setEscrowMigrator(
+			_escrowMigrator: string,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		setStakingRewards(
+			_stakingRewards: string,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		setTreasuryDAO(
+			_treasuryDAO: string,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		stakingRewards(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		supportsInterface(
+			interfaceId: BytesLike,
+			overrides?: CallOverrides
+		): Promise<PopulatedTransaction>
+
+		symbol(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		tokenByIndex(index: BigNumberish, overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		tokenOfOwnerByIndex(
+			owner: string,
+			index: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<PopulatedTransaction>
+
+		tokenURI(tokenId: BigNumberish, overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		totalEscrowedAccountBalance(
+			arg0: string,
+			overrides?: CallOverrides
+		): Promise<PopulatedTransaction>
+
+		totalEscrowedBalance(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		totalSupply(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		totalVestedAccountBalance(
+			arg0: string,
+			overrides?: CallOverrides
+		): Promise<PopulatedTransaction>
+
+		transferFrom(
+			from: string,
+			to: string,
+			tokenId: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		transferOwnership(
+			newOwner: string,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		treasuryDAO(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		unpauseRewardEscrow(overrides?: Overrides & { from?: string }): Promise<PopulatedTransaction>
+
+		unstakedEscrowedBalanceOf(
+			_account: string,
+			overrides?: CallOverrides
+		): Promise<PopulatedTransaction>
+
+		upgradeTo(
+			newImplementation: string,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		upgradeToAndCall(
+			newImplementation: string,
+			data: BytesLike,
+			overrides?: PayableOverrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		vest(
+			_entryIDs: BigNumberish[],
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		vestingSchedules(arg0: BigNumberish, overrides?: CallOverrides): Promise<PopulatedTransaction>
+	}
 }

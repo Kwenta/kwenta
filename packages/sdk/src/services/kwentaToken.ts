@@ -2,6 +2,7 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { wei } from '@synthetixio/wei'
 import { ethers } from 'ethers'
 import moment from 'moment'
+import axios from 'axios'
 
 import KwentaSDK from '..'
 import * as sdkErrors from '../common/errors'
@@ -27,6 +28,7 @@ import { getFuturesAggregateStats, getFuturesTrades } from '../utils/subgraph'
 import { calculateFeesForAccount, calculateTotalFees, getStakingGqlEndpoint } from '../utils'
 import { ADDRESSES } from '../constants'
 import { queryOperatorsByOwner } from '../queries/staking'
+import { FuturesAggregateStatResult } from '../utils/subgraph'
 
 export default class KwentaTokenService {
 	private sdk: KwentaSDK
@@ -805,24 +807,28 @@ export default class KwentaTokenService {
 	}
 
 	public async getFuturesFee(start: number, end: number) {
-		if (!this.sdk.context.isL2) {
-			throw new Error(sdkErrors.REQUIRES_L2)
-		}
+		// if (!this.sdk.context.isL2) {
+		// 	throw new Error(sdkErrors.REQUIRES_L2)
+		// }
 
-		const response = await getFuturesAggregateStats(
-			this.sdk.futures.futuresGqlEndpoint,
-			{
-				first: DEFAULT_NUMBER_OF_FUTURES_FEE,
-				where: {
-					asset: AGGREGATE_ASSET_KEY,
-					period: SECONDS_PER_DAY,
-					timestamp_gte: start,
-					timestamp_lt: end,
-				},
-				orderDirection: 'desc',
-				orderBy: 'timestamp',
-			},
-			{ feesKwenta: true }
+		// const response = await getFuturesAggregateStats(
+		// 	this.sdk.futures.futuresGqlEndpoint,
+		// 	{
+		// 		first: DEFAULT_NUMBER_OF_FUTURES_FEE,
+		// 		where: {
+		// 			asset: AGGREGATE_ASSET_KEY,
+		// 			period: SECONDS_PER_DAY,
+		// 			timestamp_gte: start,
+		// 			timestamp_lt: end,
+		// 		},
+		// 		orderDirection: 'desc',
+		// 		orderBy: 'timestamp',
+		// 	},
+		// 	{ feesKwenta: true }
+		// )
+
+		const { data: response } = await axios.get<Pick<FuturesAggregateStatResult, 'feesKwenta'>[]>(
+			'http://localhost/kwenta-token/futures-fee'
 		)
 
 		return response ? calculateTotalFees(response) : wei(0)

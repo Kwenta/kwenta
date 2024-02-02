@@ -2,3697 +2,2843 @@
 /* tslint:disable */
 /* eslint-disable */
 import type {
-  BaseContract,
-  BigNumber,
-  BigNumberish,
-  BytesLike,
-  CallOverrides,
-  ContractTransaction,
-  Overrides,
-  PopulatedTransaction,
-  Signer,
-  utils,
-} from "ethers";
-import type {
-  FunctionFragment,
-  Result,
-  EventFragment,
-} from "@ethersproject/abi";
-import type { Listener, Provider } from "@ethersproject/providers";
-import type {
-  TypedEventFilter,
-  TypedEvent,
-  TypedListener,
-  OnEvent,
-} from "./common";
+	BaseContract,
+	BigNumber,
+	BigNumberish,
+	BytesLike,
+	CallOverrides,
+	ContractTransaction,
+	Overrides,
+	PopulatedTransaction,
+	Signer,
+	utils,
+} from 'ethers'
+import type { FunctionFragment, Result, EventFragment } from '@ethersproject/abi'
+import type { Listener, Provider } from '@ethersproject/providers'
+import type { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from './common'
 
 export interface SystemSettingsInterface extends utils.Interface {
-  functions: {
-    "CONTRACT_NAME()": FunctionFragment;
-    "acceptOwnership()": FunctionFragment;
-    "aggregatorWarningFlags()": FunctionFragment;
-    "atomicEquivalentForDexPricing(bytes32)": FunctionFragment;
-    "atomicExchangeFeeRate(bytes32)": FunctionFragment;
-    "atomicMaxVolumePerBlock()": FunctionFragment;
-    "atomicTwapWindow()": FunctionFragment;
-    "atomicVolatilityConsiderationWindow(bytes32)": FunctionFragment;
-    "atomicVolatilityUpdateThreshold(bytes32)": FunctionFragment;
-    "collapseFeeRate(address)": FunctionFragment;
-    "crossChainSynthTransferEnabled(bytes32)": FunctionFragment;
-    "crossDomainMessageGasLimit(uint8)": FunctionFragment;
-    "debtSnapshotStaleTime()": FunctionFragment;
-    "etherWrapperBurnFeeRate()": FunctionFragment;
-    "etherWrapperMaxETH()": FunctionFragment;
-    "etherWrapperMintFeeRate()": FunctionFragment;
-    "exchangeDynamicFeeRounds()": FunctionFragment;
-    "exchangeDynamicFeeThreshold()": FunctionFragment;
-    "exchangeDynamicFeeWeightDecay()": FunctionFragment;
-    "exchangeFeeRate(bytes32)": FunctionFragment;
-    "exchangeMaxDynamicFee()": FunctionFragment;
-    "feePeriodDuration()": FunctionFragment;
-    "flagReward()": FunctionFragment;
-    "interactionDelay(address)": FunctionFragment;
-    "isResolverCached()": FunctionFragment;
-    "issuanceRatio()": FunctionFragment;
-    "liquidateReward()": FunctionFragment;
-    "liquidationDelay()": FunctionFragment;
-    "liquidationEscrowDuration()": FunctionFragment;
-    "liquidationPenalty()": FunctionFragment;
-    "liquidationRatio()": FunctionFragment;
-    "minimumStakeTime()": FunctionFragment;
-    "nominateNewOwner(address)": FunctionFragment;
-    "nominatedOwner()": FunctionFragment;
-    "owner()": FunctionFragment;
-    "priceDeviationThresholdFactor()": FunctionFragment;
-    "pureChainlinkPriceForAtomicSwapsEnabled(bytes32)": FunctionFragment;
-    "rateStalePeriod()": FunctionFragment;
-    "rebuildCache()": FunctionFragment;
-    "resolver()": FunctionFragment;
-    "resolverAddressesRequired()": FunctionFragment;
-    "selfLiquidationPenalty()": FunctionFragment;
-    "setAggregatorWarningFlags(address)": FunctionFragment;
-    "setAtomicEquivalentForDexPricing(bytes32,address)": FunctionFragment;
-    "setAtomicExchangeFeeRate(bytes32,uint256)": FunctionFragment;
-    "setAtomicMaxVolumePerBlock(uint256)": FunctionFragment;
-    "setAtomicTwapWindow(uint256)": FunctionFragment;
-    "setAtomicVolatilityConsiderationWindow(bytes32,uint256)": FunctionFragment;
-    "setAtomicVolatilityUpdateThreshold(bytes32,uint256)": FunctionFragment;
-    "setCollapseFeeRate(address,uint256)": FunctionFragment;
-    "setCrossChainSynthTransferEnabled(bytes32,uint256)": FunctionFragment;
-    "setCrossDomainMessageGasLimit(uint8,uint256)": FunctionFragment;
-    "setDebtSnapshotStaleTime(uint256)": FunctionFragment;
-    "setEtherWrapperBurnFeeRate(uint256)": FunctionFragment;
-    "setEtherWrapperMaxETH(uint256)": FunctionFragment;
-    "setEtherWrapperMintFeeRate(uint256)": FunctionFragment;
-    "setExchangeDynamicFeeRounds(uint256)": FunctionFragment;
-    "setExchangeDynamicFeeThreshold(uint256)": FunctionFragment;
-    "setExchangeDynamicFeeWeightDecay(uint256)": FunctionFragment;
-    "setExchangeFeeRateForSynths(bytes32[],uint256[])": FunctionFragment;
-    "setExchangeMaxDynamicFee(uint256)": FunctionFragment;
-    "setFeePeriodDuration(uint256)": FunctionFragment;
-    "setFlagReward(uint256)": FunctionFragment;
-    "setInteractionDelay(address,uint256)": FunctionFragment;
-    "setIssuanceRatio(uint256)": FunctionFragment;
-    "setLiquidateReward(uint256)": FunctionFragment;
-    "setLiquidationDelay(uint256)": FunctionFragment;
-    "setLiquidationEscrowDuration(uint256)": FunctionFragment;
-    "setLiquidationPenalty(uint256)": FunctionFragment;
-    "setLiquidationRatio(uint256)": FunctionFragment;
-    "setMinimumStakeTime(uint256)": FunctionFragment;
-    "setPriceDeviationThresholdFactor(uint256)": FunctionFragment;
-    "setPureChainlinkPriceForAtomicSwapsEnabled(bytes32,bool)": FunctionFragment;
-    "setRateStalePeriod(uint256)": FunctionFragment;
-    "setSelfLiquidationPenalty(uint256)": FunctionFragment;
-    "setSnxLiquidationPenalty(uint256)": FunctionFragment;
-    "setTargetThreshold(uint256)": FunctionFragment;
-    "setTradingRewardsEnabled(bool)": FunctionFragment;
-    "setWaitingPeriodSecs(uint256)": FunctionFragment;
-    "setWrapperBurnFeeRate(address,int256)": FunctionFragment;
-    "setWrapperMaxTokenAmount(address,uint256)": FunctionFragment;
-    "setWrapperMintFeeRate(address,int256)": FunctionFragment;
-    "snxLiquidationPenalty()": FunctionFragment;
-    "targetThreshold()": FunctionFragment;
-    "tradingRewardsEnabled()": FunctionFragment;
-    "waitingPeriodSecs()": FunctionFragment;
-    "wrapperBurnFeeRate(address)": FunctionFragment;
-    "wrapperMaxTokenAmount(address)": FunctionFragment;
-    "wrapperMintFeeRate(address)": FunctionFragment;
-  };
+	functions: {
+		'CONTRACT_NAME()': FunctionFragment
+		'acceptOwnership()': FunctionFragment
+		'aggregatorWarningFlags()': FunctionFragment
+		'atomicEquivalentForDexPricing(bytes32)': FunctionFragment
+		'atomicExchangeFeeRate(bytes32)': FunctionFragment
+		'atomicMaxVolumePerBlock()': FunctionFragment
+		'atomicTwapWindow()': FunctionFragment
+		'atomicVolatilityConsiderationWindow(bytes32)': FunctionFragment
+		'atomicVolatilityUpdateThreshold(bytes32)': FunctionFragment
+		'collapseFeeRate(address)': FunctionFragment
+		'crossChainSynthTransferEnabled(bytes32)': FunctionFragment
+		'crossDomainMessageGasLimit(uint8)': FunctionFragment
+		'debtSnapshotStaleTime()': FunctionFragment
+		'etherWrapperBurnFeeRate()': FunctionFragment
+		'etherWrapperMaxETH()': FunctionFragment
+		'etherWrapperMintFeeRate()': FunctionFragment
+		'exchangeDynamicFeeRounds()': FunctionFragment
+		'exchangeDynamicFeeThreshold()': FunctionFragment
+		'exchangeDynamicFeeWeightDecay()': FunctionFragment
+		'exchangeFeeRate(bytes32)': FunctionFragment
+		'exchangeMaxDynamicFee()': FunctionFragment
+		'feePeriodDuration()': FunctionFragment
+		'flagReward()': FunctionFragment
+		'interactionDelay(address)': FunctionFragment
+		'isResolverCached()': FunctionFragment
+		'issuanceRatio()': FunctionFragment
+		'liquidateReward()': FunctionFragment
+		'liquidationDelay()': FunctionFragment
+		'liquidationEscrowDuration()': FunctionFragment
+		'liquidationPenalty()': FunctionFragment
+		'liquidationRatio()': FunctionFragment
+		'minimumStakeTime()': FunctionFragment
+		'nominateNewOwner(address)': FunctionFragment
+		'nominatedOwner()': FunctionFragment
+		'owner()': FunctionFragment
+		'priceDeviationThresholdFactor()': FunctionFragment
+		'pureChainlinkPriceForAtomicSwapsEnabled(bytes32)': FunctionFragment
+		'rateStalePeriod()': FunctionFragment
+		'rebuildCache()': FunctionFragment
+		'resolver()': FunctionFragment
+		'resolverAddressesRequired()': FunctionFragment
+		'selfLiquidationPenalty()': FunctionFragment
+		'setAggregatorWarningFlags(address)': FunctionFragment
+		'setAtomicEquivalentForDexPricing(bytes32,address)': FunctionFragment
+		'setAtomicExchangeFeeRate(bytes32,uint256)': FunctionFragment
+		'setAtomicMaxVolumePerBlock(uint256)': FunctionFragment
+		'setAtomicTwapWindow(uint256)': FunctionFragment
+		'setAtomicVolatilityConsiderationWindow(bytes32,uint256)': FunctionFragment
+		'setAtomicVolatilityUpdateThreshold(bytes32,uint256)': FunctionFragment
+		'setCollapseFeeRate(address,uint256)': FunctionFragment
+		'setCrossChainSynthTransferEnabled(bytes32,uint256)': FunctionFragment
+		'setCrossDomainMessageGasLimit(uint8,uint256)': FunctionFragment
+		'setDebtSnapshotStaleTime(uint256)': FunctionFragment
+		'setEtherWrapperBurnFeeRate(uint256)': FunctionFragment
+		'setEtherWrapperMaxETH(uint256)': FunctionFragment
+		'setEtherWrapperMintFeeRate(uint256)': FunctionFragment
+		'setExchangeDynamicFeeRounds(uint256)': FunctionFragment
+		'setExchangeDynamicFeeThreshold(uint256)': FunctionFragment
+		'setExchangeDynamicFeeWeightDecay(uint256)': FunctionFragment
+		'setExchangeFeeRateForSynths(bytes32[],uint256[])': FunctionFragment
+		'setExchangeMaxDynamicFee(uint256)': FunctionFragment
+		'setFeePeriodDuration(uint256)': FunctionFragment
+		'setFlagReward(uint256)': FunctionFragment
+		'setInteractionDelay(address,uint256)': FunctionFragment
+		'setIssuanceRatio(uint256)': FunctionFragment
+		'setLiquidateReward(uint256)': FunctionFragment
+		'setLiquidationDelay(uint256)': FunctionFragment
+		'setLiquidationEscrowDuration(uint256)': FunctionFragment
+		'setLiquidationPenalty(uint256)': FunctionFragment
+		'setLiquidationRatio(uint256)': FunctionFragment
+		'setMinimumStakeTime(uint256)': FunctionFragment
+		'setPriceDeviationThresholdFactor(uint256)': FunctionFragment
+		'setPureChainlinkPriceForAtomicSwapsEnabled(bytes32,bool)': FunctionFragment
+		'setRateStalePeriod(uint256)': FunctionFragment
+		'setSelfLiquidationPenalty(uint256)': FunctionFragment
+		'setSnxLiquidationPenalty(uint256)': FunctionFragment
+		'setTargetThreshold(uint256)': FunctionFragment
+		'setTradingRewardsEnabled(bool)': FunctionFragment
+		'setWaitingPeriodSecs(uint256)': FunctionFragment
+		'setWrapperBurnFeeRate(address,int256)': FunctionFragment
+		'setWrapperMaxTokenAmount(address,uint256)': FunctionFragment
+		'setWrapperMintFeeRate(address,int256)': FunctionFragment
+		'snxLiquidationPenalty()': FunctionFragment
+		'targetThreshold()': FunctionFragment
+		'tradingRewardsEnabled()': FunctionFragment
+		'waitingPeriodSecs()': FunctionFragment
+		'wrapperBurnFeeRate(address)': FunctionFragment
+		'wrapperMaxTokenAmount(address)': FunctionFragment
+		'wrapperMintFeeRate(address)': FunctionFragment
+	}
 
-  getFunction(
-    nameOrSignatureOrTopic:
-      | "CONTRACT_NAME"
-      | "acceptOwnership"
-      | "aggregatorWarningFlags"
-      | "atomicEquivalentForDexPricing"
-      | "atomicExchangeFeeRate"
-      | "atomicMaxVolumePerBlock"
-      | "atomicTwapWindow"
-      | "atomicVolatilityConsiderationWindow"
-      | "atomicVolatilityUpdateThreshold"
-      | "collapseFeeRate"
-      | "crossChainSynthTransferEnabled"
-      | "crossDomainMessageGasLimit"
-      | "debtSnapshotStaleTime"
-      | "etherWrapperBurnFeeRate"
-      | "etherWrapperMaxETH"
-      | "etherWrapperMintFeeRate"
-      | "exchangeDynamicFeeRounds"
-      | "exchangeDynamicFeeThreshold"
-      | "exchangeDynamicFeeWeightDecay"
-      | "exchangeFeeRate"
-      | "exchangeMaxDynamicFee"
-      | "feePeriodDuration"
-      | "flagReward"
-      | "interactionDelay"
-      | "isResolverCached"
-      | "issuanceRatio"
-      | "liquidateReward"
-      | "liquidationDelay"
-      | "liquidationEscrowDuration"
-      | "liquidationPenalty"
-      | "liquidationRatio"
-      | "minimumStakeTime"
-      | "nominateNewOwner"
-      | "nominatedOwner"
-      | "owner"
-      | "priceDeviationThresholdFactor"
-      | "pureChainlinkPriceForAtomicSwapsEnabled"
-      | "rateStalePeriod"
-      | "rebuildCache"
-      | "resolver"
-      | "resolverAddressesRequired"
-      | "selfLiquidationPenalty"
-      | "setAggregatorWarningFlags"
-      | "setAtomicEquivalentForDexPricing"
-      | "setAtomicExchangeFeeRate"
-      | "setAtomicMaxVolumePerBlock"
-      | "setAtomicTwapWindow"
-      | "setAtomicVolatilityConsiderationWindow"
-      | "setAtomicVolatilityUpdateThreshold"
-      | "setCollapseFeeRate"
-      | "setCrossChainSynthTransferEnabled"
-      | "setCrossDomainMessageGasLimit"
-      | "setDebtSnapshotStaleTime"
-      | "setEtherWrapperBurnFeeRate"
-      | "setEtherWrapperMaxETH"
-      | "setEtherWrapperMintFeeRate"
-      | "setExchangeDynamicFeeRounds"
-      | "setExchangeDynamicFeeThreshold"
-      | "setExchangeDynamicFeeWeightDecay"
-      | "setExchangeFeeRateForSynths"
-      | "setExchangeMaxDynamicFee"
-      | "setFeePeriodDuration"
-      | "setFlagReward"
-      | "setInteractionDelay"
-      | "setIssuanceRatio"
-      | "setLiquidateReward"
-      | "setLiquidationDelay"
-      | "setLiquidationEscrowDuration"
-      | "setLiquidationPenalty"
-      | "setLiquidationRatio"
-      | "setMinimumStakeTime"
-      | "setPriceDeviationThresholdFactor"
-      | "setPureChainlinkPriceForAtomicSwapsEnabled"
-      | "setRateStalePeriod"
-      | "setSelfLiquidationPenalty"
-      | "setSnxLiquidationPenalty"
-      | "setTargetThreshold"
-      | "setTradingRewardsEnabled"
-      | "setWaitingPeriodSecs"
-      | "setWrapperBurnFeeRate"
-      | "setWrapperMaxTokenAmount"
-      | "setWrapperMintFeeRate"
-      | "snxLiquidationPenalty"
-      | "targetThreshold"
-      | "tradingRewardsEnabled"
-      | "waitingPeriodSecs"
-      | "wrapperBurnFeeRate"
-      | "wrapperMaxTokenAmount"
-      | "wrapperMintFeeRate"
-  ): FunctionFragment;
+	getFunction(
+		nameOrSignatureOrTopic:
+			| 'CONTRACT_NAME'
+			| 'acceptOwnership'
+			| 'aggregatorWarningFlags'
+			| 'atomicEquivalentForDexPricing'
+			| 'atomicExchangeFeeRate'
+			| 'atomicMaxVolumePerBlock'
+			| 'atomicTwapWindow'
+			| 'atomicVolatilityConsiderationWindow'
+			| 'atomicVolatilityUpdateThreshold'
+			| 'collapseFeeRate'
+			| 'crossChainSynthTransferEnabled'
+			| 'crossDomainMessageGasLimit'
+			| 'debtSnapshotStaleTime'
+			| 'etherWrapperBurnFeeRate'
+			| 'etherWrapperMaxETH'
+			| 'etherWrapperMintFeeRate'
+			| 'exchangeDynamicFeeRounds'
+			| 'exchangeDynamicFeeThreshold'
+			| 'exchangeDynamicFeeWeightDecay'
+			| 'exchangeFeeRate'
+			| 'exchangeMaxDynamicFee'
+			| 'feePeriodDuration'
+			| 'flagReward'
+			| 'interactionDelay'
+			| 'isResolverCached'
+			| 'issuanceRatio'
+			| 'liquidateReward'
+			| 'liquidationDelay'
+			| 'liquidationEscrowDuration'
+			| 'liquidationPenalty'
+			| 'liquidationRatio'
+			| 'minimumStakeTime'
+			| 'nominateNewOwner'
+			| 'nominatedOwner'
+			| 'owner'
+			| 'priceDeviationThresholdFactor'
+			| 'pureChainlinkPriceForAtomicSwapsEnabled'
+			| 'rateStalePeriod'
+			| 'rebuildCache'
+			| 'resolver'
+			| 'resolverAddressesRequired'
+			| 'selfLiquidationPenalty'
+			| 'setAggregatorWarningFlags'
+			| 'setAtomicEquivalentForDexPricing'
+			| 'setAtomicExchangeFeeRate'
+			| 'setAtomicMaxVolumePerBlock'
+			| 'setAtomicTwapWindow'
+			| 'setAtomicVolatilityConsiderationWindow'
+			| 'setAtomicVolatilityUpdateThreshold'
+			| 'setCollapseFeeRate'
+			| 'setCrossChainSynthTransferEnabled'
+			| 'setCrossDomainMessageGasLimit'
+			| 'setDebtSnapshotStaleTime'
+			| 'setEtherWrapperBurnFeeRate'
+			| 'setEtherWrapperMaxETH'
+			| 'setEtherWrapperMintFeeRate'
+			| 'setExchangeDynamicFeeRounds'
+			| 'setExchangeDynamicFeeThreshold'
+			| 'setExchangeDynamicFeeWeightDecay'
+			| 'setExchangeFeeRateForSynths'
+			| 'setExchangeMaxDynamicFee'
+			| 'setFeePeriodDuration'
+			| 'setFlagReward'
+			| 'setInteractionDelay'
+			| 'setIssuanceRatio'
+			| 'setLiquidateReward'
+			| 'setLiquidationDelay'
+			| 'setLiquidationEscrowDuration'
+			| 'setLiquidationPenalty'
+			| 'setLiquidationRatio'
+			| 'setMinimumStakeTime'
+			| 'setPriceDeviationThresholdFactor'
+			| 'setPureChainlinkPriceForAtomicSwapsEnabled'
+			| 'setRateStalePeriod'
+			| 'setSelfLiquidationPenalty'
+			| 'setSnxLiquidationPenalty'
+			| 'setTargetThreshold'
+			| 'setTradingRewardsEnabled'
+			| 'setWaitingPeriodSecs'
+			| 'setWrapperBurnFeeRate'
+			| 'setWrapperMaxTokenAmount'
+			| 'setWrapperMintFeeRate'
+			| 'snxLiquidationPenalty'
+			| 'targetThreshold'
+			| 'tradingRewardsEnabled'
+			| 'waitingPeriodSecs'
+			| 'wrapperBurnFeeRate'
+			| 'wrapperMaxTokenAmount'
+			| 'wrapperMintFeeRate'
+	): FunctionFragment
 
-  encodeFunctionData(
-    functionFragment: "CONTRACT_NAME",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "acceptOwnership",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "aggregatorWarningFlags",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "atomicEquivalentForDexPricing",
-    values: [BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "atomicExchangeFeeRate",
-    values: [BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "atomicMaxVolumePerBlock",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "atomicTwapWindow",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "atomicVolatilityConsiderationWindow",
-    values: [BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "atomicVolatilityUpdateThreshold",
-    values: [BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "collapseFeeRate",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "crossChainSynthTransferEnabled",
-    values: [BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "crossDomainMessageGasLimit",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "debtSnapshotStaleTime",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "etherWrapperBurnFeeRate",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "etherWrapperMaxETH",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "etherWrapperMintFeeRate",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "exchangeDynamicFeeRounds",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "exchangeDynamicFeeThreshold",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "exchangeDynamicFeeWeightDecay",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "exchangeFeeRate",
-    values: [BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "exchangeMaxDynamicFee",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "feePeriodDuration",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "flagReward",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "interactionDelay",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "isResolverCached",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "issuanceRatio",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "liquidateReward",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "liquidationDelay",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "liquidationEscrowDuration",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "liquidationPenalty",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "liquidationRatio",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "minimumStakeTime",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "nominateNewOwner",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "nominatedOwner",
-    values?: undefined
-  ): string;
-  encodeFunctionData(functionFragment: "owner", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "priceDeviationThresholdFactor",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "pureChainlinkPriceForAtomicSwapsEnabled",
-    values: [BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "rateStalePeriod",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "rebuildCache",
-    values?: undefined
-  ): string;
-  encodeFunctionData(functionFragment: "resolver", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "resolverAddressesRequired",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "selfLiquidationPenalty",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setAggregatorWarningFlags",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setAtomicEquivalentForDexPricing",
-    values: [BytesLike, string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setAtomicExchangeFeeRate",
-    values: [BytesLike, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setAtomicMaxVolumePerBlock",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setAtomicTwapWindow",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setAtomicVolatilityConsiderationWindow",
-    values: [BytesLike, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setAtomicVolatilityUpdateThreshold",
-    values: [BytesLike, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setCollapseFeeRate",
-    values: [string, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setCrossChainSynthTransferEnabled",
-    values: [BytesLike, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setCrossDomainMessageGasLimit",
-    values: [BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setDebtSnapshotStaleTime",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setEtherWrapperBurnFeeRate",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setEtherWrapperMaxETH",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setEtherWrapperMintFeeRate",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setExchangeDynamicFeeRounds",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setExchangeDynamicFeeThreshold",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setExchangeDynamicFeeWeightDecay",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setExchangeFeeRateForSynths",
-    values: [BytesLike[], BigNumberish[]]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setExchangeMaxDynamicFee",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setFeePeriodDuration",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setFlagReward",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setInteractionDelay",
-    values: [string, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setIssuanceRatio",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setLiquidateReward",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setLiquidationDelay",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setLiquidationEscrowDuration",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setLiquidationPenalty",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setLiquidationRatio",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setMinimumStakeTime",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setPriceDeviationThresholdFactor",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setPureChainlinkPriceForAtomicSwapsEnabled",
-    values: [BytesLike, boolean]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setRateStalePeriod",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setSelfLiquidationPenalty",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setSnxLiquidationPenalty",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setTargetThreshold",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setTradingRewardsEnabled",
-    values: [boolean]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setWaitingPeriodSecs",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setWrapperBurnFeeRate",
-    values: [string, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setWrapperMaxTokenAmount",
-    values: [string, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setWrapperMintFeeRate",
-    values: [string, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "snxLiquidationPenalty",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "targetThreshold",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "tradingRewardsEnabled",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "waitingPeriodSecs",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "wrapperBurnFeeRate",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "wrapperMaxTokenAmount",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "wrapperMintFeeRate",
-    values: [string]
-  ): string;
+	encodeFunctionData(functionFragment: 'CONTRACT_NAME', values?: undefined): string
+	encodeFunctionData(functionFragment: 'acceptOwnership', values?: undefined): string
+	encodeFunctionData(functionFragment: 'aggregatorWarningFlags', values?: undefined): string
+	encodeFunctionData(functionFragment: 'atomicEquivalentForDexPricing', values: [BytesLike]): string
+	encodeFunctionData(functionFragment: 'atomicExchangeFeeRate', values: [BytesLike]): string
+	encodeFunctionData(functionFragment: 'atomicMaxVolumePerBlock', values?: undefined): string
+	encodeFunctionData(functionFragment: 'atomicTwapWindow', values?: undefined): string
+	encodeFunctionData(
+		functionFragment: 'atomicVolatilityConsiderationWindow',
+		values: [BytesLike]
+	): string
+	encodeFunctionData(
+		functionFragment: 'atomicVolatilityUpdateThreshold',
+		values: [BytesLike]
+	): string
+	encodeFunctionData(functionFragment: 'collapseFeeRate', values: [string]): string
+	encodeFunctionData(
+		functionFragment: 'crossChainSynthTransferEnabled',
+		values: [BytesLike]
+	): string
+	encodeFunctionData(functionFragment: 'crossDomainMessageGasLimit', values: [BigNumberish]): string
+	encodeFunctionData(functionFragment: 'debtSnapshotStaleTime', values?: undefined): string
+	encodeFunctionData(functionFragment: 'etherWrapperBurnFeeRate', values?: undefined): string
+	encodeFunctionData(functionFragment: 'etherWrapperMaxETH', values?: undefined): string
+	encodeFunctionData(functionFragment: 'etherWrapperMintFeeRate', values?: undefined): string
+	encodeFunctionData(functionFragment: 'exchangeDynamicFeeRounds', values?: undefined): string
+	encodeFunctionData(functionFragment: 'exchangeDynamicFeeThreshold', values?: undefined): string
+	encodeFunctionData(functionFragment: 'exchangeDynamicFeeWeightDecay', values?: undefined): string
+	encodeFunctionData(functionFragment: 'exchangeFeeRate', values: [BytesLike]): string
+	encodeFunctionData(functionFragment: 'exchangeMaxDynamicFee', values?: undefined): string
+	encodeFunctionData(functionFragment: 'feePeriodDuration', values?: undefined): string
+	encodeFunctionData(functionFragment: 'flagReward', values?: undefined): string
+	encodeFunctionData(functionFragment: 'interactionDelay', values: [string]): string
+	encodeFunctionData(functionFragment: 'isResolverCached', values?: undefined): string
+	encodeFunctionData(functionFragment: 'issuanceRatio', values?: undefined): string
+	encodeFunctionData(functionFragment: 'liquidateReward', values?: undefined): string
+	encodeFunctionData(functionFragment: 'liquidationDelay', values?: undefined): string
+	encodeFunctionData(functionFragment: 'liquidationEscrowDuration', values?: undefined): string
+	encodeFunctionData(functionFragment: 'liquidationPenalty', values?: undefined): string
+	encodeFunctionData(functionFragment: 'liquidationRatio', values?: undefined): string
+	encodeFunctionData(functionFragment: 'minimumStakeTime', values?: undefined): string
+	encodeFunctionData(functionFragment: 'nominateNewOwner', values: [string]): string
+	encodeFunctionData(functionFragment: 'nominatedOwner', values?: undefined): string
+	encodeFunctionData(functionFragment: 'owner', values?: undefined): string
+	encodeFunctionData(functionFragment: 'priceDeviationThresholdFactor', values?: undefined): string
+	encodeFunctionData(
+		functionFragment: 'pureChainlinkPriceForAtomicSwapsEnabled',
+		values: [BytesLike]
+	): string
+	encodeFunctionData(functionFragment: 'rateStalePeriod', values?: undefined): string
+	encodeFunctionData(functionFragment: 'rebuildCache', values?: undefined): string
+	encodeFunctionData(functionFragment: 'resolver', values?: undefined): string
+	encodeFunctionData(functionFragment: 'resolverAddressesRequired', values?: undefined): string
+	encodeFunctionData(functionFragment: 'selfLiquidationPenalty', values?: undefined): string
+	encodeFunctionData(functionFragment: 'setAggregatorWarningFlags', values: [string]): string
+	encodeFunctionData(
+		functionFragment: 'setAtomicEquivalentForDexPricing',
+		values: [BytesLike, string]
+	): string
+	encodeFunctionData(
+		functionFragment: 'setAtomicExchangeFeeRate',
+		values: [BytesLike, BigNumberish]
+	): string
+	encodeFunctionData(functionFragment: 'setAtomicMaxVolumePerBlock', values: [BigNumberish]): string
+	encodeFunctionData(functionFragment: 'setAtomicTwapWindow', values: [BigNumberish]): string
+	encodeFunctionData(
+		functionFragment: 'setAtomicVolatilityConsiderationWindow',
+		values: [BytesLike, BigNumberish]
+	): string
+	encodeFunctionData(
+		functionFragment: 'setAtomicVolatilityUpdateThreshold',
+		values: [BytesLike, BigNumberish]
+	): string
+	encodeFunctionData(functionFragment: 'setCollapseFeeRate', values: [string, BigNumberish]): string
+	encodeFunctionData(
+		functionFragment: 'setCrossChainSynthTransferEnabled',
+		values: [BytesLike, BigNumberish]
+	): string
+	encodeFunctionData(
+		functionFragment: 'setCrossDomainMessageGasLimit',
+		values: [BigNumberish, BigNumberish]
+	): string
+	encodeFunctionData(functionFragment: 'setDebtSnapshotStaleTime', values: [BigNumberish]): string
+	encodeFunctionData(functionFragment: 'setEtherWrapperBurnFeeRate', values: [BigNumberish]): string
+	encodeFunctionData(functionFragment: 'setEtherWrapperMaxETH', values: [BigNumberish]): string
+	encodeFunctionData(functionFragment: 'setEtherWrapperMintFeeRate', values: [BigNumberish]): string
+	encodeFunctionData(
+		functionFragment: 'setExchangeDynamicFeeRounds',
+		values: [BigNumberish]
+	): string
+	encodeFunctionData(
+		functionFragment: 'setExchangeDynamicFeeThreshold',
+		values: [BigNumberish]
+	): string
+	encodeFunctionData(
+		functionFragment: 'setExchangeDynamicFeeWeightDecay',
+		values: [BigNumberish]
+	): string
+	encodeFunctionData(
+		functionFragment: 'setExchangeFeeRateForSynths',
+		values: [BytesLike[], BigNumberish[]]
+	): string
+	encodeFunctionData(functionFragment: 'setExchangeMaxDynamicFee', values: [BigNumberish]): string
+	encodeFunctionData(functionFragment: 'setFeePeriodDuration', values: [BigNumberish]): string
+	encodeFunctionData(functionFragment: 'setFlagReward', values: [BigNumberish]): string
+	encodeFunctionData(
+		functionFragment: 'setInteractionDelay',
+		values: [string, BigNumberish]
+	): string
+	encodeFunctionData(functionFragment: 'setIssuanceRatio', values: [BigNumberish]): string
+	encodeFunctionData(functionFragment: 'setLiquidateReward', values: [BigNumberish]): string
+	encodeFunctionData(functionFragment: 'setLiquidationDelay', values: [BigNumberish]): string
+	encodeFunctionData(
+		functionFragment: 'setLiquidationEscrowDuration',
+		values: [BigNumberish]
+	): string
+	encodeFunctionData(functionFragment: 'setLiquidationPenalty', values: [BigNumberish]): string
+	encodeFunctionData(functionFragment: 'setLiquidationRatio', values: [BigNumberish]): string
+	encodeFunctionData(functionFragment: 'setMinimumStakeTime', values: [BigNumberish]): string
+	encodeFunctionData(
+		functionFragment: 'setPriceDeviationThresholdFactor',
+		values: [BigNumberish]
+	): string
+	encodeFunctionData(
+		functionFragment: 'setPureChainlinkPriceForAtomicSwapsEnabled',
+		values: [BytesLike, boolean]
+	): string
+	encodeFunctionData(functionFragment: 'setRateStalePeriod', values: [BigNumberish]): string
+	encodeFunctionData(functionFragment: 'setSelfLiquidationPenalty', values: [BigNumberish]): string
+	encodeFunctionData(functionFragment: 'setSnxLiquidationPenalty', values: [BigNumberish]): string
+	encodeFunctionData(functionFragment: 'setTargetThreshold', values: [BigNumberish]): string
+	encodeFunctionData(functionFragment: 'setTradingRewardsEnabled', values: [boolean]): string
+	encodeFunctionData(functionFragment: 'setWaitingPeriodSecs', values: [BigNumberish]): string
+	encodeFunctionData(
+		functionFragment: 'setWrapperBurnFeeRate',
+		values: [string, BigNumberish]
+	): string
+	encodeFunctionData(
+		functionFragment: 'setWrapperMaxTokenAmount',
+		values: [string, BigNumberish]
+	): string
+	encodeFunctionData(
+		functionFragment: 'setWrapperMintFeeRate',
+		values: [string, BigNumberish]
+	): string
+	encodeFunctionData(functionFragment: 'snxLiquidationPenalty', values?: undefined): string
+	encodeFunctionData(functionFragment: 'targetThreshold', values?: undefined): string
+	encodeFunctionData(functionFragment: 'tradingRewardsEnabled', values?: undefined): string
+	encodeFunctionData(functionFragment: 'waitingPeriodSecs', values?: undefined): string
+	encodeFunctionData(functionFragment: 'wrapperBurnFeeRate', values: [string]): string
+	encodeFunctionData(functionFragment: 'wrapperMaxTokenAmount', values: [string]): string
+	encodeFunctionData(functionFragment: 'wrapperMintFeeRate', values: [string]): string
 
-  decodeFunctionResult(
-    functionFragment: "CONTRACT_NAME",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "acceptOwnership",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "aggregatorWarningFlags",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "atomicEquivalentForDexPricing",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "atomicExchangeFeeRate",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "atomicMaxVolumePerBlock",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "atomicTwapWindow",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "atomicVolatilityConsiderationWindow",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "atomicVolatilityUpdateThreshold",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "collapseFeeRate",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "crossChainSynthTransferEnabled",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "crossDomainMessageGasLimit",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "debtSnapshotStaleTime",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "etherWrapperBurnFeeRate",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "etherWrapperMaxETH",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "etherWrapperMintFeeRate",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "exchangeDynamicFeeRounds",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "exchangeDynamicFeeThreshold",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "exchangeDynamicFeeWeightDecay",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "exchangeFeeRate",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "exchangeMaxDynamicFee",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "feePeriodDuration",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "flagReward", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "interactionDelay",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "isResolverCached",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "issuanceRatio",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "liquidateReward",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "liquidationDelay",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "liquidationEscrowDuration",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "liquidationPenalty",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "liquidationRatio",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "minimumStakeTime",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "nominateNewOwner",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "nominatedOwner",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "priceDeviationThresholdFactor",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "pureChainlinkPriceForAtomicSwapsEnabled",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "rateStalePeriod",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "rebuildCache",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "resolver", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "resolverAddressesRequired",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "selfLiquidationPenalty",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setAggregatorWarningFlags",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setAtomicEquivalentForDexPricing",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setAtomicExchangeFeeRate",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setAtomicMaxVolumePerBlock",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setAtomicTwapWindow",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setAtomicVolatilityConsiderationWindow",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setAtomicVolatilityUpdateThreshold",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setCollapseFeeRate",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setCrossChainSynthTransferEnabled",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setCrossDomainMessageGasLimit",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setDebtSnapshotStaleTime",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setEtherWrapperBurnFeeRate",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setEtherWrapperMaxETH",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setEtherWrapperMintFeeRate",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setExchangeDynamicFeeRounds",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setExchangeDynamicFeeThreshold",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setExchangeDynamicFeeWeightDecay",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setExchangeFeeRateForSynths",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setExchangeMaxDynamicFee",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setFeePeriodDuration",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setFlagReward",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setInteractionDelay",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setIssuanceRatio",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setLiquidateReward",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setLiquidationDelay",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setLiquidationEscrowDuration",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setLiquidationPenalty",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setLiquidationRatio",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setMinimumStakeTime",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setPriceDeviationThresholdFactor",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setPureChainlinkPriceForAtomicSwapsEnabled",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setRateStalePeriod",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setSelfLiquidationPenalty",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setSnxLiquidationPenalty",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setTargetThreshold",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setTradingRewardsEnabled",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setWaitingPeriodSecs",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setWrapperBurnFeeRate",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setWrapperMaxTokenAmount",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setWrapperMintFeeRate",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "snxLiquidationPenalty",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "targetThreshold",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "tradingRewardsEnabled",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "waitingPeriodSecs",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "wrapperBurnFeeRate",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "wrapperMaxTokenAmount",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "wrapperMintFeeRate",
-    data: BytesLike
-  ): Result;
+	decodeFunctionResult(functionFragment: 'CONTRACT_NAME', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'acceptOwnership', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'aggregatorWarningFlags', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'atomicEquivalentForDexPricing', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'atomicExchangeFeeRate', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'atomicMaxVolumePerBlock', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'atomicTwapWindow', data: BytesLike): Result
+	decodeFunctionResult(
+		functionFragment: 'atomicVolatilityConsiderationWindow',
+		data: BytesLike
+	): Result
+	decodeFunctionResult(functionFragment: 'atomicVolatilityUpdateThreshold', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'collapseFeeRate', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'crossChainSynthTransferEnabled', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'crossDomainMessageGasLimit', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'debtSnapshotStaleTime', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'etherWrapperBurnFeeRate', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'etherWrapperMaxETH', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'etherWrapperMintFeeRate', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'exchangeDynamicFeeRounds', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'exchangeDynamicFeeThreshold', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'exchangeDynamicFeeWeightDecay', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'exchangeFeeRate', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'exchangeMaxDynamicFee', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'feePeriodDuration', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'flagReward', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'interactionDelay', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'isResolverCached', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'issuanceRatio', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'liquidateReward', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'liquidationDelay', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'liquidationEscrowDuration', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'liquidationPenalty', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'liquidationRatio', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'minimumStakeTime', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'nominateNewOwner', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'nominatedOwner', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'owner', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'priceDeviationThresholdFactor', data: BytesLike): Result
+	decodeFunctionResult(
+		functionFragment: 'pureChainlinkPriceForAtomicSwapsEnabled',
+		data: BytesLike
+	): Result
+	decodeFunctionResult(functionFragment: 'rateStalePeriod', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'rebuildCache', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'resolver', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'resolverAddressesRequired', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'selfLiquidationPenalty', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'setAggregatorWarningFlags', data: BytesLike): Result
+	decodeFunctionResult(
+		functionFragment: 'setAtomicEquivalentForDexPricing',
+		data: BytesLike
+	): Result
+	decodeFunctionResult(functionFragment: 'setAtomicExchangeFeeRate', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'setAtomicMaxVolumePerBlock', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'setAtomicTwapWindow', data: BytesLike): Result
+	decodeFunctionResult(
+		functionFragment: 'setAtomicVolatilityConsiderationWindow',
+		data: BytesLike
+	): Result
+	decodeFunctionResult(
+		functionFragment: 'setAtomicVolatilityUpdateThreshold',
+		data: BytesLike
+	): Result
+	decodeFunctionResult(functionFragment: 'setCollapseFeeRate', data: BytesLike): Result
+	decodeFunctionResult(
+		functionFragment: 'setCrossChainSynthTransferEnabled',
+		data: BytesLike
+	): Result
+	decodeFunctionResult(functionFragment: 'setCrossDomainMessageGasLimit', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'setDebtSnapshotStaleTime', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'setEtherWrapperBurnFeeRate', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'setEtherWrapperMaxETH', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'setEtherWrapperMintFeeRate', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'setExchangeDynamicFeeRounds', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'setExchangeDynamicFeeThreshold', data: BytesLike): Result
+	decodeFunctionResult(
+		functionFragment: 'setExchangeDynamicFeeWeightDecay',
+		data: BytesLike
+	): Result
+	decodeFunctionResult(functionFragment: 'setExchangeFeeRateForSynths', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'setExchangeMaxDynamicFee', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'setFeePeriodDuration', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'setFlagReward', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'setInteractionDelay', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'setIssuanceRatio', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'setLiquidateReward', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'setLiquidationDelay', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'setLiquidationEscrowDuration', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'setLiquidationPenalty', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'setLiquidationRatio', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'setMinimumStakeTime', data: BytesLike): Result
+	decodeFunctionResult(
+		functionFragment: 'setPriceDeviationThresholdFactor',
+		data: BytesLike
+	): Result
+	decodeFunctionResult(
+		functionFragment: 'setPureChainlinkPriceForAtomicSwapsEnabled',
+		data: BytesLike
+	): Result
+	decodeFunctionResult(functionFragment: 'setRateStalePeriod', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'setSelfLiquidationPenalty', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'setSnxLiquidationPenalty', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'setTargetThreshold', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'setTradingRewardsEnabled', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'setWaitingPeriodSecs', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'setWrapperBurnFeeRate', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'setWrapperMaxTokenAmount', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'setWrapperMintFeeRate', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'snxLiquidationPenalty', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'targetThreshold', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'tradingRewardsEnabled', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'waitingPeriodSecs', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'wrapperBurnFeeRate', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'wrapperMaxTokenAmount', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'wrapperMintFeeRate', data: BytesLike): Result
 
-  events: {
-    "AggregatorWarningFlagsUpdated(address)": EventFragment;
-    "AtomicEquivalentForDexPricingUpdated(bytes32,address)": EventFragment;
-    "AtomicExchangeFeeUpdated(bytes32,uint256)": EventFragment;
-    "AtomicMaxVolumePerBlockUpdated(uint256)": EventFragment;
-    "AtomicTwapWindowUpdated(uint256)": EventFragment;
-    "AtomicVolatilityConsiderationWindowUpdated(bytes32,uint256)": EventFragment;
-    "AtomicVolatilityUpdateThresholdUpdated(bytes32,uint256)": EventFragment;
-    "CacheUpdated(bytes32,address)": EventFragment;
-    "CollapseFeeRateUpdated(uint256)": EventFragment;
-    "CrossChainSynthTransferEnabledUpdated(bytes32,uint256)": EventFragment;
-    "CrossDomainMessageGasLimitChanged(uint8,uint256)": EventFragment;
-    "DebtSnapshotStaleTimeUpdated(uint256)": EventFragment;
-    "EtherWrapperBurnFeeRateUpdated(uint256)": EventFragment;
-    "EtherWrapperMaxETHUpdated(uint256)": EventFragment;
-    "EtherWrapperMintFeeRateUpdated(uint256)": EventFragment;
-    "ExchangeDynamicFeeRoundsUpdated(uint256)": EventFragment;
-    "ExchangeDynamicFeeThresholdUpdated(uint256)": EventFragment;
-    "ExchangeDynamicFeeWeightDecayUpdated(uint256)": EventFragment;
-    "ExchangeFeeUpdated(bytes32,uint256)": EventFragment;
-    "ExchangeMaxDynamicFeeUpdated(uint256)": EventFragment;
-    "FeePeriodDurationUpdated(uint256)": EventFragment;
-    "FlagRewardUpdated(uint256)": EventFragment;
-    "InteractionDelayUpdated(uint256)": EventFragment;
-    "IssuanceRatioUpdated(uint256)": EventFragment;
-    "LiquidateRewardUpdated(uint256)": EventFragment;
-    "LiquidationDelayUpdated(uint256)": EventFragment;
-    "LiquidationEscrowDurationUpdated(uint256)": EventFragment;
-    "LiquidationPenaltyUpdated(uint256)": EventFragment;
-    "LiquidationRatioUpdated(uint256)": EventFragment;
-    "MinimumStakeTimeUpdated(uint256)": EventFragment;
-    "OwnerChanged(address,address)": EventFragment;
-    "OwnerNominated(address)": EventFragment;
-    "PriceDeviationThresholdUpdated(uint256)": EventFragment;
-    "PureChainlinkPriceForAtomicSwapsEnabledUpdated(bytes32,bool)": EventFragment;
-    "RateStalePeriodUpdated(uint256)": EventFragment;
-    "SelfLiquidationPenaltyUpdated(uint256)": EventFragment;
-    "SnxLiquidationPenaltyUpdated(uint256)": EventFragment;
-    "TargetThresholdUpdated(uint256)": EventFragment;
-    "TradingRewardsEnabled(bool)": EventFragment;
-    "WaitingPeriodSecsUpdated(uint256)": EventFragment;
-    "WrapperBurnFeeRateUpdated(address,int256)": EventFragment;
-    "WrapperMaxTokenAmountUpdated(address,uint256)": EventFragment;
-    "WrapperMintFeeRateUpdated(address,int256)": EventFragment;
-  };
+	events: {
+		'AggregatorWarningFlagsUpdated(address)': EventFragment
+		'AtomicEquivalentForDexPricingUpdated(bytes32,address)': EventFragment
+		'AtomicExchangeFeeUpdated(bytes32,uint256)': EventFragment
+		'AtomicMaxVolumePerBlockUpdated(uint256)': EventFragment
+		'AtomicTwapWindowUpdated(uint256)': EventFragment
+		'AtomicVolatilityConsiderationWindowUpdated(bytes32,uint256)': EventFragment
+		'AtomicVolatilityUpdateThresholdUpdated(bytes32,uint256)': EventFragment
+		'CacheUpdated(bytes32,address)': EventFragment
+		'CollapseFeeRateUpdated(uint256)': EventFragment
+		'CrossChainSynthTransferEnabledUpdated(bytes32,uint256)': EventFragment
+		'CrossDomainMessageGasLimitChanged(uint8,uint256)': EventFragment
+		'DebtSnapshotStaleTimeUpdated(uint256)': EventFragment
+		'EtherWrapperBurnFeeRateUpdated(uint256)': EventFragment
+		'EtherWrapperMaxETHUpdated(uint256)': EventFragment
+		'EtherWrapperMintFeeRateUpdated(uint256)': EventFragment
+		'ExchangeDynamicFeeRoundsUpdated(uint256)': EventFragment
+		'ExchangeDynamicFeeThresholdUpdated(uint256)': EventFragment
+		'ExchangeDynamicFeeWeightDecayUpdated(uint256)': EventFragment
+		'ExchangeFeeUpdated(bytes32,uint256)': EventFragment
+		'ExchangeMaxDynamicFeeUpdated(uint256)': EventFragment
+		'FeePeriodDurationUpdated(uint256)': EventFragment
+		'FlagRewardUpdated(uint256)': EventFragment
+		'InteractionDelayUpdated(uint256)': EventFragment
+		'IssuanceRatioUpdated(uint256)': EventFragment
+		'LiquidateRewardUpdated(uint256)': EventFragment
+		'LiquidationDelayUpdated(uint256)': EventFragment
+		'LiquidationEscrowDurationUpdated(uint256)': EventFragment
+		'LiquidationPenaltyUpdated(uint256)': EventFragment
+		'LiquidationRatioUpdated(uint256)': EventFragment
+		'MinimumStakeTimeUpdated(uint256)': EventFragment
+		'OwnerChanged(address,address)': EventFragment
+		'OwnerNominated(address)': EventFragment
+		'PriceDeviationThresholdUpdated(uint256)': EventFragment
+		'PureChainlinkPriceForAtomicSwapsEnabledUpdated(bytes32,bool)': EventFragment
+		'RateStalePeriodUpdated(uint256)': EventFragment
+		'SelfLiquidationPenaltyUpdated(uint256)': EventFragment
+		'SnxLiquidationPenaltyUpdated(uint256)': EventFragment
+		'TargetThresholdUpdated(uint256)': EventFragment
+		'TradingRewardsEnabled(bool)': EventFragment
+		'WaitingPeriodSecsUpdated(uint256)': EventFragment
+		'WrapperBurnFeeRateUpdated(address,int256)': EventFragment
+		'WrapperMaxTokenAmountUpdated(address,uint256)': EventFragment
+		'WrapperMintFeeRateUpdated(address,int256)': EventFragment
+	}
 
-  getEvent(
-    nameOrSignatureOrTopic: "AggregatorWarningFlagsUpdated"
-  ): EventFragment;
-  getEvent(
-    nameOrSignatureOrTopic: "AtomicEquivalentForDexPricingUpdated"
-  ): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "AtomicExchangeFeeUpdated"): EventFragment;
-  getEvent(
-    nameOrSignatureOrTopic: "AtomicMaxVolumePerBlockUpdated"
-  ): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "AtomicTwapWindowUpdated"): EventFragment;
-  getEvent(
-    nameOrSignatureOrTopic: "AtomicVolatilityConsiderationWindowUpdated"
-  ): EventFragment;
-  getEvent(
-    nameOrSignatureOrTopic: "AtomicVolatilityUpdateThresholdUpdated"
-  ): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "CacheUpdated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "CollapseFeeRateUpdated"): EventFragment;
-  getEvent(
-    nameOrSignatureOrTopic: "CrossChainSynthTransferEnabledUpdated"
-  ): EventFragment;
-  getEvent(
-    nameOrSignatureOrTopic: "CrossDomainMessageGasLimitChanged"
-  ): EventFragment;
-  getEvent(
-    nameOrSignatureOrTopic: "DebtSnapshotStaleTimeUpdated"
-  ): EventFragment;
-  getEvent(
-    nameOrSignatureOrTopic: "EtherWrapperBurnFeeRateUpdated"
-  ): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "EtherWrapperMaxETHUpdated"): EventFragment;
-  getEvent(
-    nameOrSignatureOrTopic: "EtherWrapperMintFeeRateUpdated"
-  ): EventFragment;
-  getEvent(
-    nameOrSignatureOrTopic: "ExchangeDynamicFeeRoundsUpdated"
-  ): EventFragment;
-  getEvent(
-    nameOrSignatureOrTopic: "ExchangeDynamicFeeThresholdUpdated"
-  ): EventFragment;
-  getEvent(
-    nameOrSignatureOrTopic: "ExchangeDynamicFeeWeightDecayUpdated"
-  ): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "ExchangeFeeUpdated"): EventFragment;
-  getEvent(
-    nameOrSignatureOrTopic: "ExchangeMaxDynamicFeeUpdated"
-  ): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "FeePeriodDurationUpdated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "FlagRewardUpdated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "InteractionDelayUpdated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "IssuanceRatioUpdated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "LiquidateRewardUpdated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "LiquidationDelayUpdated"): EventFragment;
-  getEvent(
-    nameOrSignatureOrTopic: "LiquidationEscrowDurationUpdated"
-  ): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "LiquidationPenaltyUpdated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "LiquidationRatioUpdated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "MinimumStakeTimeUpdated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "OwnerChanged"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "OwnerNominated"): EventFragment;
-  getEvent(
-    nameOrSignatureOrTopic: "PriceDeviationThresholdUpdated"
-  ): EventFragment;
-  getEvent(
-    nameOrSignatureOrTopic: "PureChainlinkPriceForAtomicSwapsEnabledUpdated"
-  ): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "RateStalePeriodUpdated"): EventFragment;
-  getEvent(
-    nameOrSignatureOrTopic: "SelfLiquidationPenaltyUpdated"
-  ): EventFragment;
-  getEvent(
-    nameOrSignatureOrTopic: "SnxLiquidationPenaltyUpdated"
-  ): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "TargetThresholdUpdated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "TradingRewardsEnabled"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "WaitingPeriodSecsUpdated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "WrapperBurnFeeRateUpdated"): EventFragment;
-  getEvent(
-    nameOrSignatureOrTopic: "WrapperMaxTokenAmountUpdated"
-  ): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "WrapperMintFeeRateUpdated"): EventFragment;
+	getEvent(nameOrSignatureOrTopic: 'AggregatorWarningFlagsUpdated'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'AtomicEquivalentForDexPricingUpdated'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'AtomicExchangeFeeUpdated'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'AtomicMaxVolumePerBlockUpdated'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'AtomicTwapWindowUpdated'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'AtomicVolatilityConsiderationWindowUpdated'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'AtomicVolatilityUpdateThresholdUpdated'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'CacheUpdated'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'CollapseFeeRateUpdated'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'CrossChainSynthTransferEnabledUpdated'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'CrossDomainMessageGasLimitChanged'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'DebtSnapshotStaleTimeUpdated'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'EtherWrapperBurnFeeRateUpdated'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'EtherWrapperMaxETHUpdated'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'EtherWrapperMintFeeRateUpdated'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'ExchangeDynamicFeeRoundsUpdated'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'ExchangeDynamicFeeThresholdUpdated'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'ExchangeDynamicFeeWeightDecayUpdated'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'ExchangeFeeUpdated'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'ExchangeMaxDynamicFeeUpdated'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'FeePeriodDurationUpdated'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'FlagRewardUpdated'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'InteractionDelayUpdated'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'IssuanceRatioUpdated'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'LiquidateRewardUpdated'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'LiquidationDelayUpdated'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'LiquidationEscrowDurationUpdated'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'LiquidationPenaltyUpdated'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'LiquidationRatioUpdated'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'MinimumStakeTimeUpdated'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'OwnerChanged'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'OwnerNominated'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'PriceDeviationThresholdUpdated'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'PureChainlinkPriceForAtomicSwapsEnabledUpdated'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'RateStalePeriodUpdated'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'SelfLiquidationPenaltyUpdated'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'SnxLiquidationPenaltyUpdated'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'TargetThresholdUpdated'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'TradingRewardsEnabled'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'WaitingPeriodSecsUpdated'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'WrapperBurnFeeRateUpdated'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'WrapperMaxTokenAmountUpdated'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'WrapperMintFeeRateUpdated'): EventFragment
 }
 
 export interface AggregatorWarningFlagsUpdatedEventObject {
-  flags: string;
+	flags: string
 }
 export type AggregatorWarningFlagsUpdatedEvent = TypedEvent<
-  [string],
-  AggregatorWarningFlagsUpdatedEventObject
->;
+	[string],
+	AggregatorWarningFlagsUpdatedEventObject
+>
 
 export type AggregatorWarningFlagsUpdatedEventFilter =
-  TypedEventFilter<AggregatorWarningFlagsUpdatedEvent>;
+	TypedEventFilter<AggregatorWarningFlagsUpdatedEvent>
 
 export interface AtomicEquivalentForDexPricingUpdatedEventObject {
-  synthKey: string;
-  equivalent: string;
+	synthKey: string
+	equivalent: string
 }
 export type AtomicEquivalentForDexPricingUpdatedEvent = TypedEvent<
-  [string, string],
-  AtomicEquivalentForDexPricingUpdatedEventObject
->;
+	[string, string],
+	AtomicEquivalentForDexPricingUpdatedEventObject
+>
 
 export type AtomicEquivalentForDexPricingUpdatedEventFilter =
-  TypedEventFilter<AtomicEquivalentForDexPricingUpdatedEvent>;
+	TypedEventFilter<AtomicEquivalentForDexPricingUpdatedEvent>
 
 export interface AtomicExchangeFeeUpdatedEventObject {
-  synthKey: string;
-  newExchangeFeeRate: BigNumber;
+	synthKey: string
+	newExchangeFeeRate: BigNumber
 }
 export type AtomicExchangeFeeUpdatedEvent = TypedEvent<
-  [string, BigNumber],
-  AtomicExchangeFeeUpdatedEventObject
->;
+	[string, BigNumber],
+	AtomicExchangeFeeUpdatedEventObject
+>
 
-export type AtomicExchangeFeeUpdatedEventFilter =
-  TypedEventFilter<AtomicExchangeFeeUpdatedEvent>;
+export type AtomicExchangeFeeUpdatedEventFilter = TypedEventFilter<AtomicExchangeFeeUpdatedEvent>
 
 export interface AtomicMaxVolumePerBlockUpdatedEventObject {
-  newMaxVolume: BigNumber;
+	newMaxVolume: BigNumber
 }
 export type AtomicMaxVolumePerBlockUpdatedEvent = TypedEvent<
-  [BigNumber],
-  AtomicMaxVolumePerBlockUpdatedEventObject
->;
+	[BigNumber],
+	AtomicMaxVolumePerBlockUpdatedEventObject
+>
 
 export type AtomicMaxVolumePerBlockUpdatedEventFilter =
-  TypedEventFilter<AtomicMaxVolumePerBlockUpdatedEvent>;
+	TypedEventFilter<AtomicMaxVolumePerBlockUpdatedEvent>
 
 export interface AtomicTwapWindowUpdatedEventObject {
-  newWindow: BigNumber;
+	newWindow: BigNumber
 }
 export type AtomicTwapWindowUpdatedEvent = TypedEvent<
-  [BigNumber],
-  AtomicTwapWindowUpdatedEventObject
->;
+	[BigNumber],
+	AtomicTwapWindowUpdatedEventObject
+>
 
-export type AtomicTwapWindowUpdatedEventFilter =
-  TypedEventFilter<AtomicTwapWindowUpdatedEvent>;
+export type AtomicTwapWindowUpdatedEventFilter = TypedEventFilter<AtomicTwapWindowUpdatedEvent>
 
 export interface AtomicVolatilityConsiderationWindowUpdatedEventObject {
-  synthKey: string;
-  newVolatilityConsiderationWindow: BigNumber;
+	synthKey: string
+	newVolatilityConsiderationWindow: BigNumber
 }
 export type AtomicVolatilityConsiderationWindowUpdatedEvent = TypedEvent<
-  [string, BigNumber],
-  AtomicVolatilityConsiderationWindowUpdatedEventObject
->;
+	[string, BigNumber],
+	AtomicVolatilityConsiderationWindowUpdatedEventObject
+>
 
 export type AtomicVolatilityConsiderationWindowUpdatedEventFilter =
-  TypedEventFilter<AtomicVolatilityConsiderationWindowUpdatedEvent>;
+	TypedEventFilter<AtomicVolatilityConsiderationWindowUpdatedEvent>
 
 export interface AtomicVolatilityUpdateThresholdUpdatedEventObject {
-  synthKey: string;
-  newVolatilityUpdateThreshold: BigNumber;
+	synthKey: string
+	newVolatilityUpdateThreshold: BigNumber
 }
 export type AtomicVolatilityUpdateThresholdUpdatedEvent = TypedEvent<
-  [string, BigNumber],
-  AtomicVolatilityUpdateThresholdUpdatedEventObject
->;
+	[string, BigNumber],
+	AtomicVolatilityUpdateThresholdUpdatedEventObject
+>
 
 export type AtomicVolatilityUpdateThresholdUpdatedEventFilter =
-  TypedEventFilter<AtomicVolatilityUpdateThresholdUpdatedEvent>;
+	TypedEventFilter<AtomicVolatilityUpdateThresholdUpdatedEvent>
 
 export interface CacheUpdatedEventObject {
-  name: string;
-  destination: string;
+	name: string
+	destination: string
 }
-export type CacheUpdatedEvent = TypedEvent<
-  [string, string],
-  CacheUpdatedEventObject
->;
+export type CacheUpdatedEvent = TypedEvent<[string, string], CacheUpdatedEventObject>
 
-export type CacheUpdatedEventFilter = TypedEventFilter<CacheUpdatedEvent>;
+export type CacheUpdatedEventFilter = TypedEventFilter<CacheUpdatedEvent>
 
 export interface CollapseFeeRateUpdatedEventObject {
-  collapseFeeRate: BigNumber;
+	collapseFeeRate: BigNumber
 }
-export type CollapseFeeRateUpdatedEvent = TypedEvent<
-  [BigNumber],
-  CollapseFeeRateUpdatedEventObject
->;
+export type CollapseFeeRateUpdatedEvent = TypedEvent<[BigNumber], CollapseFeeRateUpdatedEventObject>
 
-export type CollapseFeeRateUpdatedEventFilter =
-  TypedEventFilter<CollapseFeeRateUpdatedEvent>;
+export type CollapseFeeRateUpdatedEventFilter = TypedEventFilter<CollapseFeeRateUpdatedEvent>
 
 export interface CrossChainSynthTransferEnabledUpdatedEventObject {
-  synthKey: string;
-  value: BigNumber;
+	synthKey: string
+	value: BigNumber
 }
 export type CrossChainSynthTransferEnabledUpdatedEvent = TypedEvent<
-  [string, BigNumber],
-  CrossChainSynthTransferEnabledUpdatedEventObject
->;
+	[string, BigNumber],
+	CrossChainSynthTransferEnabledUpdatedEventObject
+>
 
 export type CrossChainSynthTransferEnabledUpdatedEventFilter =
-  TypedEventFilter<CrossChainSynthTransferEnabledUpdatedEvent>;
+	TypedEventFilter<CrossChainSynthTransferEnabledUpdatedEvent>
 
 export interface CrossDomainMessageGasLimitChangedEventObject {
-  gasLimitType: number;
-  newLimit: BigNumber;
+	gasLimitType: number
+	newLimit: BigNumber
 }
 export type CrossDomainMessageGasLimitChangedEvent = TypedEvent<
-  [number, BigNumber],
-  CrossDomainMessageGasLimitChangedEventObject
->;
+	[number, BigNumber],
+	CrossDomainMessageGasLimitChangedEventObject
+>
 
 export type CrossDomainMessageGasLimitChangedEventFilter =
-  TypedEventFilter<CrossDomainMessageGasLimitChangedEvent>;
+	TypedEventFilter<CrossDomainMessageGasLimitChangedEvent>
 
 export interface DebtSnapshotStaleTimeUpdatedEventObject {
-  debtSnapshotStaleTime: BigNumber;
+	debtSnapshotStaleTime: BigNumber
 }
 export type DebtSnapshotStaleTimeUpdatedEvent = TypedEvent<
-  [BigNumber],
-  DebtSnapshotStaleTimeUpdatedEventObject
->;
+	[BigNumber],
+	DebtSnapshotStaleTimeUpdatedEventObject
+>
 
 export type DebtSnapshotStaleTimeUpdatedEventFilter =
-  TypedEventFilter<DebtSnapshotStaleTimeUpdatedEvent>;
+	TypedEventFilter<DebtSnapshotStaleTimeUpdatedEvent>
 
 export interface EtherWrapperBurnFeeRateUpdatedEventObject {
-  rate: BigNumber;
+	rate: BigNumber
 }
 export type EtherWrapperBurnFeeRateUpdatedEvent = TypedEvent<
-  [BigNumber],
-  EtherWrapperBurnFeeRateUpdatedEventObject
->;
+	[BigNumber],
+	EtherWrapperBurnFeeRateUpdatedEventObject
+>
 
 export type EtherWrapperBurnFeeRateUpdatedEventFilter =
-  TypedEventFilter<EtherWrapperBurnFeeRateUpdatedEvent>;
+	TypedEventFilter<EtherWrapperBurnFeeRateUpdatedEvent>
 
 export interface EtherWrapperMaxETHUpdatedEventObject {
-  maxETH: BigNumber;
+	maxETH: BigNumber
 }
 export type EtherWrapperMaxETHUpdatedEvent = TypedEvent<
-  [BigNumber],
-  EtherWrapperMaxETHUpdatedEventObject
->;
+	[BigNumber],
+	EtherWrapperMaxETHUpdatedEventObject
+>
 
-export type EtherWrapperMaxETHUpdatedEventFilter =
-  TypedEventFilter<EtherWrapperMaxETHUpdatedEvent>;
+export type EtherWrapperMaxETHUpdatedEventFilter = TypedEventFilter<EtherWrapperMaxETHUpdatedEvent>
 
 export interface EtherWrapperMintFeeRateUpdatedEventObject {
-  rate: BigNumber;
+	rate: BigNumber
 }
 export type EtherWrapperMintFeeRateUpdatedEvent = TypedEvent<
-  [BigNumber],
-  EtherWrapperMintFeeRateUpdatedEventObject
->;
+	[BigNumber],
+	EtherWrapperMintFeeRateUpdatedEventObject
+>
 
 export type EtherWrapperMintFeeRateUpdatedEventFilter =
-  TypedEventFilter<EtherWrapperMintFeeRateUpdatedEvent>;
+	TypedEventFilter<EtherWrapperMintFeeRateUpdatedEvent>
 
 export interface ExchangeDynamicFeeRoundsUpdatedEventObject {
-  dynamicFeeRounds: BigNumber;
+	dynamicFeeRounds: BigNumber
 }
 export type ExchangeDynamicFeeRoundsUpdatedEvent = TypedEvent<
-  [BigNumber],
-  ExchangeDynamicFeeRoundsUpdatedEventObject
->;
+	[BigNumber],
+	ExchangeDynamicFeeRoundsUpdatedEventObject
+>
 
 export type ExchangeDynamicFeeRoundsUpdatedEventFilter =
-  TypedEventFilter<ExchangeDynamicFeeRoundsUpdatedEvent>;
+	TypedEventFilter<ExchangeDynamicFeeRoundsUpdatedEvent>
 
 export interface ExchangeDynamicFeeThresholdUpdatedEventObject {
-  dynamicFeeThreshold: BigNumber;
+	dynamicFeeThreshold: BigNumber
 }
 export type ExchangeDynamicFeeThresholdUpdatedEvent = TypedEvent<
-  [BigNumber],
-  ExchangeDynamicFeeThresholdUpdatedEventObject
->;
+	[BigNumber],
+	ExchangeDynamicFeeThresholdUpdatedEventObject
+>
 
 export type ExchangeDynamicFeeThresholdUpdatedEventFilter =
-  TypedEventFilter<ExchangeDynamicFeeThresholdUpdatedEvent>;
+	TypedEventFilter<ExchangeDynamicFeeThresholdUpdatedEvent>
 
 export interface ExchangeDynamicFeeWeightDecayUpdatedEventObject {
-  dynamicFeeWeightDecay: BigNumber;
+	dynamicFeeWeightDecay: BigNumber
 }
 export type ExchangeDynamicFeeWeightDecayUpdatedEvent = TypedEvent<
-  [BigNumber],
-  ExchangeDynamicFeeWeightDecayUpdatedEventObject
->;
+	[BigNumber],
+	ExchangeDynamicFeeWeightDecayUpdatedEventObject
+>
 
 export type ExchangeDynamicFeeWeightDecayUpdatedEventFilter =
-  TypedEventFilter<ExchangeDynamicFeeWeightDecayUpdatedEvent>;
+	TypedEventFilter<ExchangeDynamicFeeWeightDecayUpdatedEvent>
 
 export interface ExchangeFeeUpdatedEventObject {
-  synthKey: string;
-  newExchangeFeeRate: BigNumber;
+	synthKey: string
+	newExchangeFeeRate: BigNumber
 }
-export type ExchangeFeeUpdatedEvent = TypedEvent<
-  [string, BigNumber],
-  ExchangeFeeUpdatedEventObject
->;
+export type ExchangeFeeUpdatedEvent = TypedEvent<[string, BigNumber], ExchangeFeeUpdatedEventObject>
 
-export type ExchangeFeeUpdatedEventFilter =
-  TypedEventFilter<ExchangeFeeUpdatedEvent>;
+export type ExchangeFeeUpdatedEventFilter = TypedEventFilter<ExchangeFeeUpdatedEvent>
 
 export interface ExchangeMaxDynamicFeeUpdatedEventObject {
-  maxDynamicFee: BigNumber;
+	maxDynamicFee: BigNumber
 }
 export type ExchangeMaxDynamicFeeUpdatedEvent = TypedEvent<
-  [BigNumber],
-  ExchangeMaxDynamicFeeUpdatedEventObject
->;
+	[BigNumber],
+	ExchangeMaxDynamicFeeUpdatedEventObject
+>
 
 export type ExchangeMaxDynamicFeeUpdatedEventFilter =
-  TypedEventFilter<ExchangeMaxDynamicFeeUpdatedEvent>;
+	TypedEventFilter<ExchangeMaxDynamicFeeUpdatedEvent>
 
 export interface FeePeriodDurationUpdatedEventObject {
-  newFeePeriodDuration: BigNumber;
+	newFeePeriodDuration: BigNumber
 }
 export type FeePeriodDurationUpdatedEvent = TypedEvent<
-  [BigNumber],
-  FeePeriodDurationUpdatedEventObject
->;
+	[BigNumber],
+	FeePeriodDurationUpdatedEventObject
+>
 
-export type FeePeriodDurationUpdatedEventFilter =
-  TypedEventFilter<FeePeriodDurationUpdatedEvent>;
+export type FeePeriodDurationUpdatedEventFilter = TypedEventFilter<FeePeriodDurationUpdatedEvent>
 
 export interface FlagRewardUpdatedEventObject {
-  newReward: BigNumber;
+	newReward: BigNumber
 }
-export type FlagRewardUpdatedEvent = TypedEvent<
-  [BigNumber],
-  FlagRewardUpdatedEventObject
->;
+export type FlagRewardUpdatedEvent = TypedEvent<[BigNumber], FlagRewardUpdatedEventObject>
 
-export type FlagRewardUpdatedEventFilter =
-  TypedEventFilter<FlagRewardUpdatedEvent>;
+export type FlagRewardUpdatedEventFilter = TypedEventFilter<FlagRewardUpdatedEvent>
 
 export interface InteractionDelayUpdatedEventObject {
-  interactionDelay: BigNumber;
+	interactionDelay: BigNumber
 }
 export type InteractionDelayUpdatedEvent = TypedEvent<
-  [BigNumber],
-  InteractionDelayUpdatedEventObject
->;
+	[BigNumber],
+	InteractionDelayUpdatedEventObject
+>
 
-export type InteractionDelayUpdatedEventFilter =
-  TypedEventFilter<InteractionDelayUpdatedEvent>;
+export type InteractionDelayUpdatedEventFilter = TypedEventFilter<InteractionDelayUpdatedEvent>
 
 export interface IssuanceRatioUpdatedEventObject {
-  newRatio: BigNumber;
+	newRatio: BigNumber
 }
-export type IssuanceRatioUpdatedEvent = TypedEvent<
-  [BigNumber],
-  IssuanceRatioUpdatedEventObject
->;
+export type IssuanceRatioUpdatedEvent = TypedEvent<[BigNumber], IssuanceRatioUpdatedEventObject>
 
-export type IssuanceRatioUpdatedEventFilter =
-  TypedEventFilter<IssuanceRatioUpdatedEvent>;
+export type IssuanceRatioUpdatedEventFilter = TypedEventFilter<IssuanceRatioUpdatedEvent>
 
 export interface LiquidateRewardUpdatedEventObject {
-  newReward: BigNumber;
+	newReward: BigNumber
 }
-export type LiquidateRewardUpdatedEvent = TypedEvent<
-  [BigNumber],
-  LiquidateRewardUpdatedEventObject
->;
+export type LiquidateRewardUpdatedEvent = TypedEvent<[BigNumber], LiquidateRewardUpdatedEventObject>
 
-export type LiquidateRewardUpdatedEventFilter =
-  TypedEventFilter<LiquidateRewardUpdatedEvent>;
+export type LiquidateRewardUpdatedEventFilter = TypedEventFilter<LiquidateRewardUpdatedEvent>
 
 export interface LiquidationDelayUpdatedEventObject {
-  newDelay: BigNumber;
+	newDelay: BigNumber
 }
 export type LiquidationDelayUpdatedEvent = TypedEvent<
-  [BigNumber],
-  LiquidationDelayUpdatedEventObject
->;
+	[BigNumber],
+	LiquidationDelayUpdatedEventObject
+>
 
-export type LiquidationDelayUpdatedEventFilter =
-  TypedEventFilter<LiquidationDelayUpdatedEvent>;
+export type LiquidationDelayUpdatedEventFilter = TypedEventFilter<LiquidationDelayUpdatedEvent>
 
 export interface LiquidationEscrowDurationUpdatedEventObject {
-  newDuration: BigNumber;
+	newDuration: BigNumber
 }
 export type LiquidationEscrowDurationUpdatedEvent = TypedEvent<
-  [BigNumber],
-  LiquidationEscrowDurationUpdatedEventObject
->;
+	[BigNumber],
+	LiquidationEscrowDurationUpdatedEventObject
+>
 
 export type LiquidationEscrowDurationUpdatedEventFilter =
-  TypedEventFilter<LiquidationEscrowDurationUpdatedEvent>;
+	TypedEventFilter<LiquidationEscrowDurationUpdatedEvent>
 
 export interface LiquidationPenaltyUpdatedEventObject {
-  newPenalty: BigNumber;
+	newPenalty: BigNumber
 }
 export type LiquidationPenaltyUpdatedEvent = TypedEvent<
-  [BigNumber],
-  LiquidationPenaltyUpdatedEventObject
->;
+	[BigNumber],
+	LiquidationPenaltyUpdatedEventObject
+>
 
-export type LiquidationPenaltyUpdatedEventFilter =
-  TypedEventFilter<LiquidationPenaltyUpdatedEvent>;
+export type LiquidationPenaltyUpdatedEventFilter = TypedEventFilter<LiquidationPenaltyUpdatedEvent>
 
 export interface LiquidationRatioUpdatedEventObject {
-  newRatio: BigNumber;
+	newRatio: BigNumber
 }
 export type LiquidationRatioUpdatedEvent = TypedEvent<
-  [BigNumber],
-  LiquidationRatioUpdatedEventObject
->;
+	[BigNumber],
+	LiquidationRatioUpdatedEventObject
+>
 
-export type LiquidationRatioUpdatedEventFilter =
-  TypedEventFilter<LiquidationRatioUpdatedEvent>;
+export type LiquidationRatioUpdatedEventFilter = TypedEventFilter<LiquidationRatioUpdatedEvent>
 
 export interface MinimumStakeTimeUpdatedEventObject {
-  minimumStakeTime: BigNumber;
+	minimumStakeTime: BigNumber
 }
 export type MinimumStakeTimeUpdatedEvent = TypedEvent<
-  [BigNumber],
-  MinimumStakeTimeUpdatedEventObject
->;
+	[BigNumber],
+	MinimumStakeTimeUpdatedEventObject
+>
 
-export type MinimumStakeTimeUpdatedEventFilter =
-  TypedEventFilter<MinimumStakeTimeUpdatedEvent>;
+export type MinimumStakeTimeUpdatedEventFilter = TypedEventFilter<MinimumStakeTimeUpdatedEvent>
 
 export interface OwnerChangedEventObject {
-  oldOwner: string;
-  newOwner: string;
+	oldOwner: string
+	newOwner: string
 }
-export type OwnerChangedEvent = TypedEvent<
-  [string, string],
-  OwnerChangedEventObject
->;
+export type OwnerChangedEvent = TypedEvent<[string, string], OwnerChangedEventObject>
 
-export type OwnerChangedEventFilter = TypedEventFilter<OwnerChangedEvent>;
+export type OwnerChangedEventFilter = TypedEventFilter<OwnerChangedEvent>
 
 export interface OwnerNominatedEventObject {
-  newOwner: string;
+	newOwner: string
 }
-export type OwnerNominatedEvent = TypedEvent<
-  [string],
-  OwnerNominatedEventObject
->;
+export type OwnerNominatedEvent = TypedEvent<[string], OwnerNominatedEventObject>
 
-export type OwnerNominatedEventFilter = TypedEventFilter<OwnerNominatedEvent>;
+export type OwnerNominatedEventFilter = TypedEventFilter<OwnerNominatedEvent>
 
 export interface PriceDeviationThresholdUpdatedEventObject {
-  threshold: BigNumber;
+	threshold: BigNumber
 }
 export type PriceDeviationThresholdUpdatedEvent = TypedEvent<
-  [BigNumber],
-  PriceDeviationThresholdUpdatedEventObject
->;
+	[BigNumber],
+	PriceDeviationThresholdUpdatedEventObject
+>
 
 export type PriceDeviationThresholdUpdatedEventFilter =
-  TypedEventFilter<PriceDeviationThresholdUpdatedEvent>;
+	TypedEventFilter<PriceDeviationThresholdUpdatedEvent>
 
 export interface PureChainlinkPriceForAtomicSwapsEnabledUpdatedEventObject {
-  synthKey: string;
-  enabled: boolean;
+	synthKey: string
+	enabled: boolean
 }
 export type PureChainlinkPriceForAtomicSwapsEnabledUpdatedEvent = TypedEvent<
-  [string, boolean],
-  PureChainlinkPriceForAtomicSwapsEnabledUpdatedEventObject
->;
+	[string, boolean],
+	PureChainlinkPriceForAtomicSwapsEnabledUpdatedEventObject
+>
 
 export type PureChainlinkPriceForAtomicSwapsEnabledUpdatedEventFilter =
-  TypedEventFilter<PureChainlinkPriceForAtomicSwapsEnabledUpdatedEvent>;
+	TypedEventFilter<PureChainlinkPriceForAtomicSwapsEnabledUpdatedEvent>
 
 export interface RateStalePeriodUpdatedEventObject {
-  rateStalePeriod: BigNumber;
+	rateStalePeriod: BigNumber
 }
-export type RateStalePeriodUpdatedEvent = TypedEvent<
-  [BigNumber],
-  RateStalePeriodUpdatedEventObject
->;
+export type RateStalePeriodUpdatedEvent = TypedEvent<[BigNumber], RateStalePeriodUpdatedEventObject>
 
-export type RateStalePeriodUpdatedEventFilter =
-  TypedEventFilter<RateStalePeriodUpdatedEvent>;
+export type RateStalePeriodUpdatedEventFilter = TypedEventFilter<RateStalePeriodUpdatedEvent>
 
 export interface SelfLiquidationPenaltyUpdatedEventObject {
-  newPenalty: BigNumber;
+	newPenalty: BigNumber
 }
 export type SelfLiquidationPenaltyUpdatedEvent = TypedEvent<
-  [BigNumber],
-  SelfLiquidationPenaltyUpdatedEventObject
->;
+	[BigNumber],
+	SelfLiquidationPenaltyUpdatedEventObject
+>
 
 export type SelfLiquidationPenaltyUpdatedEventFilter =
-  TypedEventFilter<SelfLiquidationPenaltyUpdatedEvent>;
+	TypedEventFilter<SelfLiquidationPenaltyUpdatedEvent>
 
 export interface SnxLiquidationPenaltyUpdatedEventObject {
-  newPenalty: BigNumber;
+	newPenalty: BigNumber
 }
 export type SnxLiquidationPenaltyUpdatedEvent = TypedEvent<
-  [BigNumber],
-  SnxLiquidationPenaltyUpdatedEventObject
->;
+	[BigNumber],
+	SnxLiquidationPenaltyUpdatedEventObject
+>
 
 export type SnxLiquidationPenaltyUpdatedEventFilter =
-  TypedEventFilter<SnxLiquidationPenaltyUpdatedEvent>;
+	TypedEventFilter<SnxLiquidationPenaltyUpdatedEvent>
 
 export interface TargetThresholdUpdatedEventObject {
-  newTargetThreshold: BigNumber;
+	newTargetThreshold: BigNumber
 }
-export type TargetThresholdUpdatedEvent = TypedEvent<
-  [BigNumber],
-  TargetThresholdUpdatedEventObject
->;
+export type TargetThresholdUpdatedEvent = TypedEvent<[BigNumber], TargetThresholdUpdatedEventObject>
 
-export type TargetThresholdUpdatedEventFilter =
-  TypedEventFilter<TargetThresholdUpdatedEvent>;
+export type TargetThresholdUpdatedEventFilter = TypedEventFilter<TargetThresholdUpdatedEvent>
 
 export interface TradingRewardsEnabledEventObject {
-  enabled: boolean;
+	enabled: boolean
 }
-export type TradingRewardsEnabledEvent = TypedEvent<
-  [boolean],
-  TradingRewardsEnabledEventObject
->;
+export type TradingRewardsEnabledEvent = TypedEvent<[boolean], TradingRewardsEnabledEventObject>
 
-export type TradingRewardsEnabledEventFilter =
-  TypedEventFilter<TradingRewardsEnabledEvent>;
+export type TradingRewardsEnabledEventFilter = TypedEventFilter<TradingRewardsEnabledEvent>
 
 export interface WaitingPeriodSecsUpdatedEventObject {
-  waitingPeriodSecs: BigNumber;
+	waitingPeriodSecs: BigNumber
 }
 export type WaitingPeriodSecsUpdatedEvent = TypedEvent<
-  [BigNumber],
-  WaitingPeriodSecsUpdatedEventObject
->;
+	[BigNumber],
+	WaitingPeriodSecsUpdatedEventObject
+>
 
-export type WaitingPeriodSecsUpdatedEventFilter =
-  TypedEventFilter<WaitingPeriodSecsUpdatedEvent>;
+export type WaitingPeriodSecsUpdatedEventFilter = TypedEventFilter<WaitingPeriodSecsUpdatedEvent>
 
 export interface WrapperBurnFeeRateUpdatedEventObject {
-  wrapper: string;
-  rate: BigNumber;
+	wrapper: string
+	rate: BigNumber
 }
 export type WrapperBurnFeeRateUpdatedEvent = TypedEvent<
-  [string, BigNumber],
-  WrapperBurnFeeRateUpdatedEventObject
->;
+	[string, BigNumber],
+	WrapperBurnFeeRateUpdatedEventObject
+>
 
-export type WrapperBurnFeeRateUpdatedEventFilter =
-  TypedEventFilter<WrapperBurnFeeRateUpdatedEvent>;
+export type WrapperBurnFeeRateUpdatedEventFilter = TypedEventFilter<WrapperBurnFeeRateUpdatedEvent>
 
 export interface WrapperMaxTokenAmountUpdatedEventObject {
-  wrapper: string;
-  maxTokenAmount: BigNumber;
+	wrapper: string
+	maxTokenAmount: BigNumber
 }
 export type WrapperMaxTokenAmountUpdatedEvent = TypedEvent<
-  [string, BigNumber],
-  WrapperMaxTokenAmountUpdatedEventObject
->;
+	[string, BigNumber],
+	WrapperMaxTokenAmountUpdatedEventObject
+>
 
 export type WrapperMaxTokenAmountUpdatedEventFilter =
-  TypedEventFilter<WrapperMaxTokenAmountUpdatedEvent>;
+	TypedEventFilter<WrapperMaxTokenAmountUpdatedEvent>
 
 export interface WrapperMintFeeRateUpdatedEventObject {
-  wrapper: string;
-  rate: BigNumber;
+	wrapper: string
+	rate: BigNumber
 }
 export type WrapperMintFeeRateUpdatedEvent = TypedEvent<
-  [string, BigNumber],
-  WrapperMintFeeRateUpdatedEventObject
->;
+	[string, BigNumber],
+	WrapperMintFeeRateUpdatedEventObject
+>
 
-export type WrapperMintFeeRateUpdatedEventFilter =
-  TypedEventFilter<WrapperMintFeeRateUpdatedEvent>;
+export type WrapperMintFeeRateUpdatedEventFilter = TypedEventFilter<WrapperMintFeeRateUpdatedEvent>
 
 export interface SystemSettings extends BaseContract {
-  connect(signerOrProvider: Signer | Provider | string): this;
-  attach(addressOrName: string): this;
-  deployed(): Promise<this>;
+	connect(signerOrProvider: Signer | Provider | string): this
+	attach(addressOrName: string): this
+	deployed(): Promise<this>
 
-  interface: SystemSettingsInterface;
+	interface: SystemSettingsInterface
 
-  queryFilter<TEvent extends TypedEvent>(
-    event: TypedEventFilter<TEvent>,
-    fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined
-  ): Promise<Array<TEvent>>;
+	queryFilter<TEvent extends TypedEvent>(
+		event: TypedEventFilter<TEvent>,
+		fromBlockOrBlockhash?: string | number | undefined,
+		toBlock?: string | number | undefined
+	): Promise<Array<TEvent>>
 
-  listeners<TEvent extends TypedEvent>(
-    eventFilter?: TypedEventFilter<TEvent>
-  ): Array<TypedListener<TEvent>>;
-  listeners(eventName?: string): Array<Listener>;
-  removeAllListeners<TEvent extends TypedEvent>(
-    eventFilter: TypedEventFilter<TEvent>
-  ): this;
-  removeAllListeners(eventName?: string): this;
-  off: OnEvent<this>;
-  on: OnEvent<this>;
-  once: OnEvent<this>;
-  removeListener: OnEvent<this>;
+	listeners<TEvent extends TypedEvent>(
+		eventFilter?: TypedEventFilter<TEvent>
+	): Array<TypedListener<TEvent>>
+	listeners(eventName?: string): Array<Listener>
+	removeAllListeners<TEvent extends TypedEvent>(eventFilter: TypedEventFilter<TEvent>): this
+	removeAllListeners(eventName?: string): this
+	off: OnEvent<this>
+	on: OnEvent<this>
+	once: OnEvent<this>
+	removeListener: OnEvent<this>
 
-  functions: {
-    CONTRACT_NAME(overrides?: CallOverrides): Promise<[string]>;
+	functions: {
+		CONTRACT_NAME(overrides?: CallOverrides): Promise<[string]>
 
-    acceptOwnership(
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
+		acceptOwnership(overrides?: Overrides & { from?: string }): Promise<ContractTransaction>
 
-    aggregatorWarningFlags(overrides?: CallOverrides): Promise<[string]>;
+		aggregatorWarningFlags(overrides?: CallOverrides): Promise<[string]>
 
-    atomicEquivalentForDexPricing(
-      currencyKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
+		atomicEquivalentForDexPricing(
+			currencyKey: BytesLike,
+			overrides?: CallOverrides
+		): Promise<[string]>
 
-    atomicExchangeFeeRate(
-      currencyKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+		atomicExchangeFeeRate(currencyKey: BytesLike, overrides?: CallOverrides): Promise<[BigNumber]>
 
-    atomicMaxVolumePerBlock(overrides?: CallOverrides): Promise<[BigNumber]>;
+		atomicMaxVolumePerBlock(overrides?: CallOverrides): Promise<[BigNumber]>
 
-    atomicTwapWindow(overrides?: CallOverrides): Promise<[BigNumber]>;
+		atomicTwapWindow(overrides?: CallOverrides): Promise<[BigNumber]>
 
-    atomicVolatilityConsiderationWindow(
-      currencyKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+		atomicVolatilityConsiderationWindow(
+			currencyKey: BytesLike,
+			overrides?: CallOverrides
+		): Promise<[BigNumber]>
 
-    atomicVolatilityUpdateThreshold(
-      currencyKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+		atomicVolatilityUpdateThreshold(
+			currencyKey: BytesLike,
+			overrides?: CallOverrides
+		): Promise<[BigNumber]>
 
-    collapseFeeRate(
-      collateral: string,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+		collapseFeeRate(collateral: string, overrides?: CallOverrides): Promise<[BigNumber]>
 
-    crossChainSynthTransferEnabled(
-      currencyKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+		crossChainSynthTransferEnabled(
+			currencyKey: BytesLike,
+			overrides?: CallOverrides
+		): Promise<[BigNumber]>
 
-    crossDomainMessageGasLimit(
-      gasLimitType: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+		crossDomainMessageGasLimit(
+			gasLimitType: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<[BigNumber]>
 
-    debtSnapshotStaleTime(overrides?: CallOverrides): Promise<[BigNumber]>;
+		debtSnapshotStaleTime(overrides?: CallOverrides): Promise<[BigNumber]>
 
-    etherWrapperBurnFeeRate(overrides?: CallOverrides): Promise<[BigNumber]>;
+		etherWrapperBurnFeeRate(overrides?: CallOverrides): Promise<[BigNumber]>
 
-    etherWrapperMaxETH(overrides?: CallOverrides): Promise<[BigNumber]>;
+		etherWrapperMaxETH(overrides?: CallOverrides): Promise<[BigNumber]>
 
-    etherWrapperMintFeeRate(overrides?: CallOverrides): Promise<[BigNumber]>;
+		etherWrapperMintFeeRate(overrides?: CallOverrides): Promise<[BigNumber]>
 
-    exchangeDynamicFeeRounds(overrides?: CallOverrides): Promise<[BigNumber]>;
+		exchangeDynamicFeeRounds(overrides?: CallOverrides): Promise<[BigNumber]>
 
-    exchangeDynamicFeeThreshold(
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+		exchangeDynamicFeeThreshold(overrides?: CallOverrides): Promise<[BigNumber]>
 
-    exchangeDynamicFeeWeightDecay(
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+		exchangeDynamicFeeWeightDecay(overrides?: CallOverrides): Promise<[BigNumber]>
 
-    exchangeFeeRate(
-      currencyKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+		exchangeFeeRate(currencyKey: BytesLike, overrides?: CallOverrides): Promise<[BigNumber]>
 
-    exchangeMaxDynamicFee(overrides?: CallOverrides): Promise<[BigNumber]>;
+		exchangeMaxDynamicFee(overrides?: CallOverrides): Promise<[BigNumber]>
 
-    feePeriodDuration(overrides?: CallOverrides): Promise<[BigNumber]>;
+		feePeriodDuration(overrides?: CallOverrides): Promise<[BigNumber]>
 
-    flagReward(overrides?: CallOverrides): Promise<[BigNumber]>;
+		flagReward(overrides?: CallOverrides): Promise<[BigNumber]>
 
-    interactionDelay(
-      collateral: string,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+		interactionDelay(collateral: string, overrides?: CallOverrides): Promise<[BigNumber]>
 
-    isResolverCached(overrides?: CallOverrides): Promise<[boolean]>;
+		isResolverCached(overrides?: CallOverrides): Promise<[boolean]>
 
-    issuanceRatio(overrides?: CallOverrides): Promise<[BigNumber]>;
+		issuanceRatio(overrides?: CallOverrides): Promise<[BigNumber]>
 
-    liquidateReward(overrides?: CallOverrides): Promise<[BigNumber]>;
+		liquidateReward(overrides?: CallOverrides): Promise<[BigNumber]>
 
-    liquidationDelay(overrides?: CallOverrides): Promise<[BigNumber]>;
+		liquidationDelay(overrides?: CallOverrides): Promise<[BigNumber]>
 
-    liquidationEscrowDuration(overrides?: CallOverrides): Promise<[BigNumber]>;
+		liquidationEscrowDuration(overrides?: CallOverrides): Promise<[BigNumber]>
 
-    liquidationPenalty(overrides?: CallOverrides): Promise<[BigNumber]>;
+		liquidationPenalty(overrides?: CallOverrides): Promise<[BigNumber]>
 
-    liquidationRatio(overrides?: CallOverrides): Promise<[BigNumber]>;
+		liquidationRatio(overrides?: CallOverrides): Promise<[BigNumber]>
 
-    minimumStakeTime(overrides?: CallOverrides): Promise<[BigNumber]>;
+		minimumStakeTime(overrides?: CallOverrides): Promise<[BigNumber]>
+
+		nominateNewOwner(
+			_owner: string,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
+
+		nominatedOwner(overrides?: CallOverrides): Promise<[string]>
+
+		owner(overrides?: CallOverrides): Promise<[string]>
+
+		priceDeviationThresholdFactor(overrides?: CallOverrides): Promise<[BigNumber]>
+
+		pureChainlinkPriceForAtomicSwapsEnabled(
+			currencyKey: BytesLike,
+			overrides?: CallOverrides
+		): Promise<[boolean]>
+
+		rateStalePeriod(overrides?: CallOverrides): Promise<[BigNumber]>
+
+		rebuildCache(overrides?: Overrides & { from?: string }): Promise<ContractTransaction>
+
+		resolver(overrides?: CallOverrides): Promise<[string]>
+
+		resolverAddressesRequired(
+			overrides?: CallOverrides
+		): Promise<[string[]] & { addresses: string[] }>
+
+		selfLiquidationPenalty(overrides?: CallOverrides): Promise<[BigNumber]>
+
+		setAggregatorWarningFlags(
+			_flags: string,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
+
+		setAtomicEquivalentForDexPricing(
+			_currencyKey: BytesLike,
+			_equivalent: string,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
+
+		setAtomicExchangeFeeRate(
+			_currencyKey: BytesLike,
+			_exchangeFeeRate: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
+
+		setAtomicMaxVolumePerBlock(
+			_maxVolume: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
+
+		setAtomicTwapWindow(
+			_window: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
+
+		setAtomicVolatilityConsiderationWindow(
+			_currencyKey: BytesLike,
+			_window: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
+
+		setAtomicVolatilityUpdateThreshold(
+			_currencyKey: BytesLike,
+			_threshold: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
+
+		setCollapseFeeRate(
+			_collateral: string,
+			_collapseFeeRate: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
+
+		setCrossChainSynthTransferEnabled(
+			_currencyKey: BytesLike,
+			_value: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
+
+		setCrossDomainMessageGasLimit(
+			_gasLimitType: BigNumberish,
+			_crossDomainMessageGasLimit: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
+
+		setDebtSnapshotStaleTime(
+			_seconds: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
+
+		setEtherWrapperBurnFeeRate(
+			_rate: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
+
+		setEtherWrapperMaxETH(
+			_maxETH: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
+
+		setEtherWrapperMintFeeRate(
+			_rate: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
+
+		setExchangeDynamicFeeRounds(
+			rounds: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
+
+		setExchangeDynamicFeeThreshold(
+			threshold: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
+
+		setExchangeDynamicFeeWeightDecay(
+			weightDecay: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
+
+		setExchangeFeeRateForSynths(
+			synthKeys: BytesLike[],
+			exchangeFeeRates: BigNumberish[],
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
+
+		setExchangeMaxDynamicFee(
+			maxFee: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
+
+		setFeePeriodDuration(
+			_feePeriodDuration: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
+
+		setFlagReward(
+			reward: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
+
+		setInteractionDelay(
+			_collateral: string,
+			_interactionDelay: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
+
+		setIssuanceRatio(
+			ratio: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
+
+		setLiquidateReward(
+			reward: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
+
+		setLiquidationDelay(
+			time: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
+
+		setLiquidationEscrowDuration(
+			duration: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
+
+		setLiquidationPenalty(
+			penalty: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
+
+		setLiquidationRatio(
+			_liquidationRatio: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
+
+		setMinimumStakeTime(
+			_seconds: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
+
+		setPriceDeviationThresholdFactor(
+			_priceDeviationThresholdFactor: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
+
+		setPureChainlinkPriceForAtomicSwapsEnabled(
+			_currencyKey: BytesLike,
+			_enabled: boolean,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
+
+		setRateStalePeriod(
+			period: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
+
+		setSelfLiquidationPenalty(
+			penalty: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
+
+		setSnxLiquidationPenalty(
+			penalty: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
 
-    nominateNewOwner(
-      _owner: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
+		setTargetThreshold(
+			percent: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
 
-    nominatedOwner(overrides?: CallOverrides): Promise<[string]>;
+		setTradingRewardsEnabled(
+			_tradingRewardsEnabled: boolean,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
 
-    owner(overrides?: CallOverrides): Promise<[string]>;
+		setWaitingPeriodSecs(
+			_waitingPeriodSecs: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
 
-    priceDeviationThresholdFactor(
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+		setWrapperBurnFeeRate(
+			_wrapper: string,
+			_rate: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
 
-    pureChainlinkPriceForAtomicSwapsEnabled(
-      currencyKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
+		setWrapperMaxTokenAmount(
+			_wrapper: string,
+			_maxTokenAmount: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
 
-    rateStalePeriod(overrides?: CallOverrides): Promise<[BigNumber]>;
+		setWrapperMintFeeRate(
+			_wrapper: string,
+			_rate: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
 
-    rebuildCache(
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    resolver(overrides?: CallOverrides): Promise<[string]>;
+		snxLiquidationPenalty(overrides?: CallOverrides): Promise<[BigNumber]>
 
-    resolverAddressesRequired(
-      overrides?: CallOverrides
-    ): Promise<[string[]] & { addresses: string[] }>;
-
-    selfLiquidationPenalty(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    setAggregatorWarningFlags(
-      _flags: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    setAtomicEquivalentForDexPricing(
-      _currencyKey: BytesLike,
-      _equivalent: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    setAtomicExchangeFeeRate(
-      _currencyKey: BytesLike,
-      _exchangeFeeRate: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    setAtomicMaxVolumePerBlock(
-      _maxVolume: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    setAtomicTwapWindow(
-      _window: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    setAtomicVolatilityConsiderationWindow(
-      _currencyKey: BytesLike,
-      _window: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    setAtomicVolatilityUpdateThreshold(
-      _currencyKey: BytesLike,
-      _threshold: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    setCollapseFeeRate(
-      _collateral: string,
-      _collapseFeeRate: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    setCrossChainSynthTransferEnabled(
-      _currencyKey: BytesLike,
-      _value: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    setCrossDomainMessageGasLimit(
-      _gasLimitType: BigNumberish,
-      _crossDomainMessageGasLimit: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    setDebtSnapshotStaleTime(
-      _seconds: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    setEtherWrapperBurnFeeRate(
-      _rate: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    setEtherWrapperMaxETH(
-      _maxETH: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    setEtherWrapperMintFeeRate(
-      _rate: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    setExchangeDynamicFeeRounds(
-      rounds: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    setExchangeDynamicFeeThreshold(
-      threshold: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    setExchangeDynamicFeeWeightDecay(
-      weightDecay: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    setExchangeFeeRateForSynths(
-      synthKeys: BytesLike[],
-      exchangeFeeRates: BigNumberish[],
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    setExchangeMaxDynamicFee(
-      maxFee: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    setFeePeriodDuration(
-      _feePeriodDuration: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    setFlagReward(
-      reward: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    setInteractionDelay(
-      _collateral: string,
-      _interactionDelay: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    setIssuanceRatio(
-      ratio: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    setLiquidateReward(
-      reward: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    setLiquidationDelay(
-      time: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    setLiquidationEscrowDuration(
-      duration: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    setLiquidationPenalty(
-      penalty: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    setLiquidationRatio(
-      _liquidationRatio: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    setMinimumStakeTime(
-      _seconds: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    setPriceDeviationThresholdFactor(
-      _priceDeviationThresholdFactor: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    setPureChainlinkPriceForAtomicSwapsEnabled(
-      _currencyKey: BytesLike,
-      _enabled: boolean,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    setRateStalePeriod(
-      period: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    setSelfLiquidationPenalty(
-      penalty: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    setSnxLiquidationPenalty(
-      penalty: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    setTargetThreshold(
-      percent: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    setTradingRewardsEnabled(
-      _tradingRewardsEnabled: boolean,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    setWaitingPeriodSecs(
-      _waitingPeriodSecs: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    setWrapperBurnFeeRate(
-      _wrapper: string,
-      _rate: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    setWrapperMaxTokenAmount(
-      _wrapper: string,
-      _maxTokenAmount: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    setWrapperMintFeeRate(
-      _wrapper: string,
-      _rate: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    snxLiquidationPenalty(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    targetThreshold(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    tradingRewardsEnabled(overrides?: CallOverrides): Promise<[boolean]>;
-
-    waitingPeriodSecs(overrides?: CallOverrides): Promise<[BigNumber]>;
+		targetThreshold(overrides?: CallOverrides): Promise<[BigNumber]>
 
-    wrapperBurnFeeRate(
-      wrapper: string,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+		tradingRewardsEnabled(overrides?: CallOverrides): Promise<[boolean]>
 
-    wrapperMaxTokenAmount(
-      wrapper: string,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+		waitingPeriodSecs(overrides?: CallOverrides): Promise<[BigNumber]>
 
-    wrapperMintFeeRate(
-      wrapper: string,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-  };
+		wrapperBurnFeeRate(wrapper: string, overrides?: CallOverrides): Promise<[BigNumber]>
 
-  CONTRACT_NAME(overrides?: CallOverrides): Promise<string>;
+		wrapperMaxTokenAmount(wrapper: string, overrides?: CallOverrides): Promise<[BigNumber]>
 
-  acceptOwnership(
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
+		wrapperMintFeeRate(wrapper: string, overrides?: CallOverrides): Promise<[BigNumber]>
+	}
 
-  aggregatorWarningFlags(overrides?: CallOverrides): Promise<string>;
+	CONTRACT_NAME(overrides?: CallOverrides): Promise<string>
 
-  atomicEquivalentForDexPricing(
-    currencyKey: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<string>;
+	acceptOwnership(overrides?: Overrides & { from?: string }): Promise<ContractTransaction>
 
-  atomicExchangeFeeRate(
-    currencyKey: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
+	aggregatorWarningFlags(overrides?: CallOverrides): Promise<string>
 
-  atomicMaxVolumePerBlock(overrides?: CallOverrides): Promise<BigNumber>;
+	atomicEquivalentForDexPricing(currencyKey: BytesLike, overrides?: CallOverrides): Promise<string>
 
-  atomicTwapWindow(overrides?: CallOverrides): Promise<BigNumber>;
+	atomicExchangeFeeRate(currencyKey: BytesLike, overrides?: CallOverrides): Promise<BigNumber>
 
-  atomicVolatilityConsiderationWindow(
-    currencyKey: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
+	atomicMaxVolumePerBlock(overrides?: CallOverrides): Promise<BigNumber>
 
-  atomicVolatilityUpdateThreshold(
-    currencyKey: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
+	atomicTwapWindow(overrides?: CallOverrides): Promise<BigNumber>
 
-  collapseFeeRate(
-    collateral: string,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
+	atomicVolatilityConsiderationWindow(
+		currencyKey: BytesLike,
+		overrides?: CallOverrides
+	): Promise<BigNumber>
 
-  crossChainSynthTransferEnabled(
-    currencyKey: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
+	atomicVolatilityUpdateThreshold(
+		currencyKey: BytesLike,
+		overrides?: CallOverrides
+	): Promise<BigNumber>
 
-  crossDomainMessageGasLimit(
-    gasLimitType: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
+	collapseFeeRate(collateral: string, overrides?: CallOverrides): Promise<BigNumber>
 
-  debtSnapshotStaleTime(overrides?: CallOverrides): Promise<BigNumber>;
+	crossChainSynthTransferEnabled(
+		currencyKey: BytesLike,
+		overrides?: CallOverrides
+	): Promise<BigNumber>
 
-  etherWrapperBurnFeeRate(overrides?: CallOverrides): Promise<BigNumber>;
+	crossDomainMessageGasLimit(
+		gasLimitType: BigNumberish,
+		overrides?: CallOverrides
+	): Promise<BigNumber>
 
-  etherWrapperMaxETH(overrides?: CallOverrides): Promise<BigNumber>;
+	debtSnapshotStaleTime(overrides?: CallOverrides): Promise<BigNumber>
 
-  etherWrapperMintFeeRate(overrides?: CallOverrides): Promise<BigNumber>;
+	etherWrapperBurnFeeRate(overrides?: CallOverrides): Promise<BigNumber>
 
-  exchangeDynamicFeeRounds(overrides?: CallOverrides): Promise<BigNumber>;
+	etherWrapperMaxETH(overrides?: CallOverrides): Promise<BigNumber>
 
-  exchangeDynamicFeeThreshold(overrides?: CallOverrides): Promise<BigNumber>;
+	etherWrapperMintFeeRate(overrides?: CallOverrides): Promise<BigNumber>
 
-  exchangeDynamicFeeWeightDecay(overrides?: CallOverrides): Promise<BigNumber>;
+	exchangeDynamicFeeRounds(overrides?: CallOverrides): Promise<BigNumber>
 
-  exchangeFeeRate(
-    currencyKey: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
+	exchangeDynamicFeeThreshold(overrides?: CallOverrides): Promise<BigNumber>
 
-  exchangeMaxDynamicFee(overrides?: CallOverrides): Promise<BigNumber>;
+	exchangeDynamicFeeWeightDecay(overrides?: CallOverrides): Promise<BigNumber>
 
-  feePeriodDuration(overrides?: CallOverrides): Promise<BigNumber>;
+	exchangeFeeRate(currencyKey: BytesLike, overrides?: CallOverrides): Promise<BigNumber>
 
-  flagReward(overrides?: CallOverrides): Promise<BigNumber>;
+	exchangeMaxDynamicFee(overrides?: CallOverrides): Promise<BigNumber>
 
-  interactionDelay(
-    collateral: string,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
+	feePeriodDuration(overrides?: CallOverrides): Promise<BigNumber>
 
-  isResolverCached(overrides?: CallOverrides): Promise<boolean>;
+	flagReward(overrides?: CallOverrides): Promise<BigNumber>
 
-  issuanceRatio(overrides?: CallOverrides): Promise<BigNumber>;
+	interactionDelay(collateral: string, overrides?: CallOverrides): Promise<BigNumber>
 
-  liquidateReward(overrides?: CallOverrides): Promise<BigNumber>;
+	isResolverCached(overrides?: CallOverrides): Promise<boolean>
 
-  liquidationDelay(overrides?: CallOverrides): Promise<BigNumber>;
+	issuanceRatio(overrides?: CallOverrides): Promise<BigNumber>
 
-  liquidationEscrowDuration(overrides?: CallOverrides): Promise<BigNumber>;
+	liquidateReward(overrides?: CallOverrides): Promise<BigNumber>
 
-  liquidationPenalty(overrides?: CallOverrides): Promise<BigNumber>;
+	liquidationDelay(overrides?: CallOverrides): Promise<BigNumber>
 
-  liquidationRatio(overrides?: CallOverrides): Promise<BigNumber>;
+	liquidationEscrowDuration(overrides?: CallOverrides): Promise<BigNumber>
 
-  minimumStakeTime(overrides?: CallOverrides): Promise<BigNumber>;
+	liquidationPenalty(overrides?: CallOverrides): Promise<BigNumber>
 
-  nominateNewOwner(
-    _owner: string,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  nominatedOwner(overrides?: CallOverrides): Promise<string>;
+	liquidationRatio(overrides?: CallOverrides): Promise<BigNumber>
 
-  owner(overrides?: CallOverrides): Promise<string>;
-
-  priceDeviationThresholdFactor(overrides?: CallOverrides): Promise<BigNumber>;
+	minimumStakeTime(overrides?: CallOverrides): Promise<BigNumber>
 
-  pureChainlinkPriceForAtomicSwapsEnabled(
-    currencyKey: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
+	nominateNewOwner(
+		_owner: string,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
 
-  rateStalePeriod(overrides?: CallOverrides): Promise<BigNumber>;
-
-  rebuildCache(
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  resolver(overrides?: CallOverrides): Promise<string>;
-
-  resolverAddressesRequired(overrides?: CallOverrides): Promise<string[]>;
-
-  selfLiquidationPenalty(overrides?: CallOverrides): Promise<BigNumber>;
-
-  setAggregatorWarningFlags(
-    _flags: string,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  setAtomicEquivalentForDexPricing(
-    _currencyKey: BytesLike,
-    _equivalent: string,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  setAtomicExchangeFeeRate(
-    _currencyKey: BytesLike,
-    _exchangeFeeRate: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  setAtomicMaxVolumePerBlock(
-    _maxVolume: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  setAtomicTwapWindow(
-    _window: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  setAtomicVolatilityConsiderationWindow(
-    _currencyKey: BytesLike,
-    _window: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  setAtomicVolatilityUpdateThreshold(
-    _currencyKey: BytesLike,
-    _threshold: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  setCollapseFeeRate(
-    _collateral: string,
-    _collapseFeeRate: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  setCrossChainSynthTransferEnabled(
-    _currencyKey: BytesLike,
-    _value: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  setCrossDomainMessageGasLimit(
-    _gasLimitType: BigNumberish,
-    _crossDomainMessageGasLimit: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  setDebtSnapshotStaleTime(
-    _seconds: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  setEtherWrapperBurnFeeRate(
-    _rate: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  setEtherWrapperMaxETH(
-    _maxETH: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  setEtherWrapperMintFeeRate(
-    _rate: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  setExchangeDynamicFeeRounds(
-    rounds: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  setExchangeDynamicFeeThreshold(
-    threshold: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  setExchangeDynamicFeeWeightDecay(
-    weightDecay: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  setExchangeFeeRateForSynths(
-    synthKeys: BytesLike[],
-    exchangeFeeRates: BigNumberish[],
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  setExchangeMaxDynamicFee(
-    maxFee: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  setFeePeriodDuration(
-    _feePeriodDuration: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  setFlagReward(
-    reward: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  setInteractionDelay(
-    _collateral: string,
-    _interactionDelay: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  setIssuanceRatio(
-    ratio: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  setLiquidateReward(
-    reward: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  setLiquidationDelay(
-    time: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  setLiquidationEscrowDuration(
-    duration: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  setLiquidationPenalty(
-    penalty: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  setLiquidationRatio(
-    _liquidationRatio: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  setMinimumStakeTime(
-    _seconds: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  setPriceDeviationThresholdFactor(
-    _priceDeviationThresholdFactor: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  setPureChainlinkPriceForAtomicSwapsEnabled(
-    _currencyKey: BytesLike,
-    _enabled: boolean,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  setRateStalePeriod(
-    period: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  setSelfLiquidationPenalty(
-    penalty: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  setSnxLiquidationPenalty(
-    penalty: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  setTargetThreshold(
-    percent: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  setTradingRewardsEnabled(
-    _tradingRewardsEnabled: boolean,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  setWaitingPeriodSecs(
-    _waitingPeriodSecs: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  setWrapperBurnFeeRate(
-    _wrapper: string,
-    _rate: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  setWrapperMaxTokenAmount(
-    _wrapper: string,
-    _maxTokenAmount: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  setWrapperMintFeeRate(
-    _wrapper: string,
-    _rate: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  snxLiquidationPenalty(overrides?: CallOverrides): Promise<BigNumber>;
-
-  targetThreshold(overrides?: CallOverrides): Promise<BigNumber>;
-
-  tradingRewardsEnabled(overrides?: CallOverrides): Promise<boolean>;
-
-  waitingPeriodSecs(overrides?: CallOverrides): Promise<BigNumber>;
-
-  wrapperBurnFeeRate(
-    wrapper: string,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
+	nominatedOwner(overrides?: CallOverrides): Promise<string>
 
-  wrapperMaxTokenAmount(
-    wrapper: string,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
+	owner(overrides?: CallOverrides): Promise<string>
 
-  wrapperMintFeeRate(
-    wrapper: string,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
+	priceDeviationThresholdFactor(overrides?: CallOverrides): Promise<BigNumber>
 
-  callStatic: {
-    CONTRACT_NAME(overrides?: CallOverrides): Promise<string>;
+	pureChainlinkPriceForAtomicSwapsEnabled(
+		currencyKey: BytesLike,
+		overrides?: CallOverrides
+	): Promise<boolean>
 
-    acceptOwnership(overrides?: CallOverrides): Promise<void>;
+	rateStalePeriod(overrides?: CallOverrides): Promise<BigNumber>
 
-    aggregatorWarningFlags(overrides?: CallOverrides): Promise<string>;
+	rebuildCache(overrides?: Overrides & { from?: string }): Promise<ContractTransaction>
 
-    atomicEquivalentForDexPricing(
-      currencyKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<string>;
+	resolver(overrides?: CallOverrides): Promise<string>
 
-    atomicExchangeFeeRate(
-      currencyKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+	resolverAddressesRequired(overrides?: CallOverrides): Promise<string[]>
 
-    atomicMaxVolumePerBlock(overrides?: CallOverrides): Promise<BigNumber>;
+	selfLiquidationPenalty(overrides?: CallOverrides): Promise<BigNumber>
 
-    atomicTwapWindow(overrides?: CallOverrides): Promise<BigNumber>;
+	setAggregatorWarningFlags(
+		_flags: string,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
 
-    atomicVolatilityConsiderationWindow(
-      currencyKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+	setAtomicEquivalentForDexPricing(
+		_currencyKey: BytesLike,
+		_equivalent: string,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
 
-    atomicVolatilityUpdateThreshold(
-      currencyKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+	setAtomicExchangeFeeRate(
+		_currencyKey: BytesLike,
+		_exchangeFeeRate: BigNumberish,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
 
-    collapseFeeRate(
-      collateral: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+	setAtomicMaxVolumePerBlock(
+		_maxVolume: BigNumberish,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
 
-    crossChainSynthTransferEnabled(
-      currencyKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+	setAtomicTwapWindow(
+		_window: BigNumberish,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
 
-    crossDomainMessageGasLimit(
-      gasLimitType: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+	setAtomicVolatilityConsiderationWindow(
+		_currencyKey: BytesLike,
+		_window: BigNumberish,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
 
-    debtSnapshotStaleTime(overrides?: CallOverrides): Promise<BigNumber>;
+	setAtomicVolatilityUpdateThreshold(
+		_currencyKey: BytesLike,
+		_threshold: BigNumberish,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
 
-    etherWrapperBurnFeeRate(overrides?: CallOverrides): Promise<BigNumber>;
+	setCollapseFeeRate(
+		_collateral: string,
+		_collapseFeeRate: BigNumberish,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
 
-    etherWrapperMaxETH(overrides?: CallOverrides): Promise<BigNumber>;
+	setCrossChainSynthTransferEnabled(
+		_currencyKey: BytesLike,
+		_value: BigNumberish,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
 
-    etherWrapperMintFeeRate(overrides?: CallOverrides): Promise<BigNumber>;
+	setCrossDomainMessageGasLimit(
+		_gasLimitType: BigNumberish,
+		_crossDomainMessageGasLimit: BigNumberish,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
 
-    exchangeDynamicFeeRounds(overrides?: CallOverrides): Promise<BigNumber>;
+	setDebtSnapshotStaleTime(
+		_seconds: BigNumberish,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
 
-    exchangeDynamicFeeThreshold(overrides?: CallOverrides): Promise<BigNumber>;
+	setEtherWrapperBurnFeeRate(
+		_rate: BigNumberish,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
 
-    exchangeDynamicFeeWeightDecay(
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+	setEtherWrapperMaxETH(
+		_maxETH: BigNumberish,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
 
-    exchangeFeeRate(
-      currencyKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+	setEtherWrapperMintFeeRate(
+		_rate: BigNumberish,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
+
+	setExchangeDynamicFeeRounds(
+		rounds: BigNumberish,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
+
+	setExchangeDynamicFeeThreshold(
+		threshold: BigNumberish,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
+
+	setExchangeDynamicFeeWeightDecay(
+		weightDecay: BigNumberish,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
+
+	setExchangeFeeRateForSynths(
+		synthKeys: BytesLike[],
+		exchangeFeeRates: BigNumberish[],
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
+
+	setExchangeMaxDynamicFee(
+		maxFee: BigNumberish,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
+
+	setFeePeriodDuration(
+		_feePeriodDuration: BigNumberish,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
+
+	setFlagReward(
+		reward: BigNumberish,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
+
+	setInteractionDelay(
+		_collateral: string,
+		_interactionDelay: BigNumberish,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
+
+	setIssuanceRatio(
+		ratio: BigNumberish,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
 
-    exchangeMaxDynamicFee(overrides?: CallOverrides): Promise<BigNumber>;
+	setLiquidateReward(
+		reward: BigNumberish,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
 
-    feePeriodDuration(overrides?: CallOverrides): Promise<BigNumber>;
+	setLiquidationDelay(
+		time: BigNumberish,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
 
-    flagReward(overrides?: CallOverrides): Promise<BigNumber>;
+	setLiquidationEscrowDuration(
+		duration: BigNumberish,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
 
-    interactionDelay(
-      collateral: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+	setLiquidationPenalty(
+		penalty: BigNumberish,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
 
-    isResolverCached(overrides?: CallOverrides): Promise<boolean>;
+	setLiquidationRatio(
+		_liquidationRatio: BigNumberish,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
 
-    issuanceRatio(overrides?: CallOverrides): Promise<BigNumber>;
+	setMinimumStakeTime(
+		_seconds: BigNumberish,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
 
-    liquidateReward(overrides?: CallOverrides): Promise<BigNumber>;
+	setPriceDeviationThresholdFactor(
+		_priceDeviationThresholdFactor: BigNumberish,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
 
-    liquidationDelay(overrides?: CallOverrides): Promise<BigNumber>;
+	setPureChainlinkPriceForAtomicSwapsEnabled(
+		_currencyKey: BytesLike,
+		_enabled: boolean,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
 
-    liquidationEscrowDuration(overrides?: CallOverrides): Promise<BigNumber>;
+	setRateStalePeriod(
+		period: BigNumberish,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
 
-    liquidationPenalty(overrides?: CallOverrides): Promise<BigNumber>;
+	setSelfLiquidationPenalty(
+		penalty: BigNumberish,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
 
-    liquidationRatio(overrides?: CallOverrides): Promise<BigNumber>;
+	setSnxLiquidationPenalty(
+		penalty: BigNumberish,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
 
-    minimumStakeTime(overrides?: CallOverrides): Promise<BigNumber>;
+	setTargetThreshold(
+		percent: BigNumberish,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
 
-    nominateNewOwner(_owner: string, overrides?: CallOverrides): Promise<void>;
+	setTradingRewardsEnabled(
+		_tradingRewardsEnabled: boolean,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
 
-    nominatedOwner(overrides?: CallOverrides): Promise<string>;
+	setWaitingPeriodSecs(
+		_waitingPeriodSecs: BigNumberish,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
 
-    owner(overrides?: CallOverrides): Promise<string>;
+	setWrapperBurnFeeRate(
+		_wrapper: string,
+		_rate: BigNumberish,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
 
-    priceDeviationThresholdFactor(
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+	setWrapperMaxTokenAmount(
+		_wrapper: string,
+		_maxTokenAmount: BigNumberish,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
 
-    pureChainlinkPriceForAtomicSwapsEnabled(
-      currencyKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    rateStalePeriod(overrides?: CallOverrides): Promise<BigNumber>;
-
-    rebuildCache(overrides?: CallOverrides): Promise<void>;
-
-    resolver(overrides?: CallOverrides): Promise<string>;
-
-    resolverAddressesRequired(overrides?: CallOverrides): Promise<string[]>;
-
-    selfLiquidationPenalty(overrides?: CallOverrides): Promise<BigNumber>;
-
-    setAggregatorWarningFlags(
-      _flags: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setAtomicEquivalentForDexPricing(
-      _currencyKey: BytesLike,
-      _equivalent: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setAtomicExchangeFeeRate(
-      _currencyKey: BytesLike,
-      _exchangeFeeRate: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setAtomicMaxVolumePerBlock(
-      _maxVolume: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setAtomicTwapWindow(
-      _window: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setAtomicVolatilityConsiderationWindow(
-      _currencyKey: BytesLike,
-      _window: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setAtomicVolatilityUpdateThreshold(
-      _currencyKey: BytesLike,
-      _threshold: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setCollapseFeeRate(
-      _collateral: string,
-      _collapseFeeRate: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setCrossChainSynthTransferEnabled(
-      _currencyKey: BytesLike,
-      _value: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setCrossDomainMessageGasLimit(
-      _gasLimitType: BigNumberish,
-      _crossDomainMessageGasLimit: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setDebtSnapshotStaleTime(
-      _seconds: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setEtherWrapperBurnFeeRate(
-      _rate: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setEtherWrapperMaxETH(
-      _maxETH: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setEtherWrapperMintFeeRate(
-      _rate: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setExchangeDynamicFeeRounds(
-      rounds: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setExchangeDynamicFeeThreshold(
-      threshold: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setExchangeDynamicFeeWeightDecay(
-      weightDecay: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setExchangeFeeRateForSynths(
-      synthKeys: BytesLike[],
-      exchangeFeeRates: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setExchangeMaxDynamicFee(
-      maxFee: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setFeePeriodDuration(
-      _feePeriodDuration: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setFlagReward(
-      reward: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setInteractionDelay(
-      _collateral: string,
-      _interactionDelay: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setIssuanceRatio(
-      ratio: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setLiquidateReward(
-      reward: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setLiquidationDelay(
-      time: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setLiquidationEscrowDuration(
-      duration: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setLiquidationPenalty(
-      penalty: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setLiquidationRatio(
-      _liquidationRatio: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setMinimumStakeTime(
-      _seconds: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setPriceDeviationThresholdFactor(
-      _priceDeviationThresholdFactor: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setPureChainlinkPriceForAtomicSwapsEnabled(
-      _currencyKey: BytesLike,
-      _enabled: boolean,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setRateStalePeriod(
-      period: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setSelfLiquidationPenalty(
-      penalty: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setSnxLiquidationPenalty(
-      penalty: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setTargetThreshold(
-      percent: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setTradingRewardsEnabled(
-      _tradingRewardsEnabled: boolean,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setWaitingPeriodSecs(
-      _waitingPeriodSecs: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setWrapperBurnFeeRate(
-      _wrapper: string,
-      _rate: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setWrapperMaxTokenAmount(
-      _wrapper: string,
-      _maxTokenAmount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setWrapperMintFeeRate(
-      _wrapper: string,
-      _rate: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    snxLiquidationPenalty(overrides?: CallOverrides): Promise<BigNumber>;
-
-    targetThreshold(overrides?: CallOverrides): Promise<BigNumber>;
-
-    tradingRewardsEnabled(overrides?: CallOverrides): Promise<boolean>;
-
-    waitingPeriodSecs(overrides?: CallOverrides): Promise<BigNumber>;
-
-    wrapperBurnFeeRate(
-      wrapper: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    wrapperMaxTokenAmount(
-      wrapper: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    wrapperMintFeeRate(
-      wrapper: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-  };
-
-  filters: {
-    "AggregatorWarningFlagsUpdated(address)"(
-      flags?: null
-    ): AggregatorWarningFlagsUpdatedEventFilter;
-    AggregatorWarningFlagsUpdated(
-      flags?: null
-    ): AggregatorWarningFlagsUpdatedEventFilter;
-
-    "AtomicEquivalentForDexPricingUpdated(bytes32,address)"(
-      synthKey?: null,
-      equivalent?: null
-    ): AtomicEquivalentForDexPricingUpdatedEventFilter;
-    AtomicEquivalentForDexPricingUpdated(
-      synthKey?: null,
-      equivalent?: null
-    ): AtomicEquivalentForDexPricingUpdatedEventFilter;
-
-    "AtomicExchangeFeeUpdated(bytes32,uint256)"(
-      synthKey?: null,
-      newExchangeFeeRate?: null
-    ): AtomicExchangeFeeUpdatedEventFilter;
-    AtomicExchangeFeeUpdated(
-      synthKey?: null,
-      newExchangeFeeRate?: null
-    ): AtomicExchangeFeeUpdatedEventFilter;
-
-    "AtomicMaxVolumePerBlockUpdated(uint256)"(
-      newMaxVolume?: null
-    ): AtomicMaxVolumePerBlockUpdatedEventFilter;
-    AtomicMaxVolumePerBlockUpdated(
-      newMaxVolume?: null
-    ): AtomicMaxVolumePerBlockUpdatedEventFilter;
-
-    "AtomicTwapWindowUpdated(uint256)"(
-      newWindow?: null
-    ): AtomicTwapWindowUpdatedEventFilter;
-    AtomicTwapWindowUpdated(
-      newWindow?: null
-    ): AtomicTwapWindowUpdatedEventFilter;
-
-    "AtomicVolatilityConsiderationWindowUpdated(bytes32,uint256)"(
-      synthKey?: null,
-      newVolatilityConsiderationWindow?: null
-    ): AtomicVolatilityConsiderationWindowUpdatedEventFilter;
-    AtomicVolatilityConsiderationWindowUpdated(
-      synthKey?: null,
-      newVolatilityConsiderationWindow?: null
-    ): AtomicVolatilityConsiderationWindowUpdatedEventFilter;
-
-    "AtomicVolatilityUpdateThresholdUpdated(bytes32,uint256)"(
-      synthKey?: null,
-      newVolatilityUpdateThreshold?: null
-    ): AtomicVolatilityUpdateThresholdUpdatedEventFilter;
-    AtomicVolatilityUpdateThresholdUpdated(
-      synthKey?: null,
-      newVolatilityUpdateThreshold?: null
-    ): AtomicVolatilityUpdateThresholdUpdatedEventFilter;
-
-    "CacheUpdated(bytes32,address)"(
-      name?: null,
-      destination?: null
-    ): CacheUpdatedEventFilter;
-    CacheUpdated(name?: null, destination?: null): CacheUpdatedEventFilter;
-
-    "CollapseFeeRateUpdated(uint256)"(
-      collapseFeeRate?: null
-    ): CollapseFeeRateUpdatedEventFilter;
-    CollapseFeeRateUpdated(
-      collapseFeeRate?: null
-    ): CollapseFeeRateUpdatedEventFilter;
-
-    "CrossChainSynthTransferEnabledUpdated(bytes32,uint256)"(
-      synthKey?: null,
-      value?: null
-    ): CrossChainSynthTransferEnabledUpdatedEventFilter;
-    CrossChainSynthTransferEnabledUpdated(
-      synthKey?: null,
-      value?: null
-    ): CrossChainSynthTransferEnabledUpdatedEventFilter;
-
-    "CrossDomainMessageGasLimitChanged(uint8,uint256)"(
-      gasLimitType?: null,
-      newLimit?: null
-    ): CrossDomainMessageGasLimitChangedEventFilter;
-    CrossDomainMessageGasLimitChanged(
-      gasLimitType?: null,
-      newLimit?: null
-    ): CrossDomainMessageGasLimitChangedEventFilter;
-
-    "DebtSnapshotStaleTimeUpdated(uint256)"(
-      debtSnapshotStaleTime?: null
-    ): DebtSnapshotStaleTimeUpdatedEventFilter;
-    DebtSnapshotStaleTimeUpdated(
-      debtSnapshotStaleTime?: null
-    ): DebtSnapshotStaleTimeUpdatedEventFilter;
-
-    "EtherWrapperBurnFeeRateUpdated(uint256)"(
-      rate?: null
-    ): EtherWrapperBurnFeeRateUpdatedEventFilter;
-    EtherWrapperBurnFeeRateUpdated(
-      rate?: null
-    ): EtherWrapperBurnFeeRateUpdatedEventFilter;
-
-    "EtherWrapperMaxETHUpdated(uint256)"(
-      maxETH?: null
-    ): EtherWrapperMaxETHUpdatedEventFilter;
-    EtherWrapperMaxETHUpdated(
-      maxETH?: null
-    ): EtherWrapperMaxETHUpdatedEventFilter;
-
-    "EtherWrapperMintFeeRateUpdated(uint256)"(
-      rate?: null
-    ): EtherWrapperMintFeeRateUpdatedEventFilter;
-    EtherWrapperMintFeeRateUpdated(
-      rate?: null
-    ): EtherWrapperMintFeeRateUpdatedEventFilter;
-
-    "ExchangeDynamicFeeRoundsUpdated(uint256)"(
-      dynamicFeeRounds?: null
-    ): ExchangeDynamicFeeRoundsUpdatedEventFilter;
-    ExchangeDynamicFeeRoundsUpdated(
-      dynamicFeeRounds?: null
-    ): ExchangeDynamicFeeRoundsUpdatedEventFilter;
-
-    "ExchangeDynamicFeeThresholdUpdated(uint256)"(
-      dynamicFeeThreshold?: null
-    ): ExchangeDynamicFeeThresholdUpdatedEventFilter;
-    ExchangeDynamicFeeThresholdUpdated(
-      dynamicFeeThreshold?: null
-    ): ExchangeDynamicFeeThresholdUpdatedEventFilter;
-
-    "ExchangeDynamicFeeWeightDecayUpdated(uint256)"(
-      dynamicFeeWeightDecay?: null
-    ): ExchangeDynamicFeeWeightDecayUpdatedEventFilter;
-    ExchangeDynamicFeeWeightDecayUpdated(
-      dynamicFeeWeightDecay?: null
-    ): ExchangeDynamicFeeWeightDecayUpdatedEventFilter;
-
-    "ExchangeFeeUpdated(bytes32,uint256)"(
-      synthKey?: null,
-      newExchangeFeeRate?: null
-    ): ExchangeFeeUpdatedEventFilter;
-    ExchangeFeeUpdated(
-      synthKey?: null,
-      newExchangeFeeRate?: null
-    ): ExchangeFeeUpdatedEventFilter;
-
-    "ExchangeMaxDynamicFeeUpdated(uint256)"(
-      maxDynamicFee?: null
-    ): ExchangeMaxDynamicFeeUpdatedEventFilter;
-    ExchangeMaxDynamicFeeUpdated(
-      maxDynamicFee?: null
-    ): ExchangeMaxDynamicFeeUpdatedEventFilter;
-
-    "FeePeriodDurationUpdated(uint256)"(
-      newFeePeriodDuration?: null
-    ): FeePeriodDurationUpdatedEventFilter;
-    FeePeriodDurationUpdated(
-      newFeePeriodDuration?: null
-    ): FeePeriodDurationUpdatedEventFilter;
-
-    "FlagRewardUpdated(uint256)"(
-      newReward?: null
-    ): FlagRewardUpdatedEventFilter;
-    FlagRewardUpdated(newReward?: null): FlagRewardUpdatedEventFilter;
-
-    "InteractionDelayUpdated(uint256)"(
-      interactionDelay?: null
-    ): InteractionDelayUpdatedEventFilter;
-    InteractionDelayUpdated(
-      interactionDelay?: null
-    ): InteractionDelayUpdatedEventFilter;
-
-    "IssuanceRatioUpdated(uint256)"(
-      newRatio?: null
-    ): IssuanceRatioUpdatedEventFilter;
-    IssuanceRatioUpdated(newRatio?: null): IssuanceRatioUpdatedEventFilter;
-
-    "LiquidateRewardUpdated(uint256)"(
-      newReward?: null
-    ): LiquidateRewardUpdatedEventFilter;
-    LiquidateRewardUpdated(newReward?: null): LiquidateRewardUpdatedEventFilter;
-
-    "LiquidationDelayUpdated(uint256)"(
-      newDelay?: null
-    ): LiquidationDelayUpdatedEventFilter;
-    LiquidationDelayUpdated(
-      newDelay?: null
-    ): LiquidationDelayUpdatedEventFilter;
-
-    "LiquidationEscrowDurationUpdated(uint256)"(
-      newDuration?: null
-    ): LiquidationEscrowDurationUpdatedEventFilter;
-    LiquidationEscrowDurationUpdated(
-      newDuration?: null
-    ): LiquidationEscrowDurationUpdatedEventFilter;
-
-    "LiquidationPenaltyUpdated(uint256)"(
-      newPenalty?: null
-    ): LiquidationPenaltyUpdatedEventFilter;
-    LiquidationPenaltyUpdated(
-      newPenalty?: null
-    ): LiquidationPenaltyUpdatedEventFilter;
-
-    "LiquidationRatioUpdated(uint256)"(
-      newRatio?: null
-    ): LiquidationRatioUpdatedEventFilter;
-    LiquidationRatioUpdated(
-      newRatio?: null
-    ): LiquidationRatioUpdatedEventFilter;
-
-    "MinimumStakeTimeUpdated(uint256)"(
-      minimumStakeTime?: null
-    ): MinimumStakeTimeUpdatedEventFilter;
-    MinimumStakeTimeUpdated(
-      minimumStakeTime?: null
-    ): MinimumStakeTimeUpdatedEventFilter;
-
-    "OwnerChanged(address,address)"(
-      oldOwner?: null,
-      newOwner?: null
-    ): OwnerChangedEventFilter;
-    OwnerChanged(oldOwner?: null, newOwner?: null): OwnerChangedEventFilter;
-
-    "OwnerNominated(address)"(newOwner?: null): OwnerNominatedEventFilter;
-    OwnerNominated(newOwner?: null): OwnerNominatedEventFilter;
-
-    "PriceDeviationThresholdUpdated(uint256)"(
-      threshold?: null
-    ): PriceDeviationThresholdUpdatedEventFilter;
-    PriceDeviationThresholdUpdated(
-      threshold?: null
-    ): PriceDeviationThresholdUpdatedEventFilter;
-
-    "PureChainlinkPriceForAtomicSwapsEnabledUpdated(bytes32,bool)"(
-      synthKey?: null,
-      enabled?: null
-    ): PureChainlinkPriceForAtomicSwapsEnabledUpdatedEventFilter;
-    PureChainlinkPriceForAtomicSwapsEnabledUpdated(
-      synthKey?: null,
-      enabled?: null
-    ): PureChainlinkPriceForAtomicSwapsEnabledUpdatedEventFilter;
-
-    "RateStalePeriodUpdated(uint256)"(
-      rateStalePeriod?: null
-    ): RateStalePeriodUpdatedEventFilter;
-    RateStalePeriodUpdated(
-      rateStalePeriod?: null
-    ): RateStalePeriodUpdatedEventFilter;
-
-    "SelfLiquidationPenaltyUpdated(uint256)"(
-      newPenalty?: null
-    ): SelfLiquidationPenaltyUpdatedEventFilter;
-    SelfLiquidationPenaltyUpdated(
-      newPenalty?: null
-    ): SelfLiquidationPenaltyUpdatedEventFilter;
-
-    "SnxLiquidationPenaltyUpdated(uint256)"(
-      newPenalty?: null
-    ): SnxLiquidationPenaltyUpdatedEventFilter;
-    SnxLiquidationPenaltyUpdated(
-      newPenalty?: null
-    ): SnxLiquidationPenaltyUpdatedEventFilter;
-
-    "TargetThresholdUpdated(uint256)"(
-      newTargetThreshold?: null
-    ): TargetThresholdUpdatedEventFilter;
-    TargetThresholdUpdated(
-      newTargetThreshold?: null
-    ): TargetThresholdUpdatedEventFilter;
-
-    "TradingRewardsEnabled(bool)"(
-      enabled?: null
-    ): TradingRewardsEnabledEventFilter;
-    TradingRewardsEnabled(enabled?: null): TradingRewardsEnabledEventFilter;
-
-    "WaitingPeriodSecsUpdated(uint256)"(
-      waitingPeriodSecs?: null
-    ): WaitingPeriodSecsUpdatedEventFilter;
-    WaitingPeriodSecsUpdated(
-      waitingPeriodSecs?: null
-    ): WaitingPeriodSecsUpdatedEventFilter;
-
-    "WrapperBurnFeeRateUpdated(address,int256)"(
-      wrapper?: null,
-      rate?: null
-    ): WrapperBurnFeeRateUpdatedEventFilter;
-    WrapperBurnFeeRateUpdated(
-      wrapper?: null,
-      rate?: null
-    ): WrapperBurnFeeRateUpdatedEventFilter;
-
-    "WrapperMaxTokenAmountUpdated(address,uint256)"(
-      wrapper?: null,
-      maxTokenAmount?: null
-    ): WrapperMaxTokenAmountUpdatedEventFilter;
-    WrapperMaxTokenAmountUpdated(
-      wrapper?: null,
-      maxTokenAmount?: null
-    ): WrapperMaxTokenAmountUpdatedEventFilter;
-
-    "WrapperMintFeeRateUpdated(address,int256)"(
-      wrapper?: null,
-      rate?: null
-    ): WrapperMintFeeRateUpdatedEventFilter;
-    WrapperMintFeeRateUpdated(
-      wrapper?: null,
-      rate?: null
-    ): WrapperMintFeeRateUpdatedEventFilter;
-  };
-
-  estimateGas: {
-    CONTRACT_NAME(overrides?: CallOverrides): Promise<BigNumber>;
-
-    acceptOwnership(
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    aggregatorWarningFlags(overrides?: CallOverrides): Promise<BigNumber>;
-
-    atomicEquivalentForDexPricing(
-      currencyKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    atomicExchangeFeeRate(
-      currencyKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    atomicMaxVolumePerBlock(overrides?: CallOverrides): Promise<BigNumber>;
-
-    atomicTwapWindow(overrides?: CallOverrides): Promise<BigNumber>;
-
-    atomicVolatilityConsiderationWindow(
-      currencyKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    atomicVolatilityUpdateThreshold(
-      currencyKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    collapseFeeRate(
-      collateral: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    crossChainSynthTransferEnabled(
-      currencyKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    crossDomainMessageGasLimit(
-      gasLimitType: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    debtSnapshotStaleTime(overrides?: CallOverrides): Promise<BigNumber>;
-
-    etherWrapperBurnFeeRate(overrides?: CallOverrides): Promise<BigNumber>;
-
-    etherWrapperMaxETH(overrides?: CallOverrides): Promise<BigNumber>;
-
-    etherWrapperMintFeeRate(overrides?: CallOverrides): Promise<BigNumber>;
-
-    exchangeDynamicFeeRounds(overrides?: CallOverrides): Promise<BigNumber>;
-
-    exchangeDynamicFeeThreshold(overrides?: CallOverrides): Promise<BigNumber>;
-
-    exchangeDynamicFeeWeightDecay(
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    exchangeFeeRate(
-      currencyKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    exchangeMaxDynamicFee(overrides?: CallOverrides): Promise<BigNumber>;
-
-    feePeriodDuration(overrides?: CallOverrides): Promise<BigNumber>;
-
-    flagReward(overrides?: CallOverrides): Promise<BigNumber>;
-
-    interactionDelay(
-      collateral: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    isResolverCached(overrides?: CallOverrides): Promise<BigNumber>;
-
-    issuanceRatio(overrides?: CallOverrides): Promise<BigNumber>;
-
-    liquidateReward(overrides?: CallOverrides): Promise<BigNumber>;
-
-    liquidationDelay(overrides?: CallOverrides): Promise<BigNumber>;
-
-    liquidationEscrowDuration(overrides?: CallOverrides): Promise<BigNumber>;
-
-    liquidationPenalty(overrides?: CallOverrides): Promise<BigNumber>;
-
-    liquidationRatio(overrides?: CallOverrides): Promise<BigNumber>;
-
-    minimumStakeTime(overrides?: CallOverrides): Promise<BigNumber>;
-
-    nominateNewOwner(
-      _owner: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    nominatedOwner(overrides?: CallOverrides): Promise<BigNumber>;
-
-    owner(overrides?: CallOverrides): Promise<BigNumber>;
-
-    priceDeviationThresholdFactor(
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    pureChainlinkPriceForAtomicSwapsEnabled(
-      currencyKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    rateStalePeriod(overrides?: CallOverrides): Promise<BigNumber>;
-
-    rebuildCache(overrides?: Overrides & { from?: string }): Promise<BigNumber>;
-
-    resolver(overrides?: CallOverrides): Promise<BigNumber>;
-
-    resolverAddressesRequired(overrides?: CallOverrides): Promise<BigNumber>;
-
-    selfLiquidationPenalty(overrides?: CallOverrides): Promise<BigNumber>;
-
-    setAggregatorWarningFlags(
-      _flags: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    setAtomicEquivalentForDexPricing(
-      _currencyKey: BytesLike,
-      _equivalent: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    setAtomicExchangeFeeRate(
-      _currencyKey: BytesLike,
-      _exchangeFeeRate: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    setAtomicMaxVolumePerBlock(
-      _maxVolume: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    setAtomicTwapWindow(
-      _window: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    setAtomicVolatilityConsiderationWindow(
-      _currencyKey: BytesLike,
-      _window: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    setAtomicVolatilityUpdateThreshold(
-      _currencyKey: BytesLike,
-      _threshold: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    setCollapseFeeRate(
-      _collateral: string,
-      _collapseFeeRate: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    setCrossChainSynthTransferEnabled(
-      _currencyKey: BytesLike,
-      _value: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    setCrossDomainMessageGasLimit(
-      _gasLimitType: BigNumberish,
-      _crossDomainMessageGasLimit: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    setDebtSnapshotStaleTime(
-      _seconds: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    setEtherWrapperBurnFeeRate(
-      _rate: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    setEtherWrapperMaxETH(
-      _maxETH: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    setEtherWrapperMintFeeRate(
-      _rate: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    setExchangeDynamicFeeRounds(
-      rounds: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    setExchangeDynamicFeeThreshold(
-      threshold: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    setExchangeDynamicFeeWeightDecay(
-      weightDecay: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    setExchangeFeeRateForSynths(
-      synthKeys: BytesLike[],
-      exchangeFeeRates: BigNumberish[],
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    setExchangeMaxDynamicFee(
-      maxFee: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    setFeePeriodDuration(
-      _feePeriodDuration: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    setFlagReward(
-      reward: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    setInteractionDelay(
-      _collateral: string,
-      _interactionDelay: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    setIssuanceRatio(
-      ratio: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    setLiquidateReward(
-      reward: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    setLiquidationDelay(
-      time: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    setLiquidationEscrowDuration(
-      duration: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    setLiquidationPenalty(
-      penalty: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    setLiquidationRatio(
-      _liquidationRatio: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    setMinimumStakeTime(
-      _seconds: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    setPriceDeviationThresholdFactor(
-      _priceDeviationThresholdFactor: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    setPureChainlinkPriceForAtomicSwapsEnabled(
-      _currencyKey: BytesLike,
-      _enabled: boolean,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    setRateStalePeriod(
-      period: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    setSelfLiquidationPenalty(
-      penalty: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    setSnxLiquidationPenalty(
-      penalty: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    setTargetThreshold(
-      percent: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    setTradingRewardsEnabled(
-      _tradingRewardsEnabled: boolean,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    setWaitingPeriodSecs(
-      _waitingPeriodSecs: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    setWrapperBurnFeeRate(
-      _wrapper: string,
-      _rate: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    setWrapperMaxTokenAmount(
-      _wrapper: string,
-      _maxTokenAmount: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    setWrapperMintFeeRate(
-      _wrapper: string,
-      _rate: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    snxLiquidationPenalty(overrides?: CallOverrides): Promise<BigNumber>;
-
-    targetThreshold(overrides?: CallOverrides): Promise<BigNumber>;
-
-    tradingRewardsEnabled(overrides?: CallOverrides): Promise<BigNumber>;
-
-    waitingPeriodSecs(overrides?: CallOverrides): Promise<BigNumber>;
-
-    wrapperBurnFeeRate(
-      wrapper: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    wrapperMaxTokenAmount(
-      wrapper: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    wrapperMintFeeRate(
-      wrapper: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-  };
-
-  populateTransaction: {
-    CONTRACT_NAME(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    acceptOwnership(
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    aggregatorWarningFlags(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    atomicEquivalentForDexPricing(
-      currencyKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    atomicExchangeFeeRate(
-      currencyKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    atomicMaxVolumePerBlock(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    atomicTwapWindow(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    atomicVolatilityConsiderationWindow(
-      currencyKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    atomicVolatilityUpdateThreshold(
-      currencyKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    collapseFeeRate(
-      collateral: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    crossChainSynthTransferEnabled(
-      currencyKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    crossDomainMessageGasLimit(
-      gasLimitType: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    debtSnapshotStaleTime(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    etherWrapperBurnFeeRate(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    etherWrapperMaxETH(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    etherWrapperMintFeeRate(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    exchangeDynamicFeeRounds(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    exchangeDynamicFeeThreshold(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    exchangeDynamicFeeWeightDecay(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    exchangeFeeRate(
-      currencyKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    exchangeMaxDynamicFee(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    feePeriodDuration(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    flagReward(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    interactionDelay(
-      collateral: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    isResolverCached(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    issuanceRatio(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    liquidateReward(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    liquidationDelay(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    liquidationEscrowDuration(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    liquidationPenalty(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    liquidationRatio(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    minimumStakeTime(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    nominateNewOwner(
-      _owner: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    nominatedOwner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    priceDeviationThresholdFactor(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    pureChainlinkPriceForAtomicSwapsEnabled(
-      currencyKey: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    rateStalePeriod(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    rebuildCache(
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    resolver(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    resolverAddressesRequired(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    selfLiquidationPenalty(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    setAggregatorWarningFlags(
-      _flags: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    setAtomicEquivalentForDexPricing(
-      _currencyKey: BytesLike,
-      _equivalent: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    setAtomicExchangeFeeRate(
-      _currencyKey: BytesLike,
-      _exchangeFeeRate: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    setAtomicMaxVolumePerBlock(
-      _maxVolume: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    setAtomicTwapWindow(
-      _window: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    setAtomicVolatilityConsiderationWindow(
-      _currencyKey: BytesLike,
-      _window: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    setAtomicVolatilityUpdateThreshold(
-      _currencyKey: BytesLike,
-      _threshold: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    setCollapseFeeRate(
-      _collateral: string,
-      _collapseFeeRate: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    setCrossChainSynthTransferEnabled(
-      _currencyKey: BytesLike,
-      _value: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    setCrossDomainMessageGasLimit(
-      _gasLimitType: BigNumberish,
-      _crossDomainMessageGasLimit: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    setDebtSnapshotStaleTime(
-      _seconds: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    setEtherWrapperBurnFeeRate(
-      _rate: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    setEtherWrapperMaxETH(
-      _maxETH: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    setEtherWrapperMintFeeRate(
-      _rate: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    setExchangeDynamicFeeRounds(
-      rounds: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    setExchangeDynamicFeeThreshold(
-      threshold: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    setExchangeDynamicFeeWeightDecay(
-      weightDecay: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    setExchangeFeeRateForSynths(
-      synthKeys: BytesLike[],
-      exchangeFeeRates: BigNumberish[],
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    setExchangeMaxDynamicFee(
-      maxFee: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    setFeePeriodDuration(
-      _feePeriodDuration: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    setFlagReward(
-      reward: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    setInteractionDelay(
-      _collateral: string,
-      _interactionDelay: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    setIssuanceRatio(
-      ratio: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    setLiquidateReward(
-      reward: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    setLiquidationDelay(
-      time: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    setLiquidationEscrowDuration(
-      duration: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    setLiquidationPenalty(
-      penalty: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    setLiquidationRatio(
-      _liquidationRatio: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    setMinimumStakeTime(
-      _seconds: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    setPriceDeviationThresholdFactor(
-      _priceDeviationThresholdFactor: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    setPureChainlinkPriceForAtomicSwapsEnabled(
-      _currencyKey: BytesLike,
-      _enabled: boolean,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    setRateStalePeriod(
-      period: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    setSelfLiquidationPenalty(
-      penalty: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    setSnxLiquidationPenalty(
-      penalty: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    setTargetThreshold(
-      percent: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    setTradingRewardsEnabled(
-      _tradingRewardsEnabled: boolean,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    setWaitingPeriodSecs(
-      _waitingPeriodSecs: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    setWrapperBurnFeeRate(
-      _wrapper: string,
-      _rate: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    setWrapperMaxTokenAmount(
-      _wrapper: string,
-      _maxTokenAmount: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    setWrapperMintFeeRate(
-      _wrapper: string,
-      _rate: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    snxLiquidationPenalty(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    targetThreshold(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    tradingRewardsEnabled(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    waitingPeriodSecs(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    wrapperBurnFeeRate(
-      wrapper: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    wrapperMaxTokenAmount(
-      wrapper: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    wrapperMintFeeRate(
-      wrapper: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-  };
+	setWrapperMintFeeRate(
+		_wrapper: string,
+		_rate: BigNumberish,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
+
+	snxLiquidationPenalty(overrides?: CallOverrides): Promise<BigNumber>
+
+	targetThreshold(overrides?: CallOverrides): Promise<BigNumber>
+
+	tradingRewardsEnabled(overrides?: CallOverrides): Promise<boolean>
+
+	waitingPeriodSecs(overrides?: CallOverrides): Promise<BigNumber>
+
+	wrapperBurnFeeRate(wrapper: string, overrides?: CallOverrides): Promise<BigNumber>
+
+	wrapperMaxTokenAmount(wrapper: string, overrides?: CallOverrides): Promise<BigNumber>
+
+	wrapperMintFeeRate(wrapper: string, overrides?: CallOverrides): Promise<BigNumber>
+
+	callStatic: {
+		CONTRACT_NAME(overrides?: CallOverrides): Promise<string>
+
+		acceptOwnership(overrides?: CallOverrides): Promise<void>
+
+		aggregatorWarningFlags(overrides?: CallOverrides): Promise<string>
+
+		atomicEquivalentForDexPricing(
+			currencyKey: BytesLike,
+			overrides?: CallOverrides
+		): Promise<string>
+
+		atomicExchangeFeeRate(currencyKey: BytesLike, overrides?: CallOverrides): Promise<BigNumber>
+
+		atomicMaxVolumePerBlock(overrides?: CallOverrides): Promise<BigNumber>
+
+		atomicTwapWindow(overrides?: CallOverrides): Promise<BigNumber>
+
+		atomicVolatilityConsiderationWindow(
+			currencyKey: BytesLike,
+			overrides?: CallOverrides
+		): Promise<BigNumber>
+
+		atomicVolatilityUpdateThreshold(
+			currencyKey: BytesLike,
+			overrides?: CallOverrides
+		): Promise<BigNumber>
+
+		collapseFeeRate(collateral: string, overrides?: CallOverrides): Promise<BigNumber>
+
+		crossChainSynthTransferEnabled(
+			currencyKey: BytesLike,
+			overrides?: CallOverrides
+		): Promise<BigNumber>
+
+		crossDomainMessageGasLimit(
+			gasLimitType: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<BigNumber>
+
+		debtSnapshotStaleTime(overrides?: CallOverrides): Promise<BigNumber>
+
+		etherWrapperBurnFeeRate(overrides?: CallOverrides): Promise<BigNumber>
+
+		etherWrapperMaxETH(overrides?: CallOverrides): Promise<BigNumber>
+
+		etherWrapperMintFeeRate(overrides?: CallOverrides): Promise<BigNumber>
+
+		exchangeDynamicFeeRounds(overrides?: CallOverrides): Promise<BigNumber>
+
+		exchangeDynamicFeeThreshold(overrides?: CallOverrides): Promise<BigNumber>
+
+		exchangeDynamicFeeWeightDecay(overrides?: CallOverrides): Promise<BigNumber>
+
+		exchangeFeeRate(currencyKey: BytesLike, overrides?: CallOverrides): Promise<BigNumber>
+
+		exchangeMaxDynamicFee(overrides?: CallOverrides): Promise<BigNumber>
+
+		feePeriodDuration(overrides?: CallOverrides): Promise<BigNumber>
+
+		flagReward(overrides?: CallOverrides): Promise<BigNumber>
+
+		interactionDelay(collateral: string, overrides?: CallOverrides): Promise<BigNumber>
+
+		isResolverCached(overrides?: CallOverrides): Promise<boolean>
+
+		issuanceRatio(overrides?: CallOverrides): Promise<BigNumber>
+
+		liquidateReward(overrides?: CallOverrides): Promise<BigNumber>
+
+		liquidationDelay(overrides?: CallOverrides): Promise<BigNumber>
+
+		liquidationEscrowDuration(overrides?: CallOverrides): Promise<BigNumber>
+
+		liquidationPenalty(overrides?: CallOverrides): Promise<BigNumber>
+
+		liquidationRatio(overrides?: CallOverrides): Promise<BigNumber>
+
+		minimumStakeTime(overrides?: CallOverrides): Promise<BigNumber>
+
+		nominateNewOwner(_owner: string, overrides?: CallOverrides): Promise<void>
+
+		nominatedOwner(overrides?: CallOverrides): Promise<string>
+
+		owner(overrides?: CallOverrides): Promise<string>
+
+		priceDeviationThresholdFactor(overrides?: CallOverrides): Promise<BigNumber>
+
+		pureChainlinkPriceForAtomicSwapsEnabled(
+			currencyKey: BytesLike,
+			overrides?: CallOverrides
+		): Promise<boolean>
+
+		rateStalePeriod(overrides?: CallOverrides): Promise<BigNumber>
+
+		rebuildCache(overrides?: CallOverrides): Promise<void>
+
+		resolver(overrides?: CallOverrides): Promise<string>
+
+		resolverAddressesRequired(overrides?: CallOverrides): Promise<string[]>
+
+		selfLiquidationPenalty(overrides?: CallOverrides): Promise<BigNumber>
+
+		setAggregatorWarningFlags(_flags: string, overrides?: CallOverrides): Promise<void>
+
+		setAtomicEquivalentForDexPricing(
+			_currencyKey: BytesLike,
+			_equivalent: string,
+			overrides?: CallOverrides
+		): Promise<void>
+
+		setAtomicExchangeFeeRate(
+			_currencyKey: BytesLike,
+			_exchangeFeeRate: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<void>
+
+		setAtomicMaxVolumePerBlock(_maxVolume: BigNumberish, overrides?: CallOverrides): Promise<void>
+
+		setAtomicTwapWindow(_window: BigNumberish, overrides?: CallOverrides): Promise<void>
+
+		setAtomicVolatilityConsiderationWindow(
+			_currencyKey: BytesLike,
+			_window: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<void>
+
+		setAtomicVolatilityUpdateThreshold(
+			_currencyKey: BytesLike,
+			_threshold: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<void>
+
+		setCollapseFeeRate(
+			_collateral: string,
+			_collapseFeeRate: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<void>
+
+		setCrossChainSynthTransferEnabled(
+			_currencyKey: BytesLike,
+			_value: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<void>
+
+		setCrossDomainMessageGasLimit(
+			_gasLimitType: BigNumberish,
+			_crossDomainMessageGasLimit: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<void>
+
+		setDebtSnapshotStaleTime(_seconds: BigNumberish, overrides?: CallOverrides): Promise<void>
+
+		setEtherWrapperBurnFeeRate(_rate: BigNumberish, overrides?: CallOverrides): Promise<void>
+
+		setEtherWrapperMaxETH(_maxETH: BigNumberish, overrides?: CallOverrides): Promise<void>
+
+		setEtherWrapperMintFeeRate(_rate: BigNumberish, overrides?: CallOverrides): Promise<void>
+
+		setExchangeDynamicFeeRounds(rounds: BigNumberish, overrides?: CallOverrides): Promise<void>
+
+		setExchangeDynamicFeeThreshold(
+			threshold: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<void>
+
+		setExchangeDynamicFeeWeightDecay(
+			weightDecay: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<void>
+
+		setExchangeFeeRateForSynths(
+			synthKeys: BytesLike[],
+			exchangeFeeRates: BigNumberish[],
+			overrides?: CallOverrides
+		): Promise<void>
+
+		setExchangeMaxDynamicFee(maxFee: BigNumberish, overrides?: CallOverrides): Promise<void>
+
+		setFeePeriodDuration(_feePeriodDuration: BigNumberish, overrides?: CallOverrides): Promise<void>
+
+		setFlagReward(reward: BigNumberish, overrides?: CallOverrides): Promise<void>
+
+		setInteractionDelay(
+			_collateral: string,
+			_interactionDelay: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<void>
+
+		setIssuanceRatio(ratio: BigNumberish, overrides?: CallOverrides): Promise<void>
+
+		setLiquidateReward(reward: BigNumberish, overrides?: CallOverrides): Promise<void>
+
+		setLiquidationDelay(time: BigNumberish, overrides?: CallOverrides): Promise<void>
+
+		setLiquidationEscrowDuration(duration: BigNumberish, overrides?: CallOverrides): Promise<void>
+
+		setLiquidationPenalty(penalty: BigNumberish, overrides?: CallOverrides): Promise<void>
+
+		setLiquidationRatio(_liquidationRatio: BigNumberish, overrides?: CallOverrides): Promise<void>
+
+		setMinimumStakeTime(_seconds: BigNumberish, overrides?: CallOverrides): Promise<void>
+
+		setPriceDeviationThresholdFactor(
+			_priceDeviationThresholdFactor: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<void>
+
+		setPureChainlinkPriceForAtomicSwapsEnabled(
+			_currencyKey: BytesLike,
+			_enabled: boolean,
+			overrides?: CallOverrides
+		): Promise<void>
+
+		setRateStalePeriod(period: BigNumberish, overrides?: CallOverrides): Promise<void>
+
+		setSelfLiquidationPenalty(penalty: BigNumberish, overrides?: CallOverrides): Promise<void>
+
+		setSnxLiquidationPenalty(penalty: BigNumberish, overrides?: CallOverrides): Promise<void>
+
+		setTargetThreshold(percent: BigNumberish, overrides?: CallOverrides): Promise<void>
+
+		setTradingRewardsEnabled(
+			_tradingRewardsEnabled: boolean,
+			overrides?: CallOverrides
+		): Promise<void>
+
+		setWaitingPeriodSecs(_waitingPeriodSecs: BigNumberish, overrides?: CallOverrides): Promise<void>
+
+		setWrapperBurnFeeRate(
+			_wrapper: string,
+			_rate: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<void>
+
+		setWrapperMaxTokenAmount(
+			_wrapper: string,
+			_maxTokenAmount: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<void>
+
+		setWrapperMintFeeRate(
+			_wrapper: string,
+			_rate: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<void>
+
+		snxLiquidationPenalty(overrides?: CallOverrides): Promise<BigNumber>
+
+		targetThreshold(overrides?: CallOverrides): Promise<BigNumber>
+
+		tradingRewardsEnabled(overrides?: CallOverrides): Promise<boolean>
+
+		waitingPeriodSecs(overrides?: CallOverrides): Promise<BigNumber>
+
+		wrapperBurnFeeRate(wrapper: string, overrides?: CallOverrides): Promise<BigNumber>
+
+		wrapperMaxTokenAmount(wrapper: string, overrides?: CallOverrides): Promise<BigNumber>
+
+		wrapperMintFeeRate(wrapper: string, overrides?: CallOverrides): Promise<BigNumber>
+	}
+
+	filters: {
+		'AggregatorWarningFlagsUpdated(address)'(flags?: null): AggregatorWarningFlagsUpdatedEventFilter
+		AggregatorWarningFlagsUpdated(flags?: null): AggregatorWarningFlagsUpdatedEventFilter
+
+		'AtomicEquivalentForDexPricingUpdated(bytes32,address)'(
+			synthKey?: null,
+			equivalent?: null
+		): AtomicEquivalentForDexPricingUpdatedEventFilter
+		AtomicEquivalentForDexPricingUpdated(
+			synthKey?: null,
+			equivalent?: null
+		): AtomicEquivalentForDexPricingUpdatedEventFilter
+
+		'AtomicExchangeFeeUpdated(bytes32,uint256)'(
+			synthKey?: null,
+			newExchangeFeeRate?: null
+		): AtomicExchangeFeeUpdatedEventFilter
+		AtomicExchangeFeeUpdated(
+			synthKey?: null,
+			newExchangeFeeRate?: null
+		): AtomicExchangeFeeUpdatedEventFilter
+
+		'AtomicMaxVolumePerBlockUpdated(uint256)'(
+			newMaxVolume?: null
+		): AtomicMaxVolumePerBlockUpdatedEventFilter
+		AtomicMaxVolumePerBlockUpdated(newMaxVolume?: null): AtomicMaxVolumePerBlockUpdatedEventFilter
+
+		'AtomicTwapWindowUpdated(uint256)'(newWindow?: null): AtomicTwapWindowUpdatedEventFilter
+		AtomicTwapWindowUpdated(newWindow?: null): AtomicTwapWindowUpdatedEventFilter
+
+		'AtomicVolatilityConsiderationWindowUpdated(bytes32,uint256)'(
+			synthKey?: null,
+			newVolatilityConsiderationWindow?: null
+		): AtomicVolatilityConsiderationWindowUpdatedEventFilter
+		AtomicVolatilityConsiderationWindowUpdated(
+			synthKey?: null,
+			newVolatilityConsiderationWindow?: null
+		): AtomicVolatilityConsiderationWindowUpdatedEventFilter
+
+		'AtomicVolatilityUpdateThresholdUpdated(bytes32,uint256)'(
+			synthKey?: null,
+			newVolatilityUpdateThreshold?: null
+		): AtomicVolatilityUpdateThresholdUpdatedEventFilter
+		AtomicVolatilityUpdateThresholdUpdated(
+			synthKey?: null,
+			newVolatilityUpdateThreshold?: null
+		): AtomicVolatilityUpdateThresholdUpdatedEventFilter
+
+		'CacheUpdated(bytes32,address)'(name?: null, destination?: null): CacheUpdatedEventFilter
+		CacheUpdated(name?: null, destination?: null): CacheUpdatedEventFilter
+
+		'CollapseFeeRateUpdated(uint256)'(collapseFeeRate?: null): CollapseFeeRateUpdatedEventFilter
+		CollapseFeeRateUpdated(collapseFeeRate?: null): CollapseFeeRateUpdatedEventFilter
+
+		'CrossChainSynthTransferEnabledUpdated(bytes32,uint256)'(
+			synthKey?: null,
+			value?: null
+		): CrossChainSynthTransferEnabledUpdatedEventFilter
+		CrossChainSynthTransferEnabledUpdated(
+			synthKey?: null,
+			value?: null
+		): CrossChainSynthTransferEnabledUpdatedEventFilter
+
+		'CrossDomainMessageGasLimitChanged(uint8,uint256)'(
+			gasLimitType?: null,
+			newLimit?: null
+		): CrossDomainMessageGasLimitChangedEventFilter
+		CrossDomainMessageGasLimitChanged(
+			gasLimitType?: null,
+			newLimit?: null
+		): CrossDomainMessageGasLimitChangedEventFilter
+
+		'DebtSnapshotStaleTimeUpdated(uint256)'(
+			debtSnapshotStaleTime?: null
+		): DebtSnapshotStaleTimeUpdatedEventFilter
+		DebtSnapshotStaleTimeUpdated(
+			debtSnapshotStaleTime?: null
+		): DebtSnapshotStaleTimeUpdatedEventFilter
+
+		'EtherWrapperBurnFeeRateUpdated(uint256)'(
+			rate?: null
+		): EtherWrapperBurnFeeRateUpdatedEventFilter
+		EtherWrapperBurnFeeRateUpdated(rate?: null): EtherWrapperBurnFeeRateUpdatedEventFilter
+
+		'EtherWrapperMaxETHUpdated(uint256)'(maxETH?: null): EtherWrapperMaxETHUpdatedEventFilter
+		EtherWrapperMaxETHUpdated(maxETH?: null): EtherWrapperMaxETHUpdatedEventFilter
+
+		'EtherWrapperMintFeeRateUpdated(uint256)'(
+			rate?: null
+		): EtherWrapperMintFeeRateUpdatedEventFilter
+		EtherWrapperMintFeeRateUpdated(rate?: null): EtherWrapperMintFeeRateUpdatedEventFilter
+
+		'ExchangeDynamicFeeRoundsUpdated(uint256)'(
+			dynamicFeeRounds?: null
+		): ExchangeDynamicFeeRoundsUpdatedEventFilter
+		ExchangeDynamicFeeRoundsUpdated(
+			dynamicFeeRounds?: null
+		): ExchangeDynamicFeeRoundsUpdatedEventFilter
+
+		'ExchangeDynamicFeeThresholdUpdated(uint256)'(
+			dynamicFeeThreshold?: null
+		): ExchangeDynamicFeeThresholdUpdatedEventFilter
+		ExchangeDynamicFeeThresholdUpdated(
+			dynamicFeeThreshold?: null
+		): ExchangeDynamicFeeThresholdUpdatedEventFilter
+
+		'ExchangeDynamicFeeWeightDecayUpdated(uint256)'(
+			dynamicFeeWeightDecay?: null
+		): ExchangeDynamicFeeWeightDecayUpdatedEventFilter
+		ExchangeDynamicFeeWeightDecayUpdated(
+			dynamicFeeWeightDecay?: null
+		): ExchangeDynamicFeeWeightDecayUpdatedEventFilter
+
+		'ExchangeFeeUpdated(bytes32,uint256)'(
+			synthKey?: null,
+			newExchangeFeeRate?: null
+		): ExchangeFeeUpdatedEventFilter
+		ExchangeFeeUpdated(synthKey?: null, newExchangeFeeRate?: null): ExchangeFeeUpdatedEventFilter
+
+		'ExchangeMaxDynamicFeeUpdated(uint256)'(
+			maxDynamicFee?: null
+		): ExchangeMaxDynamicFeeUpdatedEventFilter
+		ExchangeMaxDynamicFeeUpdated(maxDynamicFee?: null): ExchangeMaxDynamicFeeUpdatedEventFilter
+
+		'FeePeriodDurationUpdated(uint256)'(
+			newFeePeriodDuration?: null
+		): FeePeriodDurationUpdatedEventFilter
+		FeePeriodDurationUpdated(newFeePeriodDuration?: null): FeePeriodDurationUpdatedEventFilter
+
+		'FlagRewardUpdated(uint256)'(newReward?: null): FlagRewardUpdatedEventFilter
+		FlagRewardUpdated(newReward?: null): FlagRewardUpdatedEventFilter
+
+		'InteractionDelayUpdated(uint256)'(interactionDelay?: null): InteractionDelayUpdatedEventFilter
+		InteractionDelayUpdated(interactionDelay?: null): InteractionDelayUpdatedEventFilter
+
+		'IssuanceRatioUpdated(uint256)'(newRatio?: null): IssuanceRatioUpdatedEventFilter
+		IssuanceRatioUpdated(newRatio?: null): IssuanceRatioUpdatedEventFilter
+
+		'LiquidateRewardUpdated(uint256)'(newReward?: null): LiquidateRewardUpdatedEventFilter
+		LiquidateRewardUpdated(newReward?: null): LiquidateRewardUpdatedEventFilter
+
+		'LiquidationDelayUpdated(uint256)'(newDelay?: null): LiquidationDelayUpdatedEventFilter
+		LiquidationDelayUpdated(newDelay?: null): LiquidationDelayUpdatedEventFilter
+
+		'LiquidationEscrowDurationUpdated(uint256)'(
+			newDuration?: null
+		): LiquidationEscrowDurationUpdatedEventFilter
+		LiquidationEscrowDurationUpdated(
+			newDuration?: null
+		): LiquidationEscrowDurationUpdatedEventFilter
+
+		'LiquidationPenaltyUpdated(uint256)'(newPenalty?: null): LiquidationPenaltyUpdatedEventFilter
+		LiquidationPenaltyUpdated(newPenalty?: null): LiquidationPenaltyUpdatedEventFilter
+
+		'LiquidationRatioUpdated(uint256)'(newRatio?: null): LiquidationRatioUpdatedEventFilter
+		LiquidationRatioUpdated(newRatio?: null): LiquidationRatioUpdatedEventFilter
+
+		'MinimumStakeTimeUpdated(uint256)'(minimumStakeTime?: null): MinimumStakeTimeUpdatedEventFilter
+		MinimumStakeTimeUpdated(minimumStakeTime?: null): MinimumStakeTimeUpdatedEventFilter
+
+		'OwnerChanged(address,address)'(oldOwner?: null, newOwner?: null): OwnerChangedEventFilter
+		OwnerChanged(oldOwner?: null, newOwner?: null): OwnerChangedEventFilter
+
+		'OwnerNominated(address)'(newOwner?: null): OwnerNominatedEventFilter
+		OwnerNominated(newOwner?: null): OwnerNominatedEventFilter
+
+		'PriceDeviationThresholdUpdated(uint256)'(
+			threshold?: null
+		): PriceDeviationThresholdUpdatedEventFilter
+		PriceDeviationThresholdUpdated(threshold?: null): PriceDeviationThresholdUpdatedEventFilter
+
+		'PureChainlinkPriceForAtomicSwapsEnabledUpdated(bytes32,bool)'(
+			synthKey?: null,
+			enabled?: null
+		): PureChainlinkPriceForAtomicSwapsEnabledUpdatedEventFilter
+		PureChainlinkPriceForAtomicSwapsEnabledUpdated(
+			synthKey?: null,
+			enabled?: null
+		): PureChainlinkPriceForAtomicSwapsEnabledUpdatedEventFilter
+
+		'RateStalePeriodUpdated(uint256)'(rateStalePeriod?: null): RateStalePeriodUpdatedEventFilter
+		RateStalePeriodUpdated(rateStalePeriod?: null): RateStalePeriodUpdatedEventFilter
+
+		'SelfLiquidationPenaltyUpdated(uint256)'(
+			newPenalty?: null
+		): SelfLiquidationPenaltyUpdatedEventFilter
+		SelfLiquidationPenaltyUpdated(newPenalty?: null): SelfLiquidationPenaltyUpdatedEventFilter
+
+		'SnxLiquidationPenaltyUpdated(uint256)'(
+			newPenalty?: null
+		): SnxLiquidationPenaltyUpdatedEventFilter
+		SnxLiquidationPenaltyUpdated(newPenalty?: null): SnxLiquidationPenaltyUpdatedEventFilter
+
+		'TargetThresholdUpdated(uint256)'(newTargetThreshold?: null): TargetThresholdUpdatedEventFilter
+		TargetThresholdUpdated(newTargetThreshold?: null): TargetThresholdUpdatedEventFilter
+
+		'TradingRewardsEnabled(bool)'(enabled?: null): TradingRewardsEnabledEventFilter
+		TradingRewardsEnabled(enabled?: null): TradingRewardsEnabledEventFilter
+
+		'WaitingPeriodSecsUpdated(uint256)'(
+			waitingPeriodSecs?: null
+		): WaitingPeriodSecsUpdatedEventFilter
+		WaitingPeriodSecsUpdated(waitingPeriodSecs?: null): WaitingPeriodSecsUpdatedEventFilter
+
+		'WrapperBurnFeeRateUpdated(address,int256)'(
+			wrapper?: null,
+			rate?: null
+		): WrapperBurnFeeRateUpdatedEventFilter
+		WrapperBurnFeeRateUpdated(wrapper?: null, rate?: null): WrapperBurnFeeRateUpdatedEventFilter
+
+		'WrapperMaxTokenAmountUpdated(address,uint256)'(
+			wrapper?: null,
+			maxTokenAmount?: null
+		): WrapperMaxTokenAmountUpdatedEventFilter
+		WrapperMaxTokenAmountUpdated(
+			wrapper?: null,
+			maxTokenAmount?: null
+		): WrapperMaxTokenAmountUpdatedEventFilter
+
+		'WrapperMintFeeRateUpdated(address,int256)'(
+			wrapper?: null,
+			rate?: null
+		): WrapperMintFeeRateUpdatedEventFilter
+		WrapperMintFeeRateUpdated(wrapper?: null, rate?: null): WrapperMintFeeRateUpdatedEventFilter
+	}
+
+	estimateGas: {
+		CONTRACT_NAME(overrides?: CallOverrides): Promise<BigNumber>
+
+		acceptOwnership(overrides?: Overrides & { from?: string }): Promise<BigNumber>
+
+		aggregatorWarningFlags(overrides?: CallOverrides): Promise<BigNumber>
+
+		atomicEquivalentForDexPricing(
+			currencyKey: BytesLike,
+			overrides?: CallOverrides
+		): Promise<BigNumber>
+
+		atomicExchangeFeeRate(currencyKey: BytesLike, overrides?: CallOverrides): Promise<BigNumber>
+
+		atomicMaxVolumePerBlock(overrides?: CallOverrides): Promise<BigNumber>
+
+		atomicTwapWindow(overrides?: CallOverrides): Promise<BigNumber>
+
+		atomicVolatilityConsiderationWindow(
+			currencyKey: BytesLike,
+			overrides?: CallOverrides
+		): Promise<BigNumber>
+
+		atomicVolatilityUpdateThreshold(
+			currencyKey: BytesLike,
+			overrides?: CallOverrides
+		): Promise<BigNumber>
+
+		collapseFeeRate(collateral: string, overrides?: CallOverrides): Promise<BigNumber>
+
+		crossChainSynthTransferEnabled(
+			currencyKey: BytesLike,
+			overrides?: CallOverrides
+		): Promise<BigNumber>
+
+		crossDomainMessageGasLimit(
+			gasLimitType: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<BigNumber>
+
+		debtSnapshotStaleTime(overrides?: CallOverrides): Promise<BigNumber>
+
+		etherWrapperBurnFeeRate(overrides?: CallOverrides): Promise<BigNumber>
+
+		etherWrapperMaxETH(overrides?: CallOverrides): Promise<BigNumber>
+
+		etherWrapperMintFeeRate(overrides?: CallOverrides): Promise<BigNumber>
+
+		exchangeDynamicFeeRounds(overrides?: CallOverrides): Promise<BigNumber>
+
+		exchangeDynamicFeeThreshold(overrides?: CallOverrides): Promise<BigNumber>
+
+		exchangeDynamicFeeWeightDecay(overrides?: CallOverrides): Promise<BigNumber>
+
+		exchangeFeeRate(currencyKey: BytesLike, overrides?: CallOverrides): Promise<BigNumber>
+
+		exchangeMaxDynamicFee(overrides?: CallOverrides): Promise<BigNumber>
+
+		feePeriodDuration(overrides?: CallOverrides): Promise<BigNumber>
+
+		flagReward(overrides?: CallOverrides): Promise<BigNumber>
+
+		interactionDelay(collateral: string, overrides?: CallOverrides): Promise<BigNumber>
+
+		isResolverCached(overrides?: CallOverrides): Promise<BigNumber>
+
+		issuanceRatio(overrides?: CallOverrides): Promise<BigNumber>
+
+		liquidateReward(overrides?: CallOverrides): Promise<BigNumber>
+
+		liquidationDelay(overrides?: CallOverrides): Promise<BigNumber>
+
+		liquidationEscrowDuration(overrides?: CallOverrides): Promise<BigNumber>
+
+		liquidationPenalty(overrides?: CallOverrides): Promise<BigNumber>
+
+		liquidationRatio(overrides?: CallOverrides): Promise<BigNumber>
+
+		minimumStakeTime(overrides?: CallOverrides): Promise<BigNumber>
+
+		nominateNewOwner(_owner: string, overrides?: Overrides & { from?: string }): Promise<BigNumber>
+
+		nominatedOwner(overrides?: CallOverrides): Promise<BigNumber>
+
+		owner(overrides?: CallOverrides): Promise<BigNumber>
+
+		priceDeviationThresholdFactor(overrides?: CallOverrides): Promise<BigNumber>
+
+		pureChainlinkPriceForAtomicSwapsEnabled(
+			currencyKey: BytesLike,
+			overrides?: CallOverrides
+		): Promise<BigNumber>
+
+		rateStalePeriod(overrides?: CallOverrides): Promise<BigNumber>
+
+		rebuildCache(overrides?: Overrides & { from?: string }): Promise<BigNumber>
+
+		resolver(overrides?: CallOverrides): Promise<BigNumber>
+
+		resolverAddressesRequired(overrides?: CallOverrides): Promise<BigNumber>
+
+		selfLiquidationPenalty(overrides?: CallOverrides): Promise<BigNumber>
+
+		setAggregatorWarningFlags(
+			_flags: string,
+			overrides?: Overrides & { from?: string }
+		): Promise<BigNumber>
+
+		setAtomicEquivalentForDexPricing(
+			_currencyKey: BytesLike,
+			_equivalent: string,
+			overrides?: Overrides & { from?: string }
+		): Promise<BigNumber>
+
+		setAtomicExchangeFeeRate(
+			_currencyKey: BytesLike,
+			_exchangeFeeRate: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<BigNumber>
+
+		setAtomicMaxVolumePerBlock(
+			_maxVolume: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<BigNumber>
+
+		setAtomicTwapWindow(
+			_window: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<BigNumber>
+
+		setAtomicVolatilityConsiderationWindow(
+			_currencyKey: BytesLike,
+			_window: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<BigNumber>
+
+		setAtomicVolatilityUpdateThreshold(
+			_currencyKey: BytesLike,
+			_threshold: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<BigNumber>
+
+		setCollapseFeeRate(
+			_collateral: string,
+			_collapseFeeRate: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<BigNumber>
+
+		setCrossChainSynthTransferEnabled(
+			_currencyKey: BytesLike,
+			_value: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<BigNumber>
+
+		setCrossDomainMessageGasLimit(
+			_gasLimitType: BigNumberish,
+			_crossDomainMessageGasLimit: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<BigNumber>
+
+		setDebtSnapshotStaleTime(
+			_seconds: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<BigNumber>
+
+		setEtherWrapperBurnFeeRate(
+			_rate: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<BigNumber>
+
+		setEtherWrapperMaxETH(
+			_maxETH: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<BigNumber>
+
+		setEtherWrapperMintFeeRate(
+			_rate: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<BigNumber>
+
+		setExchangeDynamicFeeRounds(
+			rounds: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<BigNumber>
+
+		setExchangeDynamicFeeThreshold(
+			threshold: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<BigNumber>
+
+		setExchangeDynamicFeeWeightDecay(
+			weightDecay: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<BigNumber>
+
+		setExchangeFeeRateForSynths(
+			synthKeys: BytesLike[],
+			exchangeFeeRates: BigNumberish[],
+			overrides?: Overrides & { from?: string }
+		): Promise<BigNumber>
+
+		setExchangeMaxDynamicFee(
+			maxFee: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<BigNumber>
+
+		setFeePeriodDuration(
+			_feePeriodDuration: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<BigNumber>
+
+		setFlagReward(
+			reward: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<BigNumber>
+
+		setInteractionDelay(
+			_collateral: string,
+			_interactionDelay: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<BigNumber>
+
+		setIssuanceRatio(
+			ratio: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<BigNumber>
+
+		setLiquidateReward(
+			reward: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<BigNumber>
+
+		setLiquidationDelay(
+			time: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<BigNumber>
+
+		setLiquidationEscrowDuration(
+			duration: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<BigNumber>
+
+		setLiquidationPenalty(
+			penalty: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<BigNumber>
+
+		setLiquidationRatio(
+			_liquidationRatio: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<BigNumber>
+
+		setMinimumStakeTime(
+			_seconds: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<BigNumber>
+
+		setPriceDeviationThresholdFactor(
+			_priceDeviationThresholdFactor: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<BigNumber>
+
+		setPureChainlinkPriceForAtomicSwapsEnabled(
+			_currencyKey: BytesLike,
+			_enabled: boolean,
+			overrides?: Overrides & { from?: string }
+		): Promise<BigNumber>
+
+		setRateStalePeriod(
+			period: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<BigNumber>
+
+		setSelfLiquidationPenalty(
+			penalty: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<BigNumber>
+
+		setSnxLiquidationPenalty(
+			penalty: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<BigNumber>
+
+		setTargetThreshold(
+			percent: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<BigNumber>
+
+		setTradingRewardsEnabled(
+			_tradingRewardsEnabled: boolean,
+			overrides?: Overrides & { from?: string }
+		): Promise<BigNumber>
+
+		setWaitingPeriodSecs(
+			_waitingPeriodSecs: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<BigNumber>
+
+		setWrapperBurnFeeRate(
+			_wrapper: string,
+			_rate: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<BigNumber>
+
+		setWrapperMaxTokenAmount(
+			_wrapper: string,
+			_maxTokenAmount: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<BigNumber>
+
+		setWrapperMintFeeRate(
+			_wrapper: string,
+			_rate: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<BigNumber>
+
+		snxLiquidationPenalty(overrides?: CallOverrides): Promise<BigNumber>
+
+		targetThreshold(overrides?: CallOverrides): Promise<BigNumber>
+
+		tradingRewardsEnabled(overrides?: CallOverrides): Promise<BigNumber>
+
+		waitingPeriodSecs(overrides?: CallOverrides): Promise<BigNumber>
+
+		wrapperBurnFeeRate(wrapper: string, overrides?: CallOverrides): Promise<BigNumber>
+
+		wrapperMaxTokenAmount(wrapper: string, overrides?: CallOverrides): Promise<BigNumber>
+
+		wrapperMintFeeRate(wrapper: string, overrides?: CallOverrides): Promise<BigNumber>
+	}
+
+	populateTransaction: {
+		CONTRACT_NAME(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		acceptOwnership(overrides?: Overrides & { from?: string }): Promise<PopulatedTransaction>
+
+		aggregatorWarningFlags(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		atomicEquivalentForDexPricing(
+			currencyKey: BytesLike,
+			overrides?: CallOverrides
+		): Promise<PopulatedTransaction>
+
+		atomicExchangeFeeRate(
+			currencyKey: BytesLike,
+			overrides?: CallOverrides
+		): Promise<PopulatedTransaction>
+
+		atomicMaxVolumePerBlock(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		atomicTwapWindow(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		atomicVolatilityConsiderationWindow(
+			currencyKey: BytesLike,
+			overrides?: CallOverrides
+		): Promise<PopulatedTransaction>
+
+		atomicVolatilityUpdateThreshold(
+			currencyKey: BytesLike,
+			overrides?: CallOverrides
+		): Promise<PopulatedTransaction>
+
+		collapseFeeRate(collateral: string, overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		crossChainSynthTransferEnabled(
+			currencyKey: BytesLike,
+			overrides?: CallOverrides
+		): Promise<PopulatedTransaction>
+
+		crossDomainMessageGasLimit(
+			gasLimitType: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<PopulatedTransaction>
+
+		debtSnapshotStaleTime(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		etherWrapperBurnFeeRate(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		etherWrapperMaxETH(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		etherWrapperMintFeeRate(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		exchangeDynamicFeeRounds(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		exchangeDynamicFeeThreshold(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		exchangeDynamicFeeWeightDecay(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		exchangeFeeRate(
+			currencyKey: BytesLike,
+			overrides?: CallOverrides
+		): Promise<PopulatedTransaction>
+
+		exchangeMaxDynamicFee(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		feePeriodDuration(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		flagReward(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		interactionDelay(collateral: string, overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		isResolverCached(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		issuanceRatio(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		liquidateReward(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		liquidationDelay(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		liquidationEscrowDuration(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		liquidationPenalty(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		liquidationRatio(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		minimumStakeTime(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		nominateNewOwner(
+			_owner: string,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		nominatedOwner(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		owner(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		priceDeviationThresholdFactor(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		pureChainlinkPriceForAtomicSwapsEnabled(
+			currencyKey: BytesLike,
+			overrides?: CallOverrides
+		): Promise<PopulatedTransaction>
+
+		rateStalePeriod(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		rebuildCache(overrides?: Overrides & { from?: string }): Promise<PopulatedTransaction>
+
+		resolver(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		resolverAddressesRequired(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		selfLiquidationPenalty(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		setAggregatorWarningFlags(
+			_flags: string,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		setAtomicEquivalentForDexPricing(
+			_currencyKey: BytesLike,
+			_equivalent: string,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		setAtomicExchangeFeeRate(
+			_currencyKey: BytesLike,
+			_exchangeFeeRate: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		setAtomicMaxVolumePerBlock(
+			_maxVolume: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		setAtomicTwapWindow(
+			_window: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		setAtomicVolatilityConsiderationWindow(
+			_currencyKey: BytesLike,
+			_window: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		setAtomicVolatilityUpdateThreshold(
+			_currencyKey: BytesLike,
+			_threshold: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		setCollapseFeeRate(
+			_collateral: string,
+			_collapseFeeRate: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		setCrossChainSynthTransferEnabled(
+			_currencyKey: BytesLike,
+			_value: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		setCrossDomainMessageGasLimit(
+			_gasLimitType: BigNumberish,
+			_crossDomainMessageGasLimit: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		setDebtSnapshotStaleTime(
+			_seconds: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		setEtherWrapperBurnFeeRate(
+			_rate: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		setEtherWrapperMaxETH(
+			_maxETH: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		setEtherWrapperMintFeeRate(
+			_rate: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		setExchangeDynamicFeeRounds(
+			rounds: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		setExchangeDynamicFeeThreshold(
+			threshold: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		setExchangeDynamicFeeWeightDecay(
+			weightDecay: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		setExchangeFeeRateForSynths(
+			synthKeys: BytesLike[],
+			exchangeFeeRates: BigNumberish[],
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		setExchangeMaxDynamicFee(
+			maxFee: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		setFeePeriodDuration(
+			_feePeriodDuration: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		setFlagReward(
+			reward: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		setInteractionDelay(
+			_collateral: string,
+			_interactionDelay: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		setIssuanceRatio(
+			ratio: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		setLiquidateReward(
+			reward: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		setLiquidationDelay(
+			time: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		setLiquidationEscrowDuration(
+			duration: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		setLiquidationPenalty(
+			penalty: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		setLiquidationRatio(
+			_liquidationRatio: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		setMinimumStakeTime(
+			_seconds: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		setPriceDeviationThresholdFactor(
+			_priceDeviationThresholdFactor: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		setPureChainlinkPriceForAtomicSwapsEnabled(
+			_currencyKey: BytesLike,
+			_enabled: boolean,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		setRateStalePeriod(
+			period: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		setSelfLiquidationPenalty(
+			penalty: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		setSnxLiquidationPenalty(
+			penalty: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		setTargetThreshold(
+			percent: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		setTradingRewardsEnabled(
+			_tradingRewardsEnabled: boolean,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		setWaitingPeriodSecs(
+			_waitingPeriodSecs: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		setWrapperBurnFeeRate(
+			_wrapper: string,
+			_rate: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		setWrapperMaxTokenAmount(
+			_wrapper: string,
+			_maxTokenAmount: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		setWrapperMintFeeRate(
+			_wrapper: string,
+			_rate: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		snxLiquidationPenalty(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		targetThreshold(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		tradingRewardsEnabled(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		waitingPeriodSecs(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		wrapperBurnFeeRate(wrapper: string, overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		wrapperMaxTokenAmount(wrapper: string, overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		wrapperMintFeeRate(wrapper: string, overrides?: CallOverrides): Promise<PopulatedTransaction>
+	}
 }

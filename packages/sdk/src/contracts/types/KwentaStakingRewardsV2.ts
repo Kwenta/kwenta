@@ -2,2180 +2,1600 @@
 /* tslint:disable */
 /* eslint-disable */
 import type {
-  BaseContract,
-  BigNumber,
-  BigNumberish,
-  BytesLike,
-  CallOverrides,
-  ContractTransaction,
-  Overrides,
-  PayableOverrides,
-  PopulatedTransaction,
-  Signer,
-  utils,
-} from "ethers";
-import type {
-  FunctionFragment,
-  Result,
-  EventFragment,
-} from "@ethersproject/abi";
-import type { Listener, Provider } from "@ethersproject/providers";
-import type {
-  TypedEventFilter,
-  TypedEvent,
-  TypedListener,
-  OnEvent,
-} from "./common";
+	BaseContract,
+	BigNumber,
+	BigNumberish,
+	BytesLike,
+	CallOverrides,
+	ContractTransaction,
+	Overrides,
+	PayableOverrides,
+	PopulatedTransaction,
+	Signer,
+	utils,
+} from 'ethers'
+import type { FunctionFragment, Result, EventFragment } from '@ethersproject/abi'
+import type { Listener, Provider } from '@ethersproject/providers'
+import type { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from './common'
 
 export interface KwentaStakingRewardsV2Interface extends utils.Interface {
-  functions: {
-    "MAX_COOLDOWN_PERIOD()": FunctionFragment;
-    "MIN_COOLDOWN_PERIOD()": FunctionFragment;
-    "acceptOwnership()": FunctionFragment;
-    "approveOperator(address,bool)": FunctionFragment;
-    "balanceAtTime(address,uint256)": FunctionFragment;
-    "balanceOf(address)": FunctionFragment;
-    "balancesCheckpoints(address,uint256)": FunctionFragment;
-    "balancesCheckpointsLength(address)": FunctionFragment;
-    "compound()": FunctionFragment;
-    "compoundOnBehalf(address)": FunctionFragment;
-    "cooldownPeriod()": FunctionFragment;
-    "earned(address)": FunctionFragment;
-    "escrowedBalanceAtTime(address,uint256)": FunctionFragment;
-    "escrowedBalanceOf(address)": FunctionFragment;
-    "escrowedBalancesCheckpoints(address,uint256)": FunctionFragment;
-    "escrowedBalancesCheckpointsLength(address)": FunctionFragment;
-    "exit()": FunctionFragment;
-    "getReward()": FunctionFragment;
-    "getRewardForDuration()": FunctionFragment;
-    "getRewardOnBehalf(address)": FunctionFragment;
-    "initialize(address)": FunctionFragment;
-    "kwenta()": FunctionFragment;
-    "lastTimeRewardApplicable()": FunctionFragment;
-    "lastUpdateTime()": FunctionFragment;
-    "nonEscrowedBalanceOf(address)": FunctionFragment;
-    "notifyRewardAmount(uint256)": FunctionFragment;
-    "operatorApprovals(address,address)": FunctionFragment;
-    "owner()": FunctionFragment;
-    "pauseStakingRewards()": FunctionFragment;
-    "paused()": FunctionFragment;
-    "pendingOwner()": FunctionFragment;
-    "periodFinish()": FunctionFragment;
-    "proxiableUUID()": FunctionFragment;
-    "recoverERC20(address,uint256)": FunctionFragment;
-    "renounceOwnership()": FunctionFragment;
-    "rewardEscrow()": FunctionFragment;
-    "rewardPerToken()": FunctionFragment;
-    "rewardPerTokenStored()": FunctionFragment;
-    "rewardRate()": FunctionFragment;
-    "rewards(address)": FunctionFragment;
-    "rewardsDuration()": FunctionFragment;
-    "rewardsNotifier()": FunctionFragment;
-    "setCooldownPeriod(uint256)": FunctionFragment;
-    "setRewardsDuration(uint256)": FunctionFragment;
-    "stake(uint256)": FunctionFragment;
-    "stakeEscrow(uint256)": FunctionFragment;
-    "stakeEscrowOnBehalf(address,uint256)": FunctionFragment;
-    "totalSupply()": FunctionFragment;
-    "totalSupplyAtTime(uint256)": FunctionFragment;
-    "totalSupplyCheckpoints(uint256)": FunctionFragment;
-    "totalSupplyCheckpointsLength()": FunctionFragment;
-    "transferOwnership(address)": FunctionFragment;
-    "unpauseStakingRewards()": FunctionFragment;
-    "unstake(uint256)": FunctionFragment;
-    "unstakeEscrow(uint256)": FunctionFragment;
-    "unstakeEscrowSkipCooldown(address,uint256)": FunctionFragment;
-    "unstakedEscrowedBalanceOf(address)": FunctionFragment;
-    "upgradeTo(address)": FunctionFragment;
-    "upgradeToAndCall(address,bytes)": FunctionFragment;
-    "userLastStakeTime(address)": FunctionFragment;
-    "userRewardPerTokenPaid(address)": FunctionFragment;
-  };
+	functions: {
+		'MAX_COOLDOWN_PERIOD()': FunctionFragment
+		'MIN_COOLDOWN_PERIOD()': FunctionFragment
+		'acceptOwnership()': FunctionFragment
+		'approveOperator(address,bool)': FunctionFragment
+		'balanceAtTime(address,uint256)': FunctionFragment
+		'balanceOf(address)': FunctionFragment
+		'balancesCheckpoints(address,uint256)': FunctionFragment
+		'balancesCheckpointsLength(address)': FunctionFragment
+		'compound()': FunctionFragment
+		'compoundOnBehalf(address)': FunctionFragment
+		'cooldownPeriod()': FunctionFragment
+		'earned(address)': FunctionFragment
+		'escrowedBalanceAtTime(address,uint256)': FunctionFragment
+		'escrowedBalanceOf(address)': FunctionFragment
+		'escrowedBalancesCheckpoints(address,uint256)': FunctionFragment
+		'escrowedBalancesCheckpointsLength(address)': FunctionFragment
+		'exit()': FunctionFragment
+		'getReward()': FunctionFragment
+		'getRewardForDuration()': FunctionFragment
+		'getRewardOnBehalf(address)': FunctionFragment
+		'initialize(address)': FunctionFragment
+		'kwenta()': FunctionFragment
+		'lastTimeRewardApplicable()': FunctionFragment
+		'lastUpdateTime()': FunctionFragment
+		'nonEscrowedBalanceOf(address)': FunctionFragment
+		'notifyRewardAmount(uint256)': FunctionFragment
+		'operatorApprovals(address,address)': FunctionFragment
+		'owner()': FunctionFragment
+		'pauseStakingRewards()': FunctionFragment
+		'paused()': FunctionFragment
+		'pendingOwner()': FunctionFragment
+		'periodFinish()': FunctionFragment
+		'proxiableUUID()': FunctionFragment
+		'recoverERC20(address,uint256)': FunctionFragment
+		'renounceOwnership()': FunctionFragment
+		'rewardEscrow()': FunctionFragment
+		'rewardPerToken()': FunctionFragment
+		'rewardPerTokenStored()': FunctionFragment
+		'rewardRate()': FunctionFragment
+		'rewards(address)': FunctionFragment
+		'rewardsDuration()': FunctionFragment
+		'rewardsNotifier()': FunctionFragment
+		'setCooldownPeriod(uint256)': FunctionFragment
+		'setRewardsDuration(uint256)': FunctionFragment
+		'stake(uint256)': FunctionFragment
+		'stakeEscrow(uint256)': FunctionFragment
+		'stakeEscrowOnBehalf(address,uint256)': FunctionFragment
+		'totalSupply()': FunctionFragment
+		'totalSupplyAtTime(uint256)': FunctionFragment
+		'totalSupplyCheckpoints(uint256)': FunctionFragment
+		'totalSupplyCheckpointsLength()': FunctionFragment
+		'transferOwnership(address)': FunctionFragment
+		'unpauseStakingRewards()': FunctionFragment
+		'unstake(uint256)': FunctionFragment
+		'unstakeEscrow(uint256)': FunctionFragment
+		'unstakeEscrowSkipCooldown(address,uint256)': FunctionFragment
+		'unstakedEscrowedBalanceOf(address)': FunctionFragment
+		'upgradeTo(address)': FunctionFragment
+		'upgradeToAndCall(address,bytes)': FunctionFragment
+		'userLastStakeTime(address)': FunctionFragment
+		'userRewardPerTokenPaid(address)': FunctionFragment
+	}
 
-  getFunction(
-    nameOrSignatureOrTopic:
-      | "MAX_COOLDOWN_PERIOD"
-      | "MIN_COOLDOWN_PERIOD"
-      | "acceptOwnership"
-      | "approveOperator"
-      | "balanceAtTime"
-      | "balanceOf"
-      | "balancesCheckpoints"
-      | "balancesCheckpointsLength"
-      | "compound"
-      | "compoundOnBehalf"
-      | "cooldownPeriod"
-      | "earned"
-      | "escrowedBalanceAtTime"
-      | "escrowedBalanceOf"
-      | "escrowedBalancesCheckpoints"
-      | "escrowedBalancesCheckpointsLength"
-      | "exit"
-      | "getReward"
-      | "getRewardForDuration"
-      | "getRewardOnBehalf"
-      | "initialize"
-      | "kwenta"
-      | "lastTimeRewardApplicable"
-      | "lastUpdateTime"
-      | "nonEscrowedBalanceOf"
-      | "notifyRewardAmount"
-      | "operatorApprovals"
-      | "owner"
-      | "pauseStakingRewards"
-      | "paused"
-      | "pendingOwner"
-      | "periodFinish"
-      | "proxiableUUID"
-      | "recoverERC20"
-      | "renounceOwnership"
-      | "rewardEscrow"
-      | "rewardPerToken"
-      | "rewardPerTokenStored"
-      | "rewardRate"
-      | "rewards"
-      | "rewardsDuration"
-      | "rewardsNotifier"
-      | "setCooldownPeriod"
-      | "setRewardsDuration"
-      | "stake"
-      | "stakeEscrow"
-      | "stakeEscrowOnBehalf"
-      | "totalSupply"
-      | "totalSupplyAtTime"
-      | "totalSupplyCheckpoints"
-      | "totalSupplyCheckpointsLength"
-      | "transferOwnership"
-      | "unpauseStakingRewards"
-      | "unstake"
-      | "unstakeEscrow"
-      | "unstakeEscrowSkipCooldown"
-      | "unstakedEscrowedBalanceOf"
-      | "upgradeTo"
-      | "upgradeToAndCall"
-      | "userLastStakeTime"
-      | "userRewardPerTokenPaid"
-  ): FunctionFragment;
+	getFunction(
+		nameOrSignatureOrTopic:
+			| 'MAX_COOLDOWN_PERIOD'
+			| 'MIN_COOLDOWN_PERIOD'
+			| 'acceptOwnership'
+			| 'approveOperator'
+			| 'balanceAtTime'
+			| 'balanceOf'
+			| 'balancesCheckpoints'
+			| 'balancesCheckpointsLength'
+			| 'compound'
+			| 'compoundOnBehalf'
+			| 'cooldownPeriod'
+			| 'earned'
+			| 'escrowedBalanceAtTime'
+			| 'escrowedBalanceOf'
+			| 'escrowedBalancesCheckpoints'
+			| 'escrowedBalancesCheckpointsLength'
+			| 'exit'
+			| 'getReward'
+			| 'getRewardForDuration'
+			| 'getRewardOnBehalf'
+			| 'initialize'
+			| 'kwenta'
+			| 'lastTimeRewardApplicable'
+			| 'lastUpdateTime'
+			| 'nonEscrowedBalanceOf'
+			| 'notifyRewardAmount'
+			| 'operatorApprovals'
+			| 'owner'
+			| 'pauseStakingRewards'
+			| 'paused'
+			| 'pendingOwner'
+			| 'periodFinish'
+			| 'proxiableUUID'
+			| 'recoverERC20'
+			| 'renounceOwnership'
+			| 'rewardEscrow'
+			| 'rewardPerToken'
+			| 'rewardPerTokenStored'
+			| 'rewardRate'
+			| 'rewards'
+			| 'rewardsDuration'
+			| 'rewardsNotifier'
+			| 'setCooldownPeriod'
+			| 'setRewardsDuration'
+			| 'stake'
+			| 'stakeEscrow'
+			| 'stakeEscrowOnBehalf'
+			| 'totalSupply'
+			| 'totalSupplyAtTime'
+			| 'totalSupplyCheckpoints'
+			| 'totalSupplyCheckpointsLength'
+			| 'transferOwnership'
+			| 'unpauseStakingRewards'
+			| 'unstake'
+			| 'unstakeEscrow'
+			| 'unstakeEscrowSkipCooldown'
+			| 'unstakedEscrowedBalanceOf'
+			| 'upgradeTo'
+			| 'upgradeToAndCall'
+			| 'userLastStakeTime'
+			| 'userRewardPerTokenPaid'
+	): FunctionFragment
 
-  encodeFunctionData(
-    functionFragment: "MAX_COOLDOWN_PERIOD",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "MIN_COOLDOWN_PERIOD",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "acceptOwnership",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "approveOperator",
-    values: [string, boolean]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "balanceAtTime",
-    values: [string, BigNumberish]
-  ): string;
-  encodeFunctionData(functionFragment: "balanceOf", values: [string]): string;
-  encodeFunctionData(
-    functionFragment: "balancesCheckpoints",
-    values: [string, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "balancesCheckpointsLength",
-    values: [string]
-  ): string;
-  encodeFunctionData(functionFragment: "compound", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "compoundOnBehalf",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "cooldownPeriod",
-    values?: undefined
-  ): string;
-  encodeFunctionData(functionFragment: "earned", values: [string]): string;
-  encodeFunctionData(
-    functionFragment: "escrowedBalanceAtTime",
-    values: [string, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "escrowedBalanceOf",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "escrowedBalancesCheckpoints",
-    values: [string, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "escrowedBalancesCheckpointsLength",
-    values: [string]
-  ): string;
-  encodeFunctionData(functionFragment: "exit", values?: undefined): string;
-  encodeFunctionData(functionFragment: "getReward", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "getRewardForDuration",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getRewardOnBehalf",
-    values: [string]
-  ): string;
-  encodeFunctionData(functionFragment: "initialize", values: [string]): string;
-  encodeFunctionData(functionFragment: "kwenta", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "lastTimeRewardApplicable",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "lastUpdateTime",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "nonEscrowedBalanceOf",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "notifyRewardAmount",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "operatorApprovals",
-    values: [string, string]
-  ): string;
-  encodeFunctionData(functionFragment: "owner", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "pauseStakingRewards",
-    values?: undefined
-  ): string;
-  encodeFunctionData(functionFragment: "paused", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "pendingOwner",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "periodFinish",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "proxiableUUID",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "recoverERC20",
-    values: [string, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "renounceOwnership",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "rewardEscrow",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "rewardPerToken",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "rewardPerTokenStored",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "rewardRate",
-    values?: undefined
-  ): string;
-  encodeFunctionData(functionFragment: "rewards", values: [string]): string;
-  encodeFunctionData(
-    functionFragment: "rewardsDuration",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "rewardsNotifier",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setCooldownPeriod",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setRewardsDuration",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(functionFragment: "stake", values: [BigNumberish]): string;
-  encodeFunctionData(
-    functionFragment: "stakeEscrow",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "stakeEscrowOnBehalf",
-    values: [string, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "totalSupply",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "totalSupplyAtTime",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "totalSupplyCheckpoints",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "totalSupplyCheckpointsLength",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "transferOwnership",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "unpauseStakingRewards",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "unstake",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "unstakeEscrow",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "unstakeEscrowSkipCooldown",
-    values: [string, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "unstakedEscrowedBalanceOf",
-    values: [string]
-  ): string;
-  encodeFunctionData(functionFragment: "upgradeTo", values: [string]): string;
-  encodeFunctionData(
-    functionFragment: "upgradeToAndCall",
-    values: [string, BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "userLastStakeTime",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "userRewardPerTokenPaid",
-    values: [string]
-  ): string;
+	encodeFunctionData(functionFragment: 'MAX_COOLDOWN_PERIOD', values?: undefined): string
+	encodeFunctionData(functionFragment: 'MIN_COOLDOWN_PERIOD', values?: undefined): string
+	encodeFunctionData(functionFragment: 'acceptOwnership', values?: undefined): string
+	encodeFunctionData(functionFragment: 'approveOperator', values: [string, boolean]): string
+	encodeFunctionData(functionFragment: 'balanceAtTime', values: [string, BigNumberish]): string
+	encodeFunctionData(functionFragment: 'balanceOf', values: [string]): string
+	encodeFunctionData(
+		functionFragment: 'balancesCheckpoints',
+		values: [string, BigNumberish]
+	): string
+	encodeFunctionData(functionFragment: 'balancesCheckpointsLength', values: [string]): string
+	encodeFunctionData(functionFragment: 'compound', values?: undefined): string
+	encodeFunctionData(functionFragment: 'compoundOnBehalf', values: [string]): string
+	encodeFunctionData(functionFragment: 'cooldownPeriod', values?: undefined): string
+	encodeFunctionData(functionFragment: 'earned', values: [string]): string
+	encodeFunctionData(
+		functionFragment: 'escrowedBalanceAtTime',
+		values: [string, BigNumberish]
+	): string
+	encodeFunctionData(functionFragment: 'escrowedBalanceOf', values: [string]): string
+	encodeFunctionData(
+		functionFragment: 'escrowedBalancesCheckpoints',
+		values: [string, BigNumberish]
+	): string
+	encodeFunctionData(
+		functionFragment: 'escrowedBalancesCheckpointsLength',
+		values: [string]
+	): string
+	encodeFunctionData(functionFragment: 'exit', values?: undefined): string
+	encodeFunctionData(functionFragment: 'getReward', values?: undefined): string
+	encodeFunctionData(functionFragment: 'getRewardForDuration', values?: undefined): string
+	encodeFunctionData(functionFragment: 'getRewardOnBehalf', values: [string]): string
+	encodeFunctionData(functionFragment: 'initialize', values: [string]): string
+	encodeFunctionData(functionFragment: 'kwenta', values?: undefined): string
+	encodeFunctionData(functionFragment: 'lastTimeRewardApplicable', values?: undefined): string
+	encodeFunctionData(functionFragment: 'lastUpdateTime', values?: undefined): string
+	encodeFunctionData(functionFragment: 'nonEscrowedBalanceOf', values: [string]): string
+	encodeFunctionData(functionFragment: 'notifyRewardAmount', values: [BigNumberish]): string
+	encodeFunctionData(functionFragment: 'operatorApprovals', values: [string, string]): string
+	encodeFunctionData(functionFragment: 'owner', values?: undefined): string
+	encodeFunctionData(functionFragment: 'pauseStakingRewards', values?: undefined): string
+	encodeFunctionData(functionFragment: 'paused', values?: undefined): string
+	encodeFunctionData(functionFragment: 'pendingOwner', values?: undefined): string
+	encodeFunctionData(functionFragment: 'periodFinish', values?: undefined): string
+	encodeFunctionData(functionFragment: 'proxiableUUID', values?: undefined): string
+	encodeFunctionData(functionFragment: 'recoverERC20', values: [string, BigNumberish]): string
+	encodeFunctionData(functionFragment: 'renounceOwnership', values?: undefined): string
+	encodeFunctionData(functionFragment: 'rewardEscrow', values?: undefined): string
+	encodeFunctionData(functionFragment: 'rewardPerToken', values?: undefined): string
+	encodeFunctionData(functionFragment: 'rewardPerTokenStored', values?: undefined): string
+	encodeFunctionData(functionFragment: 'rewardRate', values?: undefined): string
+	encodeFunctionData(functionFragment: 'rewards', values: [string]): string
+	encodeFunctionData(functionFragment: 'rewardsDuration', values?: undefined): string
+	encodeFunctionData(functionFragment: 'rewardsNotifier', values?: undefined): string
+	encodeFunctionData(functionFragment: 'setCooldownPeriod', values: [BigNumberish]): string
+	encodeFunctionData(functionFragment: 'setRewardsDuration', values: [BigNumberish]): string
+	encodeFunctionData(functionFragment: 'stake', values: [BigNumberish]): string
+	encodeFunctionData(functionFragment: 'stakeEscrow', values: [BigNumberish]): string
+	encodeFunctionData(
+		functionFragment: 'stakeEscrowOnBehalf',
+		values: [string, BigNumberish]
+	): string
+	encodeFunctionData(functionFragment: 'totalSupply', values?: undefined): string
+	encodeFunctionData(functionFragment: 'totalSupplyAtTime', values: [BigNumberish]): string
+	encodeFunctionData(functionFragment: 'totalSupplyCheckpoints', values: [BigNumberish]): string
+	encodeFunctionData(functionFragment: 'totalSupplyCheckpointsLength', values?: undefined): string
+	encodeFunctionData(functionFragment: 'transferOwnership', values: [string]): string
+	encodeFunctionData(functionFragment: 'unpauseStakingRewards', values?: undefined): string
+	encodeFunctionData(functionFragment: 'unstake', values: [BigNumberish]): string
+	encodeFunctionData(functionFragment: 'unstakeEscrow', values: [BigNumberish]): string
+	encodeFunctionData(
+		functionFragment: 'unstakeEscrowSkipCooldown',
+		values: [string, BigNumberish]
+	): string
+	encodeFunctionData(functionFragment: 'unstakedEscrowedBalanceOf', values: [string]): string
+	encodeFunctionData(functionFragment: 'upgradeTo', values: [string]): string
+	encodeFunctionData(functionFragment: 'upgradeToAndCall', values: [string, BytesLike]): string
+	encodeFunctionData(functionFragment: 'userLastStakeTime', values: [string]): string
+	encodeFunctionData(functionFragment: 'userRewardPerTokenPaid', values: [string]): string
 
-  decodeFunctionResult(
-    functionFragment: "MAX_COOLDOWN_PERIOD",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "MIN_COOLDOWN_PERIOD",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "acceptOwnership",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "approveOperator",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "balanceAtTime",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "balancesCheckpoints",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "balancesCheckpointsLength",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "compound", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "compoundOnBehalf",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "cooldownPeriod",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "earned", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "escrowedBalanceAtTime",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "escrowedBalanceOf",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "escrowedBalancesCheckpoints",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "escrowedBalancesCheckpointsLength",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "exit", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "getReward", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "getRewardForDuration",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getRewardOnBehalf",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "kwenta", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "lastTimeRewardApplicable",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "lastUpdateTime",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "nonEscrowedBalanceOf",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "notifyRewardAmount",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "operatorApprovals",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "pauseStakingRewards",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "pendingOwner",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "periodFinish",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "proxiableUUID",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "recoverERC20",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "renounceOwnership",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "rewardEscrow",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "rewardPerToken",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "rewardPerTokenStored",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "rewardRate", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "rewards", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "rewardsDuration",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "rewardsNotifier",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setCooldownPeriod",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setRewardsDuration",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "stake", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "stakeEscrow",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "stakeEscrowOnBehalf",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "totalSupply",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "totalSupplyAtTime",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "totalSupplyCheckpoints",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "totalSupplyCheckpointsLength",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "transferOwnership",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "unpauseStakingRewards",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "unstake", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "unstakeEscrow",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "unstakeEscrowSkipCooldown",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "unstakedEscrowedBalanceOf",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "upgradeTo", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "upgradeToAndCall",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "userLastStakeTime",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "userRewardPerTokenPaid",
-    data: BytesLike
-  ): Result;
+	decodeFunctionResult(functionFragment: 'MAX_COOLDOWN_PERIOD', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'MIN_COOLDOWN_PERIOD', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'acceptOwnership', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'approveOperator', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'balanceAtTime', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'balanceOf', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'balancesCheckpoints', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'balancesCheckpointsLength', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'compound', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'compoundOnBehalf', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'cooldownPeriod', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'earned', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'escrowedBalanceAtTime', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'escrowedBalanceOf', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'escrowedBalancesCheckpoints', data: BytesLike): Result
+	decodeFunctionResult(
+		functionFragment: 'escrowedBalancesCheckpointsLength',
+		data: BytesLike
+	): Result
+	decodeFunctionResult(functionFragment: 'exit', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'getReward', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'getRewardForDuration', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'getRewardOnBehalf', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'initialize', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'kwenta', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'lastTimeRewardApplicable', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'lastUpdateTime', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'nonEscrowedBalanceOf', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'notifyRewardAmount', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'operatorApprovals', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'owner', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'pauseStakingRewards', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'paused', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'pendingOwner', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'periodFinish', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'proxiableUUID', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'recoverERC20', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'renounceOwnership', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'rewardEscrow', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'rewardPerToken', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'rewardPerTokenStored', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'rewardRate', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'rewards', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'rewardsDuration', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'rewardsNotifier', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'setCooldownPeriod', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'setRewardsDuration', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'stake', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'stakeEscrow', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'stakeEscrowOnBehalf', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'totalSupply', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'totalSupplyAtTime', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'totalSupplyCheckpoints', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'totalSupplyCheckpointsLength', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'transferOwnership', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'unpauseStakingRewards', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'unstake', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'unstakeEscrow', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'unstakeEscrowSkipCooldown', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'unstakedEscrowedBalanceOf', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'upgradeTo', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'upgradeToAndCall', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'userLastStakeTime', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'userRewardPerTokenPaid', data: BytesLike): Result
 
-  events: {
-    "AdminChanged(address,address)": EventFragment;
-    "BeaconUpgraded(address)": EventFragment;
-    "CooldownPeriodUpdated(uint256)": EventFragment;
-    "EscrowStaked(address,uint256)": EventFragment;
-    "EscrowUnstaked(address,uint256)": EventFragment;
-    "Initialized(uint8)": EventFragment;
-    "OperatorApproved(address,address,bool)": EventFragment;
-    "OwnershipTransferStarted(address,address)": EventFragment;
-    "OwnershipTransferred(address,address)": EventFragment;
-    "Paused(address)": EventFragment;
-    "Recovered(address,uint256)": EventFragment;
-    "RewardAdded(uint256)": EventFragment;
-    "RewardPaid(address,uint256)": EventFragment;
-    "RewardsDurationUpdated(uint256)": EventFragment;
-    "Staked(address,uint256)": EventFragment;
-    "Unpaused(address)": EventFragment;
-    "Unstaked(address,uint256)": EventFragment;
-    "Upgraded(address)": EventFragment;
-  };
+	events: {
+		'AdminChanged(address,address)': EventFragment
+		'BeaconUpgraded(address)': EventFragment
+		'CooldownPeriodUpdated(uint256)': EventFragment
+		'EscrowStaked(address,uint256)': EventFragment
+		'EscrowUnstaked(address,uint256)': EventFragment
+		'Initialized(uint8)': EventFragment
+		'OperatorApproved(address,address,bool)': EventFragment
+		'OwnershipTransferStarted(address,address)': EventFragment
+		'OwnershipTransferred(address,address)': EventFragment
+		'Paused(address)': EventFragment
+		'Recovered(address,uint256)': EventFragment
+		'RewardAdded(uint256)': EventFragment
+		'RewardPaid(address,uint256)': EventFragment
+		'RewardsDurationUpdated(uint256)': EventFragment
+		'Staked(address,uint256)': EventFragment
+		'Unpaused(address)': EventFragment
+		'Unstaked(address,uint256)': EventFragment
+		'Upgraded(address)': EventFragment
+	}
 
-  getEvent(nameOrSignatureOrTopic: "AdminChanged"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "BeaconUpgraded"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "CooldownPeriodUpdated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "EscrowStaked"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "EscrowUnstaked"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "OperatorApproved"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "OwnershipTransferStarted"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Recovered"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "RewardAdded"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "RewardPaid"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "RewardsDurationUpdated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Staked"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Unpaused"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Unstaked"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Upgraded"): EventFragment;
+	getEvent(nameOrSignatureOrTopic: 'AdminChanged'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'BeaconUpgraded'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'CooldownPeriodUpdated'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'EscrowStaked'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'EscrowUnstaked'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'Initialized'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'OperatorApproved'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'OwnershipTransferStarted'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'OwnershipTransferred'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'Paused'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'Recovered'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'RewardAdded'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'RewardPaid'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'RewardsDurationUpdated'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'Staked'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'Unpaused'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'Unstaked'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'Upgraded'): EventFragment
 }
 
 export interface AdminChangedEventObject {
-  previousAdmin: string;
-  newAdmin: string;
+	previousAdmin: string
+	newAdmin: string
 }
-export type AdminChangedEvent = TypedEvent<
-  [string, string],
-  AdminChangedEventObject
->;
+export type AdminChangedEvent = TypedEvent<[string, string], AdminChangedEventObject>
 
-export type AdminChangedEventFilter = TypedEventFilter<AdminChangedEvent>;
+export type AdminChangedEventFilter = TypedEventFilter<AdminChangedEvent>
 
 export interface BeaconUpgradedEventObject {
-  beacon: string;
+	beacon: string
 }
-export type BeaconUpgradedEvent = TypedEvent<
-  [string],
-  BeaconUpgradedEventObject
->;
+export type BeaconUpgradedEvent = TypedEvent<[string], BeaconUpgradedEventObject>
 
-export type BeaconUpgradedEventFilter = TypedEventFilter<BeaconUpgradedEvent>;
+export type BeaconUpgradedEventFilter = TypedEventFilter<BeaconUpgradedEvent>
 
 export interface CooldownPeriodUpdatedEventObject {
-  cooldownPeriod: BigNumber;
+	cooldownPeriod: BigNumber
 }
-export type CooldownPeriodUpdatedEvent = TypedEvent<
-  [BigNumber],
-  CooldownPeriodUpdatedEventObject
->;
+export type CooldownPeriodUpdatedEvent = TypedEvent<[BigNumber], CooldownPeriodUpdatedEventObject>
 
-export type CooldownPeriodUpdatedEventFilter =
-  TypedEventFilter<CooldownPeriodUpdatedEvent>;
+export type CooldownPeriodUpdatedEventFilter = TypedEventFilter<CooldownPeriodUpdatedEvent>
 
 export interface EscrowStakedEventObject {
-  user: string;
-  amount: BigNumber;
+	user: string
+	amount: BigNumber
 }
-export type EscrowStakedEvent = TypedEvent<
-  [string, BigNumber],
-  EscrowStakedEventObject
->;
+export type EscrowStakedEvent = TypedEvent<[string, BigNumber], EscrowStakedEventObject>
 
-export type EscrowStakedEventFilter = TypedEventFilter<EscrowStakedEvent>;
+export type EscrowStakedEventFilter = TypedEventFilter<EscrowStakedEvent>
 
 export interface EscrowUnstakedEventObject {
-  user: string;
-  amount: BigNumber;
+	user: string
+	amount: BigNumber
 }
-export type EscrowUnstakedEvent = TypedEvent<
-  [string, BigNumber],
-  EscrowUnstakedEventObject
->;
+export type EscrowUnstakedEvent = TypedEvent<[string, BigNumber], EscrowUnstakedEventObject>
 
-export type EscrowUnstakedEventFilter = TypedEventFilter<EscrowUnstakedEvent>;
+export type EscrowUnstakedEventFilter = TypedEventFilter<EscrowUnstakedEvent>
 
 export interface InitializedEventObject {
-  version: number;
+	version: number
 }
-export type InitializedEvent = TypedEvent<[number], InitializedEventObject>;
+export type InitializedEvent = TypedEvent<[number], InitializedEventObject>
 
-export type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
+export type InitializedEventFilter = TypedEventFilter<InitializedEvent>
 
 export interface OperatorApprovedEventObject {
-  owner: string;
-  operator: string;
-  approved: boolean;
+	owner: string
+	operator: string
+	approved: boolean
 }
 export type OperatorApprovedEvent = TypedEvent<
-  [string, string, boolean],
-  OperatorApprovedEventObject
->;
+	[string, string, boolean],
+	OperatorApprovedEventObject
+>
 
-export type OperatorApprovedEventFilter =
-  TypedEventFilter<OperatorApprovedEvent>;
+export type OperatorApprovedEventFilter = TypedEventFilter<OperatorApprovedEvent>
 
 export interface OwnershipTransferStartedEventObject {
-  previousOwner: string;
-  newOwner: string;
+	previousOwner: string
+	newOwner: string
 }
 export type OwnershipTransferStartedEvent = TypedEvent<
-  [string, string],
-  OwnershipTransferStartedEventObject
->;
+	[string, string],
+	OwnershipTransferStartedEventObject
+>
 
-export type OwnershipTransferStartedEventFilter =
-  TypedEventFilter<OwnershipTransferStartedEvent>;
+export type OwnershipTransferStartedEventFilter = TypedEventFilter<OwnershipTransferStartedEvent>
 
 export interface OwnershipTransferredEventObject {
-  previousOwner: string;
-  newOwner: string;
+	previousOwner: string
+	newOwner: string
 }
 export type OwnershipTransferredEvent = TypedEvent<
-  [string, string],
-  OwnershipTransferredEventObject
->;
+	[string, string],
+	OwnershipTransferredEventObject
+>
 
-export type OwnershipTransferredEventFilter =
-  TypedEventFilter<OwnershipTransferredEvent>;
+export type OwnershipTransferredEventFilter = TypedEventFilter<OwnershipTransferredEvent>
 
 export interface PausedEventObject {
-  account: string;
+	account: string
 }
-export type PausedEvent = TypedEvent<[string], PausedEventObject>;
+export type PausedEvent = TypedEvent<[string], PausedEventObject>
 
-export type PausedEventFilter = TypedEventFilter<PausedEvent>;
+export type PausedEventFilter = TypedEventFilter<PausedEvent>
 
 export interface RecoveredEventObject {
-  token: string;
-  amount: BigNumber;
+	token: string
+	amount: BigNumber
 }
-export type RecoveredEvent = TypedEvent<
-  [string, BigNumber],
-  RecoveredEventObject
->;
+export type RecoveredEvent = TypedEvent<[string, BigNumber], RecoveredEventObject>
 
-export type RecoveredEventFilter = TypedEventFilter<RecoveredEvent>;
+export type RecoveredEventFilter = TypedEventFilter<RecoveredEvent>
 
 export interface RewardAddedEventObject {
-  reward: BigNumber;
+	reward: BigNumber
 }
-export type RewardAddedEvent = TypedEvent<[BigNumber], RewardAddedEventObject>;
+export type RewardAddedEvent = TypedEvent<[BigNumber], RewardAddedEventObject>
 
-export type RewardAddedEventFilter = TypedEventFilter<RewardAddedEvent>;
+export type RewardAddedEventFilter = TypedEventFilter<RewardAddedEvent>
 
 export interface RewardPaidEventObject {
-  user: string;
-  reward: BigNumber;
+	user: string
+	reward: BigNumber
 }
-export type RewardPaidEvent = TypedEvent<
-  [string, BigNumber],
-  RewardPaidEventObject
->;
+export type RewardPaidEvent = TypedEvent<[string, BigNumber], RewardPaidEventObject>
 
-export type RewardPaidEventFilter = TypedEventFilter<RewardPaidEvent>;
+export type RewardPaidEventFilter = TypedEventFilter<RewardPaidEvent>
 
 export interface RewardsDurationUpdatedEventObject {
-  newDuration: BigNumber;
+	newDuration: BigNumber
 }
-export type RewardsDurationUpdatedEvent = TypedEvent<
-  [BigNumber],
-  RewardsDurationUpdatedEventObject
->;
+export type RewardsDurationUpdatedEvent = TypedEvent<[BigNumber], RewardsDurationUpdatedEventObject>
 
-export type RewardsDurationUpdatedEventFilter =
-  TypedEventFilter<RewardsDurationUpdatedEvent>;
+export type RewardsDurationUpdatedEventFilter = TypedEventFilter<RewardsDurationUpdatedEvent>
 
 export interface StakedEventObject {
-  user: string;
-  amount: BigNumber;
+	user: string
+	amount: BigNumber
 }
-export type StakedEvent = TypedEvent<[string, BigNumber], StakedEventObject>;
+export type StakedEvent = TypedEvent<[string, BigNumber], StakedEventObject>
 
-export type StakedEventFilter = TypedEventFilter<StakedEvent>;
+export type StakedEventFilter = TypedEventFilter<StakedEvent>
 
 export interface UnpausedEventObject {
-  account: string;
+	account: string
 }
-export type UnpausedEvent = TypedEvent<[string], UnpausedEventObject>;
+export type UnpausedEvent = TypedEvent<[string], UnpausedEventObject>
 
-export type UnpausedEventFilter = TypedEventFilter<UnpausedEvent>;
+export type UnpausedEventFilter = TypedEventFilter<UnpausedEvent>
 
 export interface UnstakedEventObject {
-  user: string;
-  amount: BigNumber;
+	user: string
+	amount: BigNumber
 }
-export type UnstakedEvent = TypedEvent<
-  [string, BigNumber],
-  UnstakedEventObject
->;
+export type UnstakedEvent = TypedEvent<[string, BigNumber], UnstakedEventObject>
 
-export type UnstakedEventFilter = TypedEventFilter<UnstakedEvent>;
+export type UnstakedEventFilter = TypedEventFilter<UnstakedEvent>
 
 export interface UpgradedEventObject {
-  implementation: string;
+	implementation: string
 }
-export type UpgradedEvent = TypedEvent<[string], UpgradedEventObject>;
+export type UpgradedEvent = TypedEvent<[string], UpgradedEventObject>
 
-export type UpgradedEventFilter = TypedEventFilter<UpgradedEvent>;
+export type UpgradedEventFilter = TypedEventFilter<UpgradedEvent>
 
 export interface KwentaStakingRewardsV2 extends BaseContract {
-  connect(signerOrProvider: Signer | Provider | string): this;
-  attach(addressOrName: string): this;
-  deployed(): Promise<this>;
-
-  interface: KwentaStakingRewardsV2Interface;
-
-  queryFilter<TEvent extends TypedEvent>(
-    event: TypedEventFilter<TEvent>,
-    fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined
-  ): Promise<Array<TEvent>>;
-
-  listeners<TEvent extends TypedEvent>(
-    eventFilter?: TypedEventFilter<TEvent>
-  ): Array<TypedListener<TEvent>>;
-  listeners(eventName?: string): Array<Listener>;
-  removeAllListeners<TEvent extends TypedEvent>(
-    eventFilter: TypedEventFilter<TEvent>
-  ): this;
-  removeAllListeners(eventName?: string): this;
-  off: OnEvent<this>;
-  on: OnEvent<this>;
-  once: OnEvent<this>;
-  removeListener: OnEvent<this>;
-
-  functions: {
-    MAX_COOLDOWN_PERIOD(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    MIN_COOLDOWN_PERIOD(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    acceptOwnership(
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    approveOperator(
-      _operator: string,
-      _approved: boolean,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    balanceAtTime(
-      _account: string,
-      _timestamp: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    balanceOf(
-      _account: string,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    balancesCheckpoints(
-      arg0: string,
-      arg1: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber, BigNumber] & {
-        ts: BigNumber;
-        blk: BigNumber;
-        value: BigNumber;
-      }
-    >;
-
-    balancesCheckpointsLength(
-      _account: string,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    compound(
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    compoundOnBehalf(
-      _account: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    cooldownPeriod(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    earned(_account: string, overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    escrowedBalanceAtTime(
-      _account: string,
-      _timestamp: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    escrowedBalanceOf(
-      _account: string,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    escrowedBalancesCheckpoints(
-      arg0: string,
-      arg1: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber, BigNumber] & {
-        ts: BigNumber;
-        blk: BigNumber;
-        value: BigNumber;
-      }
-    >;
+	connect(signerOrProvider: Signer | Provider | string): this
+	attach(addressOrName: string): this
+	deployed(): Promise<this>
+
+	interface: KwentaStakingRewardsV2Interface
+
+	queryFilter<TEvent extends TypedEvent>(
+		event: TypedEventFilter<TEvent>,
+		fromBlockOrBlockhash?: string | number | undefined,
+		toBlock?: string | number | undefined
+	): Promise<Array<TEvent>>
+
+	listeners<TEvent extends TypedEvent>(
+		eventFilter?: TypedEventFilter<TEvent>
+	): Array<TypedListener<TEvent>>
+	listeners(eventName?: string): Array<Listener>
+	removeAllListeners<TEvent extends TypedEvent>(eventFilter: TypedEventFilter<TEvent>): this
+	removeAllListeners(eventName?: string): this
+	off: OnEvent<this>
+	on: OnEvent<this>
+	once: OnEvent<this>
+	removeListener: OnEvent<this>
+
+	functions: {
+		MAX_COOLDOWN_PERIOD(overrides?: CallOverrides): Promise<[BigNumber]>
+
+		MIN_COOLDOWN_PERIOD(overrides?: CallOverrides): Promise<[BigNumber]>
 
-    escrowedBalancesCheckpointsLength(
-      _account: string,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+		acceptOwnership(overrides?: Overrides & { from?: string }): Promise<ContractTransaction>
 
-    exit(
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
+		approveOperator(
+			_operator: string,
+			_approved: boolean,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
 
-    getReward(
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
+		balanceAtTime(
+			_account: string,
+			_timestamp: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<[BigNumber]>
 
-    getRewardForDuration(overrides?: CallOverrides): Promise<[BigNumber]>;
+		balanceOf(_account: string, overrides?: CallOverrides): Promise<[BigNumber]>
 
-    getRewardOnBehalf(
-      _account: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
+		balancesCheckpoints(
+			arg0: string,
+			arg1: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<
+			[BigNumber, BigNumber, BigNumber] & {
+				ts: BigNumber
+				blk: BigNumber
+				value: BigNumber
+			}
+		>
 
-    initialize(
-      _contractOwner: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
+		balancesCheckpointsLength(_account: string, overrides?: CallOverrides): Promise<[BigNumber]>
 
-    kwenta(overrides?: CallOverrides): Promise<[string]>;
+		compound(overrides?: Overrides & { from?: string }): Promise<ContractTransaction>
 
-    lastTimeRewardApplicable(overrides?: CallOverrides): Promise<[BigNumber]>;
+		compoundOnBehalf(
+			_account: string,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
 
-    lastUpdateTime(overrides?: CallOverrides): Promise<[BigNumber]>;
+		cooldownPeriod(overrides?: CallOverrides): Promise<[BigNumber]>
 
-    nonEscrowedBalanceOf(
-      _account: string,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+		earned(_account: string, overrides?: CallOverrides): Promise<[BigNumber]>
 
-    notifyRewardAmount(
-      _reward: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
+		escrowedBalanceAtTime(
+			_account: string,
+			_timestamp: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<[BigNumber]>
 
-    operatorApprovals(
-      arg0: string,
-      arg1: string,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
+		escrowedBalanceOf(_account: string, overrides?: CallOverrides): Promise<[BigNumber]>
 
-    owner(overrides?: CallOverrides): Promise<[string]>;
+		escrowedBalancesCheckpoints(
+			arg0: string,
+			arg1: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<
+			[BigNumber, BigNumber, BigNumber] & {
+				ts: BigNumber
+				blk: BigNumber
+				value: BigNumber
+			}
+		>
 
-    pauseStakingRewards(
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
+		escrowedBalancesCheckpointsLength(
+			_account: string,
+			overrides?: CallOverrides
+		): Promise<[BigNumber]>
 
-    paused(overrides?: CallOverrides): Promise<[boolean]>;
+		exit(overrides?: Overrides & { from?: string }): Promise<ContractTransaction>
 
-    pendingOwner(overrides?: CallOverrides): Promise<[string]>;
+		getReward(overrides?: Overrides & { from?: string }): Promise<ContractTransaction>
 
-    periodFinish(overrides?: CallOverrides): Promise<[BigNumber]>;
+		getRewardForDuration(overrides?: CallOverrides): Promise<[BigNumber]>
 
-    proxiableUUID(overrides?: CallOverrides): Promise<[string]>;
+		getRewardOnBehalf(
+			_account: string,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
 
-    recoverERC20(
-      _tokenAddress: string,
-      _tokenAmount: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
+		initialize(
+			_contractOwner: string,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
 
-    renounceOwnership(
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
+		kwenta(overrides?: CallOverrides): Promise<[string]>
 
-    rewardEscrow(overrides?: CallOverrides): Promise<[string]>;
+		lastTimeRewardApplicable(overrides?: CallOverrides): Promise<[BigNumber]>
 
-    rewardPerToken(overrides?: CallOverrides): Promise<[BigNumber]>;
+		lastUpdateTime(overrides?: CallOverrides): Promise<[BigNumber]>
 
-    rewardPerTokenStored(overrides?: CallOverrides): Promise<[BigNumber]>;
+		nonEscrowedBalanceOf(_account: string, overrides?: CallOverrides): Promise<[BigNumber]>
 
-    rewardRate(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    rewards(arg0: string, overrides?: CallOverrides): Promise<[BigNumber]>;
+		notifyRewardAmount(
+			_reward: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
 
-    rewardsDuration(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    rewardsNotifier(overrides?: CallOverrides): Promise<[string]>;
-
-    setCooldownPeriod(
-      _cooldownPeriod: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
+		operatorApprovals(arg0: string, arg1: string, overrides?: CallOverrides): Promise<[boolean]>
 
-    setRewardsDuration(
-      _rewardsDuration: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
+		owner(overrides?: CallOverrides): Promise<[string]>
 
-    stake(
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
+		pauseStakingRewards(overrides?: Overrides & { from?: string }): Promise<ContractTransaction>
 
-    stakeEscrow(
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    stakeEscrowOnBehalf(
-      _account: string,
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    totalSupply(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    totalSupplyAtTime(
-      _timestamp: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    totalSupplyCheckpoints(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber, BigNumber] & {
-        ts: BigNumber;
-        blk: BigNumber;
-        value: BigNumber;
-      }
-    >;
-
-    totalSupplyCheckpointsLength(
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    transferOwnership(
-      newOwner: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    unpauseStakingRewards(
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    unstake(
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    unstakeEscrow(
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    unstakeEscrowSkipCooldown(
-      _account: string,
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    unstakedEscrowedBalanceOf(
-      _account: string,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    upgradeTo(
-      newImplementation: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    upgradeToAndCall(
-      newImplementation: string,
-      data: BytesLike,
-      overrides?: PayableOverrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    userLastStakeTime(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    userRewardPerTokenPaid(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-  };
-
-  MAX_COOLDOWN_PERIOD(overrides?: CallOverrides): Promise<BigNumber>;
-
-  MIN_COOLDOWN_PERIOD(overrides?: CallOverrides): Promise<BigNumber>;
-
-  acceptOwnership(
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  approveOperator(
-    _operator: string,
-    _approved: boolean,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  balanceAtTime(
-    _account: string,
-    _timestamp: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  balanceOf(_account: string, overrides?: CallOverrides): Promise<BigNumber>;
-
-  balancesCheckpoints(
-    arg0: string,
-    arg1: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<
-    [BigNumber, BigNumber, BigNumber] & {
-      ts: BigNumber;
-      blk: BigNumber;
-      value: BigNumber;
-    }
-  >;
-
-  balancesCheckpointsLength(
-    _account: string,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  compound(
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  compoundOnBehalf(
-    _account: string,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  cooldownPeriod(overrides?: CallOverrides): Promise<BigNumber>;
-
-  earned(_account: string, overrides?: CallOverrides): Promise<BigNumber>;
+		paused(overrides?: CallOverrides): Promise<[boolean]>
 
-  escrowedBalanceAtTime(
-    _account: string,
-    _timestamp: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
+		pendingOwner(overrides?: CallOverrides): Promise<[string]>
 
-  escrowedBalanceOf(
-    _account: string,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
+		periodFinish(overrides?: CallOverrides): Promise<[BigNumber]>
 
-  escrowedBalancesCheckpoints(
-    arg0: string,
-    arg1: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<
-    [BigNumber, BigNumber, BigNumber] & {
-      ts: BigNumber;
-      blk: BigNumber;
-      value: BigNumber;
-    }
-  >;
+		proxiableUUID(overrides?: CallOverrides): Promise<[string]>
 
-  escrowedBalancesCheckpointsLength(
-    _account: string,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
+		recoverERC20(
+			_tokenAddress: string,
+			_tokenAmount: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
 
-  exit(overrides?: Overrides & { from?: string }): Promise<ContractTransaction>;
+		renounceOwnership(overrides?: Overrides & { from?: string }): Promise<ContractTransaction>
 
-  getReward(
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
+		rewardEscrow(overrides?: CallOverrides): Promise<[string]>
 
-  getRewardForDuration(overrides?: CallOverrides): Promise<BigNumber>;
+		rewardPerToken(overrides?: CallOverrides): Promise<[BigNumber]>
 
-  getRewardOnBehalf(
-    _account: string,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
+		rewardPerTokenStored(overrides?: CallOverrides): Promise<[BigNumber]>
 
-  initialize(
-    _contractOwner: string,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  kwenta(overrides?: CallOverrides): Promise<string>;
-
-  lastTimeRewardApplicable(overrides?: CallOverrides): Promise<BigNumber>;
-
-  lastUpdateTime(overrides?: CallOverrides): Promise<BigNumber>;
-
-  nonEscrowedBalanceOf(
-    _account: string,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  notifyRewardAmount(
-    _reward: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  operatorApprovals(
-    arg0: string,
-    arg1: string,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
-  owner(overrides?: CallOverrides): Promise<string>;
-
-  pauseStakingRewards(
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  paused(overrides?: CallOverrides): Promise<boolean>;
-
-  pendingOwner(overrides?: CallOverrides): Promise<string>;
-
-  periodFinish(overrides?: CallOverrides): Promise<BigNumber>;
-
-  proxiableUUID(overrides?: CallOverrides): Promise<string>;
-
-  recoverERC20(
-    _tokenAddress: string,
-    _tokenAmount: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  renounceOwnership(
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  rewardEscrow(overrides?: CallOverrides): Promise<string>;
-
-  rewardPerToken(overrides?: CallOverrides): Promise<BigNumber>;
-
-  rewardPerTokenStored(overrides?: CallOverrides): Promise<BigNumber>;
-
-  rewardRate(overrides?: CallOverrides): Promise<BigNumber>;
-
-  rewards(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
-
-  rewardsDuration(overrides?: CallOverrides): Promise<BigNumber>;
-
-  rewardsNotifier(overrides?: CallOverrides): Promise<string>;
-
-  setCooldownPeriod(
-    _cooldownPeriod: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  setRewardsDuration(
-    _rewardsDuration: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  stake(
-    _amount: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  stakeEscrow(
-    _amount: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  stakeEscrowOnBehalf(
-    _account: string,
-    _amount: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
-
-  totalSupplyAtTime(
-    _timestamp: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  totalSupplyCheckpoints(
-    arg0: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<
-    [BigNumber, BigNumber, BigNumber] & {
-      ts: BigNumber;
-      blk: BigNumber;
-      value: BigNumber;
-    }
-  >;
-
-  totalSupplyCheckpointsLength(overrides?: CallOverrides): Promise<BigNumber>;
-
-  transferOwnership(
-    newOwner: string,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  unpauseStakingRewards(
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  unstake(
-    _amount: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  unstakeEscrow(
-    _amount: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  unstakeEscrowSkipCooldown(
-    _account: string,
-    _amount: BigNumberish,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  unstakedEscrowedBalanceOf(
-    _account: string,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  upgradeTo(
-    newImplementation: string,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  upgradeToAndCall(
-    newImplementation: string,
-    data: BytesLike,
-    overrides?: PayableOverrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  userLastStakeTime(
-    arg0: string,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  userRewardPerTokenPaid(
-    arg0: string,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  callStatic: {
-    MAX_COOLDOWN_PERIOD(overrides?: CallOverrides): Promise<BigNumber>;
-
-    MIN_COOLDOWN_PERIOD(overrides?: CallOverrides): Promise<BigNumber>;
-
-    acceptOwnership(overrides?: CallOverrides): Promise<void>;
-
-    approveOperator(
-      _operator: string,
-      _approved: boolean,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    balanceAtTime(
-      _account: string,
-      _timestamp: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    balanceOf(_account: string, overrides?: CallOverrides): Promise<BigNumber>;
-
-    balancesCheckpoints(
-      arg0: string,
-      arg1: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber, BigNumber] & {
-        ts: BigNumber;
-        blk: BigNumber;
-        value: BigNumber;
-      }
-    >;
-
-    balancesCheckpointsLength(
-      _account: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    compound(overrides?: CallOverrides): Promise<void>;
-
-    compoundOnBehalf(
-      _account: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
+		rewardRate(overrides?: CallOverrides): Promise<[BigNumber]>
 
-    cooldownPeriod(overrides?: CallOverrides): Promise<BigNumber>;
+		rewards(arg0: string, overrides?: CallOverrides): Promise<[BigNumber]>
 
-    earned(_account: string, overrides?: CallOverrides): Promise<BigNumber>;
+		rewardsDuration(overrides?: CallOverrides): Promise<[BigNumber]>
 
-    escrowedBalanceAtTime(
-      _account: string,
-      _timestamp: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+		rewardsNotifier(overrides?: CallOverrides): Promise<[string]>
 
-    escrowedBalanceOf(
-      _account: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+		setCooldownPeriod(
+			_cooldownPeriod: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
 
-    escrowedBalancesCheckpoints(
-      arg0: string,
-      arg1: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber, BigNumber] & {
-        ts: BigNumber;
-        blk: BigNumber;
-        value: BigNumber;
-      }
-    >;
+		setRewardsDuration(
+			_rewardsDuration: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
 
-    escrowedBalancesCheckpointsLength(
-      _account: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+		stake(
+			_amount: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
 
-    exit(overrides?: CallOverrides): Promise<void>;
+		stakeEscrow(
+			_amount: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
 
-    getReward(overrides?: CallOverrides): Promise<void>;
+		stakeEscrowOnBehalf(
+			_account: string,
+			_amount: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
 
-    getRewardForDuration(overrides?: CallOverrides): Promise<BigNumber>;
+		totalSupply(overrides?: CallOverrides): Promise<[BigNumber]>
 
-    getRewardOnBehalf(
-      _account: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    initialize(
-      _contractOwner: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
+		totalSupplyAtTime(_timestamp: BigNumberish, overrides?: CallOverrides): Promise<[BigNumber]>
 
-    kwenta(overrides?: CallOverrides): Promise<string>;
-
-    lastTimeRewardApplicable(overrides?: CallOverrides): Promise<BigNumber>;
-
-    lastUpdateTime(overrides?: CallOverrides): Promise<BigNumber>;
-
-    nonEscrowedBalanceOf(
-      _account: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+		totalSupplyCheckpoints(
+			arg0: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<
+			[BigNumber, BigNumber, BigNumber] & {
+				ts: BigNumber
+				blk: BigNumber
+				value: BigNumber
+			}
+		>
 
-    notifyRewardAmount(
-      _reward: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
+		totalSupplyCheckpointsLength(overrides?: CallOverrides): Promise<[BigNumber]>
 
-    operatorApprovals(
-      arg0: string,
-      arg1: string,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    owner(overrides?: CallOverrides): Promise<string>;
-
-    pauseStakingRewards(overrides?: CallOverrides): Promise<void>;
-
-    paused(overrides?: CallOverrides): Promise<boolean>;
-
-    pendingOwner(overrides?: CallOverrides): Promise<string>;
-
-    periodFinish(overrides?: CallOverrides): Promise<BigNumber>;
-
-    proxiableUUID(overrides?: CallOverrides): Promise<string>;
-
-    recoverERC20(
-      _tokenAddress: string,
-      _tokenAmount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    renounceOwnership(overrides?: CallOverrides): Promise<void>;
-
-    rewardEscrow(overrides?: CallOverrides): Promise<string>;
-
-    rewardPerToken(overrides?: CallOverrides): Promise<BigNumber>;
-
-    rewardPerTokenStored(overrides?: CallOverrides): Promise<BigNumber>;
-
-    rewardRate(overrides?: CallOverrides): Promise<BigNumber>;
-
-    rewards(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
-
-    rewardsDuration(overrides?: CallOverrides): Promise<BigNumber>;
-
-    rewardsNotifier(overrides?: CallOverrides): Promise<string>;
-
-    setCooldownPeriod(
-      _cooldownPeriod: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setRewardsDuration(
-      _rewardsDuration: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    stake(_amount: BigNumberish, overrides?: CallOverrides): Promise<void>;
-
-    stakeEscrow(
-      _amount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    stakeEscrowOnBehalf(
-      _account: string,
-      _amount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
-
-    totalSupplyAtTime(
-      _timestamp: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    totalSupplyCheckpoints(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber, BigNumber] & {
-        ts: BigNumber;
-        blk: BigNumber;
-        value: BigNumber;
-      }
-    >;
-
-    totalSupplyCheckpointsLength(overrides?: CallOverrides): Promise<BigNumber>;
-
-    transferOwnership(
-      newOwner: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    unpauseStakingRewards(overrides?: CallOverrides): Promise<void>;
-
-    unstake(_amount: BigNumberish, overrides?: CallOverrides): Promise<void>;
-
-    unstakeEscrow(
-      _amount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    unstakeEscrowSkipCooldown(
-      _account: string,
-      _amount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    unstakedEscrowedBalanceOf(
-      _account: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    upgradeTo(
-      newImplementation: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    upgradeToAndCall(
-      newImplementation: string,
-      data: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    userLastStakeTime(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    userRewardPerTokenPaid(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-  };
-
-  filters: {
-    "AdminChanged(address,address)"(
-      previousAdmin?: null,
-      newAdmin?: null
-    ): AdminChangedEventFilter;
-    AdminChanged(
-      previousAdmin?: null,
-      newAdmin?: null
-    ): AdminChangedEventFilter;
-
-    "BeaconUpgraded(address)"(
-      beacon?: string | null
-    ): BeaconUpgradedEventFilter;
-    BeaconUpgraded(beacon?: string | null): BeaconUpgradedEventFilter;
-
-    "CooldownPeriodUpdated(uint256)"(
-      cooldownPeriod?: null
-    ): CooldownPeriodUpdatedEventFilter;
-    CooldownPeriodUpdated(
-      cooldownPeriod?: null
-    ): CooldownPeriodUpdatedEventFilter;
-
-    "EscrowStaked(address,uint256)"(
-      user?: string | null,
-      amount?: null
-    ): EscrowStakedEventFilter;
-    EscrowStaked(user?: string | null, amount?: null): EscrowStakedEventFilter;
-
-    "EscrowUnstaked(address,uint256)"(
-      user?: null,
-      amount?: null
-    ): EscrowUnstakedEventFilter;
-    EscrowUnstaked(user?: null, amount?: null): EscrowUnstakedEventFilter;
-
-    "Initialized(uint8)"(version?: null): InitializedEventFilter;
-    Initialized(version?: null): InitializedEventFilter;
-
-    "OperatorApproved(address,address,bool)"(
-      owner?: null,
-      operator?: null,
-      approved?: null
-    ): OperatorApprovedEventFilter;
-    OperatorApproved(
-      owner?: null,
-      operator?: null,
-      approved?: null
-    ): OperatorApprovedEventFilter;
-
-    "OwnershipTransferStarted(address,address)"(
-      previousOwner?: string | null,
-      newOwner?: string | null
-    ): OwnershipTransferStartedEventFilter;
-    OwnershipTransferStarted(
-      previousOwner?: string | null,
-      newOwner?: string | null
-    ): OwnershipTransferStartedEventFilter;
-
-    "OwnershipTransferred(address,address)"(
-      previousOwner?: string | null,
-      newOwner?: string | null
-    ): OwnershipTransferredEventFilter;
-    OwnershipTransferred(
-      previousOwner?: string | null,
-      newOwner?: string | null
-    ): OwnershipTransferredEventFilter;
-
-    "Paused(address)"(account?: null): PausedEventFilter;
-    Paused(account?: null): PausedEventFilter;
-
-    "Recovered(address,uint256)"(
-      token?: null,
-      amount?: null
-    ): RecoveredEventFilter;
-    Recovered(token?: null, amount?: null): RecoveredEventFilter;
-
-    "RewardAdded(uint256)"(reward?: null): RewardAddedEventFilter;
-    RewardAdded(reward?: null): RewardAddedEventFilter;
-
-    "RewardPaid(address,uint256)"(
-      user?: string | null,
-      reward?: null
-    ): RewardPaidEventFilter;
-    RewardPaid(user?: string | null, reward?: null): RewardPaidEventFilter;
-
-    "RewardsDurationUpdated(uint256)"(
-      newDuration?: null
-    ): RewardsDurationUpdatedEventFilter;
-    RewardsDurationUpdated(
-      newDuration?: null
-    ): RewardsDurationUpdatedEventFilter;
-
-    "Staked(address,uint256)"(
-      user?: string | null,
-      amount?: null
-    ): StakedEventFilter;
-    Staked(user?: string | null, amount?: null): StakedEventFilter;
-
-    "Unpaused(address)"(account?: null): UnpausedEventFilter;
-    Unpaused(account?: null): UnpausedEventFilter;
-
-    "Unstaked(address,uint256)"(
-      user?: string | null,
-      amount?: null
-    ): UnstakedEventFilter;
-    Unstaked(user?: string | null, amount?: null): UnstakedEventFilter;
-
-    "Upgraded(address)"(implementation?: string | null): UpgradedEventFilter;
-    Upgraded(implementation?: string | null): UpgradedEventFilter;
-  };
-
-  estimateGas: {
-    MAX_COOLDOWN_PERIOD(overrides?: CallOverrides): Promise<BigNumber>;
-
-    MIN_COOLDOWN_PERIOD(overrides?: CallOverrides): Promise<BigNumber>;
-
-    acceptOwnership(
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    approveOperator(
-      _operator: string,
-      _approved: boolean,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    balanceAtTime(
-      _account: string,
-      _timestamp: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    balanceOf(_account: string, overrides?: CallOverrides): Promise<BigNumber>;
-
-    balancesCheckpoints(
-      arg0: string,
-      arg1: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    balancesCheckpointsLength(
-      _account: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    compound(overrides?: Overrides & { from?: string }): Promise<BigNumber>;
-
-    compoundOnBehalf(
-      _account: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    cooldownPeriod(overrides?: CallOverrides): Promise<BigNumber>;
-
-    earned(_account: string, overrides?: CallOverrides): Promise<BigNumber>;
-
-    escrowedBalanceAtTime(
-      _account: string,
-      _timestamp: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    escrowedBalanceOf(
-      _account: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    escrowedBalancesCheckpoints(
-      arg0: string,
-      arg1: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    escrowedBalancesCheckpointsLength(
-      _account: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    exit(overrides?: Overrides & { from?: string }): Promise<BigNumber>;
-
-    getReward(overrides?: Overrides & { from?: string }): Promise<BigNumber>;
-
-    getRewardForDuration(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getRewardOnBehalf(
-      _account: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    initialize(
-      _contractOwner: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    kwenta(overrides?: CallOverrides): Promise<BigNumber>;
-
-    lastTimeRewardApplicable(overrides?: CallOverrides): Promise<BigNumber>;
-
-    lastUpdateTime(overrides?: CallOverrides): Promise<BigNumber>;
-
-    nonEscrowedBalanceOf(
-      _account: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    notifyRewardAmount(
-      _reward: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    operatorApprovals(
-      arg0: string,
-      arg1: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    owner(overrides?: CallOverrides): Promise<BigNumber>;
-
-    pauseStakingRewards(
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    paused(overrides?: CallOverrides): Promise<BigNumber>;
-
-    pendingOwner(overrides?: CallOverrides): Promise<BigNumber>;
-
-    periodFinish(overrides?: CallOverrides): Promise<BigNumber>;
-
-    proxiableUUID(overrides?: CallOverrides): Promise<BigNumber>;
-
-    recoverERC20(
-      _tokenAddress: string,
-      _tokenAmount: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    renounceOwnership(
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    rewardEscrow(overrides?: CallOverrides): Promise<BigNumber>;
-
-    rewardPerToken(overrides?: CallOverrides): Promise<BigNumber>;
-
-    rewardPerTokenStored(overrides?: CallOverrides): Promise<BigNumber>;
-
-    rewardRate(overrides?: CallOverrides): Promise<BigNumber>;
-
-    rewards(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
-
-    rewardsDuration(overrides?: CallOverrides): Promise<BigNumber>;
-
-    rewardsNotifier(overrides?: CallOverrides): Promise<BigNumber>;
-
-    setCooldownPeriod(
-      _cooldownPeriod: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    setRewardsDuration(
-      _rewardsDuration: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    stake(
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    stakeEscrow(
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    stakeEscrowOnBehalf(
-      _account: string,
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
-
-    totalSupplyAtTime(
-      _timestamp: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    totalSupplyCheckpoints(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    totalSupplyCheckpointsLength(overrides?: CallOverrides): Promise<BigNumber>;
-
-    transferOwnership(
-      newOwner: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    unpauseStakingRewards(
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    unstake(
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    unstakeEscrow(
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    unstakeEscrowSkipCooldown(
-      _account: string,
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    unstakedEscrowedBalanceOf(
-      _account: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    upgradeTo(
-      newImplementation: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    upgradeToAndCall(
-      newImplementation: string,
-      data: BytesLike,
-      overrides?: PayableOverrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    userLastStakeTime(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    userRewardPerTokenPaid(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-  };
-
-  populateTransaction: {
-    MAX_COOLDOWN_PERIOD(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    MIN_COOLDOWN_PERIOD(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    acceptOwnership(
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    approveOperator(
-      _operator: string,
-      _approved: boolean,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    balanceAtTime(
-      _account: string,
-      _timestamp: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    balanceOf(
-      _account: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    balancesCheckpoints(
-      arg0: string,
-      arg1: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    balancesCheckpointsLength(
-      _account: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    compound(
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    compoundOnBehalf(
-      _account: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    cooldownPeriod(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    earned(
-      _account: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    escrowedBalanceAtTime(
-      _account: string,
-      _timestamp: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    escrowedBalanceOf(
-      _account: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    escrowedBalancesCheckpoints(
-      arg0: string,
-      arg1: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    escrowedBalancesCheckpointsLength(
-      _account: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    exit(
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    getReward(
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    getRewardForDuration(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getRewardOnBehalf(
-      _account: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    initialize(
-      _contractOwner: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    kwenta(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    lastTimeRewardApplicable(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    lastUpdateTime(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    nonEscrowedBalanceOf(
-      _account: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    notifyRewardAmount(
-      _reward: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    operatorApprovals(
-      arg0: string,
-      arg1: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    pauseStakingRewards(
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    paused(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    pendingOwner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    periodFinish(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    proxiableUUID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    recoverERC20(
-      _tokenAddress: string,
-      _tokenAmount: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    renounceOwnership(
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    rewardEscrow(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    rewardPerToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    rewardPerTokenStored(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    rewardRate(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    rewards(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    rewardsDuration(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    rewardsNotifier(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    setCooldownPeriod(
-      _cooldownPeriod: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    setRewardsDuration(
-      _rewardsDuration: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    stake(
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    stakeEscrow(
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    stakeEscrowOnBehalf(
-      _account: string,
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    totalSupply(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    totalSupplyAtTime(
-      _timestamp: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    totalSupplyCheckpoints(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    totalSupplyCheckpointsLength(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    transferOwnership(
-      newOwner: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    unpauseStakingRewards(
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    unstake(
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    unstakeEscrow(
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    unstakeEscrowSkipCooldown(
-      _account: string,
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    unstakedEscrowedBalanceOf(
-      _account: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    upgradeTo(
-      newImplementation: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    upgradeToAndCall(
-      newImplementation: string,
-      data: BytesLike,
-      overrides?: PayableOverrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    userLastStakeTime(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    userRewardPerTokenPaid(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-  };
+		transferOwnership(
+			newOwner: string,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
+
+		unpauseStakingRewards(overrides?: Overrides & { from?: string }): Promise<ContractTransaction>
+
+		unstake(
+			_amount: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
+
+		unstakeEscrow(
+			_amount: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
+
+		unstakeEscrowSkipCooldown(
+			_account: string,
+			_amount: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
+
+		unstakedEscrowedBalanceOf(_account: string, overrides?: CallOverrides): Promise<[BigNumber]>
+
+		upgradeTo(
+			newImplementation: string,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
+
+		upgradeToAndCall(
+			newImplementation: string,
+			data: BytesLike,
+			overrides?: PayableOverrides & { from?: string }
+		): Promise<ContractTransaction>
+
+		userLastStakeTime(arg0: string, overrides?: CallOverrides): Promise<[BigNumber]>
+
+		userRewardPerTokenPaid(arg0: string, overrides?: CallOverrides): Promise<[BigNumber]>
+	}
+
+	MAX_COOLDOWN_PERIOD(overrides?: CallOverrides): Promise<BigNumber>
+
+	MIN_COOLDOWN_PERIOD(overrides?: CallOverrides): Promise<BigNumber>
+
+	acceptOwnership(overrides?: Overrides & { from?: string }): Promise<ContractTransaction>
+
+	approveOperator(
+		_operator: string,
+		_approved: boolean,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
+
+	balanceAtTime(
+		_account: string,
+		_timestamp: BigNumberish,
+		overrides?: CallOverrides
+	): Promise<BigNumber>
+
+	balanceOf(_account: string, overrides?: CallOverrides): Promise<BigNumber>
+
+	balancesCheckpoints(
+		arg0: string,
+		arg1: BigNumberish,
+		overrides?: CallOverrides
+	): Promise<
+		[BigNumber, BigNumber, BigNumber] & {
+			ts: BigNumber
+			blk: BigNumber
+			value: BigNumber
+		}
+	>
+
+	balancesCheckpointsLength(_account: string, overrides?: CallOverrides): Promise<BigNumber>
+
+	compound(overrides?: Overrides & { from?: string }): Promise<ContractTransaction>
+
+	compoundOnBehalf(
+		_account: string,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
+
+	cooldownPeriod(overrides?: CallOverrides): Promise<BigNumber>
+
+	earned(_account: string, overrides?: CallOverrides): Promise<BigNumber>
+
+	escrowedBalanceAtTime(
+		_account: string,
+		_timestamp: BigNumberish,
+		overrides?: CallOverrides
+	): Promise<BigNumber>
+
+	escrowedBalanceOf(_account: string, overrides?: CallOverrides): Promise<BigNumber>
+
+	escrowedBalancesCheckpoints(
+		arg0: string,
+		arg1: BigNumberish,
+		overrides?: CallOverrides
+	): Promise<
+		[BigNumber, BigNumber, BigNumber] & {
+			ts: BigNumber
+			blk: BigNumber
+			value: BigNumber
+		}
+	>
+
+	escrowedBalancesCheckpointsLength(_account: string, overrides?: CallOverrides): Promise<BigNumber>
+
+	exit(overrides?: Overrides & { from?: string }): Promise<ContractTransaction>
+
+	getReward(overrides?: Overrides & { from?: string }): Promise<ContractTransaction>
+
+	getRewardForDuration(overrides?: CallOverrides): Promise<BigNumber>
+
+	getRewardOnBehalf(
+		_account: string,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
+
+	initialize(
+		_contractOwner: string,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
+
+	kwenta(overrides?: CallOverrides): Promise<string>
+
+	lastTimeRewardApplicable(overrides?: CallOverrides): Promise<BigNumber>
+
+	lastUpdateTime(overrides?: CallOverrides): Promise<BigNumber>
+
+	nonEscrowedBalanceOf(_account: string, overrides?: CallOverrides): Promise<BigNumber>
+
+	notifyRewardAmount(
+		_reward: BigNumberish,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
+
+	operatorApprovals(arg0: string, arg1: string, overrides?: CallOverrides): Promise<boolean>
+
+	owner(overrides?: CallOverrides): Promise<string>
+
+	pauseStakingRewards(overrides?: Overrides & { from?: string }): Promise<ContractTransaction>
+
+	paused(overrides?: CallOverrides): Promise<boolean>
+
+	pendingOwner(overrides?: CallOverrides): Promise<string>
+
+	periodFinish(overrides?: CallOverrides): Promise<BigNumber>
+
+	proxiableUUID(overrides?: CallOverrides): Promise<string>
+
+	recoverERC20(
+		_tokenAddress: string,
+		_tokenAmount: BigNumberish,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
+
+	renounceOwnership(overrides?: Overrides & { from?: string }): Promise<ContractTransaction>
+
+	rewardEscrow(overrides?: CallOverrides): Promise<string>
+
+	rewardPerToken(overrides?: CallOverrides): Promise<BigNumber>
+
+	rewardPerTokenStored(overrides?: CallOverrides): Promise<BigNumber>
+
+	rewardRate(overrides?: CallOverrides): Promise<BigNumber>
+
+	rewards(arg0: string, overrides?: CallOverrides): Promise<BigNumber>
+
+	rewardsDuration(overrides?: CallOverrides): Promise<BigNumber>
+
+	rewardsNotifier(overrides?: CallOverrides): Promise<string>
+
+	setCooldownPeriod(
+		_cooldownPeriod: BigNumberish,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
+
+	setRewardsDuration(
+		_rewardsDuration: BigNumberish,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
+
+	stake(
+		_amount: BigNumberish,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
+
+	stakeEscrow(
+		_amount: BigNumberish,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
+
+	stakeEscrowOnBehalf(
+		_account: string,
+		_amount: BigNumberish,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
+
+	totalSupply(overrides?: CallOverrides): Promise<BigNumber>
+
+	totalSupplyAtTime(_timestamp: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
+
+	totalSupplyCheckpoints(
+		arg0: BigNumberish,
+		overrides?: CallOverrides
+	): Promise<
+		[BigNumber, BigNumber, BigNumber] & {
+			ts: BigNumber
+			blk: BigNumber
+			value: BigNumber
+		}
+	>
+
+	totalSupplyCheckpointsLength(overrides?: CallOverrides): Promise<BigNumber>
+
+	transferOwnership(
+		newOwner: string,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
+
+	unpauseStakingRewards(overrides?: Overrides & { from?: string }): Promise<ContractTransaction>
+
+	unstake(
+		_amount: BigNumberish,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
+
+	unstakeEscrow(
+		_amount: BigNumberish,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
+
+	unstakeEscrowSkipCooldown(
+		_account: string,
+		_amount: BigNumberish,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
+
+	unstakedEscrowedBalanceOf(_account: string, overrides?: CallOverrides): Promise<BigNumber>
+
+	upgradeTo(
+		newImplementation: string,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
+
+	upgradeToAndCall(
+		newImplementation: string,
+		data: BytesLike,
+		overrides?: PayableOverrides & { from?: string }
+	): Promise<ContractTransaction>
+
+	userLastStakeTime(arg0: string, overrides?: CallOverrides): Promise<BigNumber>
+
+	userRewardPerTokenPaid(arg0: string, overrides?: CallOverrides): Promise<BigNumber>
+
+	callStatic: {
+		MAX_COOLDOWN_PERIOD(overrides?: CallOverrides): Promise<BigNumber>
+
+		MIN_COOLDOWN_PERIOD(overrides?: CallOverrides): Promise<BigNumber>
+
+		acceptOwnership(overrides?: CallOverrides): Promise<void>
+
+		approveOperator(_operator: string, _approved: boolean, overrides?: CallOverrides): Promise<void>
+
+		balanceAtTime(
+			_account: string,
+			_timestamp: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<BigNumber>
+
+		balanceOf(_account: string, overrides?: CallOverrides): Promise<BigNumber>
+
+		balancesCheckpoints(
+			arg0: string,
+			arg1: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<
+			[BigNumber, BigNumber, BigNumber] & {
+				ts: BigNumber
+				blk: BigNumber
+				value: BigNumber
+			}
+		>
+
+		balancesCheckpointsLength(_account: string, overrides?: CallOverrides): Promise<BigNumber>
+
+		compound(overrides?: CallOverrides): Promise<void>
+
+		compoundOnBehalf(_account: string, overrides?: CallOverrides): Promise<void>
+
+		cooldownPeriod(overrides?: CallOverrides): Promise<BigNumber>
+
+		earned(_account: string, overrides?: CallOverrides): Promise<BigNumber>
+
+		escrowedBalanceAtTime(
+			_account: string,
+			_timestamp: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<BigNumber>
+
+		escrowedBalanceOf(_account: string, overrides?: CallOverrides): Promise<BigNumber>
+
+		escrowedBalancesCheckpoints(
+			arg0: string,
+			arg1: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<
+			[BigNumber, BigNumber, BigNumber] & {
+				ts: BigNumber
+				blk: BigNumber
+				value: BigNumber
+			}
+		>
+
+		escrowedBalancesCheckpointsLength(
+			_account: string,
+			overrides?: CallOverrides
+		): Promise<BigNumber>
+
+		exit(overrides?: CallOverrides): Promise<void>
+
+		getReward(overrides?: CallOverrides): Promise<void>
+
+		getRewardForDuration(overrides?: CallOverrides): Promise<BigNumber>
+
+		getRewardOnBehalf(_account: string, overrides?: CallOverrides): Promise<void>
+
+		initialize(_contractOwner: string, overrides?: CallOverrides): Promise<void>
+
+		kwenta(overrides?: CallOverrides): Promise<string>
+
+		lastTimeRewardApplicable(overrides?: CallOverrides): Promise<BigNumber>
+
+		lastUpdateTime(overrides?: CallOverrides): Promise<BigNumber>
+
+		nonEscrowedBalanceOf(_account: string, overrides?: CallOverrides): Promise<BigNumber>
+
+		notifyRewardAmount(_reward: BigNumberish, overrides?: CallOverrides): Promise<void>
+
+		operatorApprovals(arg0: string, arg1: string, overrides?: CallOverrides): Promise<boolean>
+
+		owner(overrides?: CallOverrides): Promise<string>
+
+		pauseStakingRewards(overrides?: CallOverrides): Promise<void>
+
+		paused(overrides?: CallOverrides): Promise<boolean>
+
+		pendingOwner(overrides?: CallOverrides): Promise<string>
+
+		periodFinish(overrides?: CallOverrides): Promise<BigNumber>
+
+		proxiableUUID(overrides?: CallOverrides): Promise<string>
+
+		recoverERC20(
+			_tokenAddress: string,
+			_tokenAmount: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<void>
+
+		renounceOwnership(overrides?: CallOverrides): Promise<void>
+
+		rewardEscrow(overrides?: CallOverrides): Promise<string>
+
+		rewardPerToken(overrides?: CallOverrides): Promise<BigNumber>
+
+		rewardPerTokenStored(overrides?: CallOverrides): Promise<BigNumber>
+
+		rewardRate(overrides?: CallOverrides): Promise<BigNumber>
+
+		rewards(arg0: string, overrides?: CallOverrides): Promise<BigNumber>
+
+		rewardsDuration(overrides?: CallOverrides): Promise<BigNumber>
+
+		rewardsNotifier(overrides?: CallOverrides): Promise<string>
+
+		setCooldownPeriod(_cooldownPeriod: BigNumberish, overrides?: CallOverrides): Promise<void>
+
+		setRewardsDuration(_rewardsDuration: BigNumberish, overrides?: CallOverrides): Promise<void>
+
+		stake(_amount: BigNumberish, overrides?: CallOverrides): Promise<void>
+
+		stakeEscrow(_amount: BigNumberish, overrides?: CallOverrides): Promise<void>
+
+		stakeEscrowOnBehalf(
+			_account: string,
+			_amount: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<void>
+
+		totalSupply(overrides?: CallOverrides): Promise<BigNumber>
+
+		totalSupplyAtTime(_timestamp: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
+
+		totalSupplyCheckpoints(
+			arg0: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<
+			[BigNumber, BigNumber, BigNumber] & {
+				ts: BigNumber
+				blk: BigNumber
+				value: BigNumber
+			}
+		>
+
+		totalSupplyCheckpointsLength(overrides?: CallOverrides): Promise<BigNumber>
+
+		transferOwnership(newOwner: string, overrides?: CallOverrides): Promise<void>
+
+		unpauseStakingRewards(overrides?: CallOverrides): Promise<void>
+
+		unstake(_amount: BigNumberish, overrides?: CallOverrides): Promise<void>
+
+		unstakeEscrow(_amount: BigNumberish, overrides?: CallOverrides): Promise<void>
+
+		unstakeEscrowSkipCooldown(
+			_account: string,
+			_amount: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<void>
+
+		unstakedEscrowedBalanceOf(_account: string, overrides?: CallOverrides): Promise<BigNumber>
+
+		upgradeTo(newImplementation: string, overrides?: CallOverrides): Promise<void>
+
+		upgradeToAndCall(
+			newImplementation: string,
+			data: BytesLike,
+			overrides?: CallOverrides
+		): Promise<void>
+
+		userLastStakeTime(arg0: string, overrides?: CallOverrides): Promise<BigNumber>
+
+		userRewardPerTokenPaid(arg0: string, overrides?: CallOverrides): Promise<BigNumber>
+	}
+
+	filters: {
+		'AdminChanged(address,address)'(previousAdmin?: null, newAdmin?: null): AdminChangedEventFilter
+		AdminChanged(previousAdmin?: null, newAdmin?: null): AdminChangedEventFilter
+
+		'BeaconUpgraded(address)'(beacon?: string | null): BeaconUpgradedEventFilter
+		BeaconUpgraded(beacon?: string | null): BeaconUpgradedEventFilter
+
+		'CooldownPeriodUpdated(uint256)'(cooldownPeriod?: null): CooldownPeriodUpdatedEventFilter
+		CooldownPeriodUpdated(cooldownPeriod?: null): CooldownPeriodUpdatedEventFilter
+
+		'EscrowStaked(address,uint256)'(user?: string | null, amount?: null): EscrowStakedEventFilter
+		EscrowStaked(user?: string | null, amount?: null): EscrowStakedEventFilter
+
+		'EscrowUnstaked(address,uint256)'(user?: null, amount?: null): EscrowUnstakedEventFilter
+		EscrowUnstaked(user?: null, amount?: null): EscrowUnstakedEventFilter
+
+		'Initialized(uint8)'(version?: null): InitializedEventFilter
+		Initialized(version?: null): InitializedEventFilter
+
+		'OperatorApproved(address,address,bool)'(
+			owner?: null,
+			operator?: null,
+			approved?: null
+		): OperatorApprovedEventFilter
+		OperatorApproved(owner?: null, operator?: null, approved?: null): OperatorApprovedEventFilter
+
+		'OwnershipTransferStarted(address,address)'(
+			previousOwner?: string | null,
+			newOwner?: string | null
+		): OwnershipTransferStartedEventFilter
+		OwnershipTransferStarted(
+			previousOwner?: string | null,
+			newOwner?: string | null
+		): OwnershipTransferStartedEventFilter
+
+		'OwnershipTransferred(address,address)'(
+			previousOwner?: string | null,
+			newOwner?: string | null
+		): OwnershipTransferredEventFilter
+		OwnershipTransferred(
+			previousOwner?: string | null,
+			newOwner?: string | null
+		): OwnershipTransferredEventFilter
+
+		'Paused(address)'(account?: null): PausedEventFilter
+		Paused(account?: null): PausedEventFilter
+
+		'Recovered(address,uint256)'(token?: null, amount?: null): RecoveredEventFilter
+		Recovered(token?: null, amount?: null): RecoveredEventFilter
+
+		'RewardAdded(uint256)'(reward?: null): RewardAddedEventFilter
+		RewardAdded(reward?: null): RewardAddedEventFilter
+
+		'RewardPaid(address,uint256)'(user?: string | null, reward?: null): RewardPaidEventFilter
+		RewardPaid(user?: string | null, reward?: null): RewardPaidEventFilter
+
+		'RewardsDurationUpdated(uint256)'(newDuration?: null): RewardsDurationUpdatedEventFilter
+		RewardsDurationUpdated(newDuration?: null): RewardsDurationUpdatedEventFilter
+
+		'Staked(address,uint256)'(user?: string | null, amount?: null): StakedEventFilter
+		Staked(user?: string | null, amount?: null): StakedEventFilter
+
+		'Unpaused(address)'(account?: null): UnpausedEventFilter
+		Unpaused(account?: null): UnpausedEventFilter
+
+		'Unstaked(address,uint256)'(user?: string | null, amount?: null): UnstakedEventFilter
+		Unstaked(user?: string | null, amount?: null): UnstakedEventFilter
+
+		'Upgraded(address)'(implementation?: string | null): UpgradedEventFilter
+		Upgraded(implementation?: string | null): UpgradedEventFilter
+	}
+
+	estimateGas: {
+		MAX_COOLDOWN_PERIOD(overrides?: CallOverrides): Promise<BigNumber>
+
+		MIN_COOLDOWN_PERIOD(overrides?: CallOverrides): Promise<BigNumber>
+
+		acceptOwnership(overrides?: Overrides & { from?: string }): Promise<BigNumber>
+
+		approveOperator(
+			_operator: string,
+			_approved: boolean,
+			overrides?: Overrides & { from?: string }
+		): Promise<BigNumber>
+
+		balanceAtTime(
+			_account: string,
+			_timestamp: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<BigNumber>
+
+		balanceOf(_account: string, overrides?: CallOverrides): Promise<BigNumber>
+
+		balancesCheckpoints(
+			arg0: string,
+			arg1: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<BigNumber>
+
+		balancesCheckpointsLength(_account: string, overrides?: CallOverrides): Promise<BigNumber>
+
+		compound(overrides?: Overrides & { from?: string }): Promise<BigNumber>
+
+		compoundOnBehalf(
+			_account: string,
+			overrides?: Overrides & { from?: string }
+		): Promise<BigNumber>
+
+		cooldownPeriod(overrides?: CallOverrides): Promise<BigNumber>
+
+		earned(_account: string, overrides?: CallOverrides): Promise<BigNumber>
+
+		escrowedBalanceAtTime(
+			_account: string,
+			_timestamp: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<BigNumber>
+
+		escrowedBalanceOf(_account: string, overrides?: CallOverrides): Promise<BigNumber>
+
+		escrowedBalancesCheckpoints(
+			arg0: string,
+			arg1: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<BigNumber>
+
+		escrowedBalancesCheckpointsLength(
+			_account: string,
+			overrides?: CallOverrides
+		): Promise<BigNumber>
+
+		exit(overrides?: Overrides & { from?: string }): Promise<BigNumber>
+
+		getReward(overrides?: Overrides & { from?: string }): Promise<BigNumber>
+
+		getRewardForDuration(overrides?: CallOverrides): Promise<BigNumber>
+
+		getRewardOnBehalf(
+			_account: string,
+			overrides?: Overrides & { from?: string }
+		): Promise<BigNumber>
+
+		initialize(
+			_contractOwner: string,
+			overrides?: Overrides & { from?: string }
+		): Promise<BigNumber>
+
+		kwenta(overrides?: CallOverrides): Promise<BigNumber>
+
+		lastTimeRewardApplicable(overrides?: CallOverrides): Promise<BigNumber>
+
+		lastUpdateTime(overrides?: CallOverrides): Promise<BigNumber>
+
+		nonEscrowedBalanceOf(_account: string, overrides?: CallOverrides): Promise<BigNumber>
+
+		notifyRewardAmount(
+			_reward: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<BigNumber>
+
+		operatorApprovals(arg0: string, arg1: string, overrides?: CallOverrides): Promise<BigNumber>
+
+		owner(overrides?: CallOverrides): Promise<BigNumber>
+
+		pauseStakingRewards(overrides?: Overrides & { from?: string }): Promise<BigNumber>
+
+		paused(overrides?: CallOverrides): Promise<BigNumber>
+
+		pendingOwner(overrides?: CallOverrides): Promise<BigNumber>
+
+		periodFinish(overrides?: CallOverrides): Promise<BigNumber>
+
+		proxiableUUID(overrides?: CallOverrides): Promise<BigNumber>
+
+		recoverERC20(
+			_tokenAddress: string,
+			_tokenAmount: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<BigNumber>
+
+		renounceOwnership(overrides?: Overrides & { from?: string }): Promise<BigNumber>
+
+		rewardEscrow(overrides?: CallOverrides): Promise<BigNumber>
+
+		rewardPerToken(overrides?: CallOverrides): Promise<BigNumber>
+
+		rewardPerTokenStored(overrides?: CallOverrides): Promise<BigNumber>
+
+		rewardRate(overrides?: CallOverrides): Promise<BigNumber>
+
+		rewards(arg0: string, overrides?: CallOverrides): Promise<BigNumber>
+
+		rewardsDuration(overrides?: CallOverrides): Promise<BigNumber>
+
+		rewardsNotifier(overrides?: CallOverrides): Promise<BigNumber>
+
+		setCooldownPeriod(
+			_cooldownPeriod: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<BigNumber>
+
+		setRewardsDuration(
+			_rewardsDuration: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<BigNumber>
+
+		stake(_amount: BigNumberish, overrides?: Overrides & { from?: string }): Promise<BigNumber>
+
+		stakeEscrow(
+			_amount: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<BigNumber>
+
+		stakeEscrowOnBehalf(
+			_account: string,
+			_amount: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<BigNumber>
+
+		totalSupply(overrides?: CallOverrides): Promise<BigNumber>
+
+		totalSupplyAtTime(_timestamp: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
+
+		totalSupplyCheckpoints(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
+
+		totalSupplyCheckpointsLength(overrides?: CallOverrides): Promise<BigNumber>
+
+		transferOwnership(
+			newOwner: string,
+			overrides?: Overrides & { from?: string }
+		): Promise<BigNumber>
+
+		unpauseStakingRewards(overrides?: Overrides & { from?: string }): Promise<BigNumber>
+
+		unstake(_amount: BigNumberish, overrides?: Overrides & { from?: string }): Promise<BigNumber>
+
+		unstakeEscrow(
+			_amount: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<BigNumber>
+
+		unstakeEscrowSkipCooldown(
+			_account: string,
+			_amount: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<BigNumber>
+
+		unstakedEscrowedBalanceOf(_account: string, overrides?: CallOverrides): Promise<BigNumber>
+
+		upgradeTo(
+			newImplementation: string,
+			overrides?: Overrides & { from?: string }
+		): Promise<BigNumber>
+
+		upgradeToAndCall(
+			newImplementation: string,
+			data: BytesLike,
+			overrides?: PayableOverrides & { from?: string }
+		): Promise<BigNumber>
+
+		userLastStakeTime(arg0: string, overrides?: CallOverrides): Promise<BigNumber>
+
+		userRewardPerTokenPaid(arg0: string, overrides?: CallOverrides): Promise<BigNumber>
+	}
+
+	populateTransaction: {
+		MAX_COOLDOWN_PERIOD(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		MIN_COOLDOWN_PERIOD(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		acceptOwnership(overrides?: Overrides & { from?: string }): Promise<PopulatedTransaction>
+
+		approveOperator(
+			_operator: string,
+			_approved: boolean,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		balanceAtTime(
+			_account: string,
+			_timestamp: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<PopulatedTransaction>
+
+		balanceOf(_account: string, overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		balancesCheckpoints(
+			arg0: string,
+			arg1: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<PopulatedTransaction>
+
+		balancesCheckpointsLength(
+			_account: string,
+			overrides?: CallOverrides
+		): Promise<PopulatedTransaction>
+
+		compound(overrides?: Overrides & { from?: string }): Promise<PopulatedTransaction>
+
+		compoundOnBehalf(
+			_account: string,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		cooldownPeriod(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		earned(_account: string, overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		escrowedBalanceAtTime(
+			_account: string,
+			_timestamp: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<PopulatedTransaction>
+
+		escrowedBalanceOf(_account: string, overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		escrowedBalancesCheckpoints(
+			arg0: string,
+			arg1: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<PopulatedTransaction>
+
+		escrowedBalancesCheckpointsLength(
+			_account: string,
+			overrides?: CallOverrides
+		): Promise<PopulatedTransaction>
+
+		exit(overrides?: Overrides & { from?: string }): Promise<PopulatedTransaction>
+
+		getReward(overrides?: Overrides & { from?: string }): Promise<PopulatedTransaction>
+
+		getRewardForDuration(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		getRewardOnBehalf(
+			_account: string,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		initialize(
+			_contractOwner: string,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		kwenta(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		lastTimeRewardApplicable(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		lastUpdateTime(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		nonEscrowedBalanceOf(_account: string, overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		notifyRewardAmount(
+			_reward: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		operatorApprovals(
+			arg0: string,
+			arg1: string,
+			overrides?: CallOverrides
+		): Promise<PopulatedTransaction>
+
+		owner(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		pauseStakingRewards(overrides?: Overrides & { from?: string }): Promise<PopulatedTransaction>
+
+		paused(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		pendingOwner(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		periodFinish(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		proxiableUUID(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		recoverERC20(
+			_tokenAddress: string,
+			_tokenAmount: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		renounceOwnership(overrides?: Overrides & { from?: string }): Promise<PopulatedTransaction>
+
+		rewardEscrow(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		rewardPerToken(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		rewardPerTokenStored(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		rewardRate(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		rewards(arg0: string, overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		rewardsDuration(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		rewardsNotifier(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		setCooldownPeriod(
+			_cooldownPeriod: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		setRewardsDuration(
+			_rewardsDuration: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		stake(
+			_amount: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		stakeEscrow(
+			_amount: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		stakeEscrowOnBehalf(
+			_account: string,
+			_amount: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		totalSupply(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		totalSupplyAtTime(
+			_timestamp: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<PopulatedTransaction>
+
+		totalSupplyCheckpoints(
+			arg0: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<PopulatedTransaction>
+
+		totalSupplyCheckpointsLength(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		transferOwnership(
+			newOwner: string,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		unpauseStakingRewards(overrides?: Overrides & { from?: string }): Promise<PopulatedTransaction>
+
+		unstake(
+			_amount: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		unstakeEscrow(
+			_amount: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		unstakeEscrowSkipCooldown(
+			_account: string,
+			_amount: BigNumberish,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		unstakedEscrowedBalanceOf(
+			_account: string,
+			overrides?: CallOverrides
+		): Promise<PopulatedTransaction>
+
+		upgradeTo(
+			newImplementation: string,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		upgradeToAndCall(
+			newImplementation: string,
+			data: BytesLike,
+			overrides?: PayableOverrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		userLastStakeTime(arg0: string, overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		userRewardPerTokenPaid(arg0: string, overrides?: CallOverrides): Promise<PopulatedTransaction>
+	}
 }
