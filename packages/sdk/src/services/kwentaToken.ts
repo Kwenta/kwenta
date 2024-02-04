@@ -26,7 +26,7 @@ import { awsClient } from '../utils/files'
 import { weiFromWei } from '../utils/number'
 import { getFuturesAggregateStats, getFuturesTrades } from '../utils/subgraph'
 import { calculateFeesForAccount, calculateTotalFees, getStakingGqlEndpoint } from '../utils'
-import { ADDRESSES } from '../constants'
+import { ADDRESSES, API_URL } from '../constants'
 import { queryOperatorsByOwner } from '../queries/staking'
 import { FuturesAggregateStatResult } from '../utils/subgraph'
 
@@ -828,7 +828,7 @@ export default class KwentaTokenService {
 		// )
 
 		const { data: response } = await axios.get<Pick<FuturesAggregateStatResult, 'feesKwenta'>[]>(
-			'http://localhost/kwenta-token/futures-fee'
+			`${API_URL}/kwenta-token/futures-fee`
 		)
 
 		return response ? calculateTotalFees(response) : wei(0)
@@ -855,6 +855,10 @@ export default class KwentaTokenService {
 				keeperFeesPaid: true,
 			}
 		)
+
+		// const { data: response } = await axios.get<
+		// 	Pick<FuturesTradeResult, 'feesPaid' | 'keeperFeesPaid'>[]
+		// >('')
 
 		return response ? calculateFeesForAccount(response) : wei(0)
 	}

@@ -99,6 +99,7 @@ import { getReasonFromCode } from '../utils/synths'
 import { getPermit2Amount, getPermit2TypedData } from '../utils/permit2'
 import { PERMIT2_ADDRESS, PERMIT_STRUCT } from '../constants/permit2'
 import { FuturesAggregateStatResult } from '../utils/subgraph'
+import { API_URL } from '../constants'
 
 export default class FuturesService {
 	private sdk: KwentaSDK
@@ -197,9 +198,7 @@ export default class FuturesService {
 		// 	)
 		// )
 
-		const { data: futuresMarkets } = await axios.get<PerpsMarketV2[]>(
-			'http://localhost/futures/markets'
-		)
+		const { data: futuresMarkets } = await axios.get<PerpsMarketV2[]>(`${API_URL}/futures/markets`)
 
 		return futuresMarkets
 	}
@@ -434,7 +433,7 @@ export default class FuturesService {
 		// )
 
 		const { data: response } = await axios.get<FuturesAggregateStatResult[]>(
-			'http://localhost/futures/daily-volumes'
+			`${API_URL}/futures/daily-volumes`
 		)
 
 		return response ? calculateVolumes(response) : {}

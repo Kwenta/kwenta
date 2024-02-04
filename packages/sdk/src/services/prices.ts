@@ -4,6 +4,7 @@ import Wei, { wei } from '@synthetixio/wei'
 import { formatEther } from 'ethers/lib/utils.js'
 import request, { gql } from 'graphql-request'
 import { throttle } from 'lodash'
+import axios from 'axios'
 
 import KwentaSDK from '..'
 import * as sdkErrors from '../common/errors'
@@ -23,6 +24,7 @@ import { startInterval } from '../utils/interval'
 import { scale } from '../utils/number'
 import { getRatesEndpoint } from '../utils/prices'
 import { PerpsV2MarketData } from '../contracts/types'
+import { API_URL } from '../constants'
 
 const DEBUG_WS = false
 const LOG_WS = process.env.NODE_ENV !== 'production' && DEBUG_WS
@@ -161,42 +163,49 @@ export default class PricesService {
 	}
 
 	public async getOffChainPrices() {
-		const pythPrices = await this.pyth.getLatestPriceFeeds(this.pythIds)
+		// const pythPrices = await this.pyth.getLatestPriceFeeds(this.pythIds)
+		const { data: pythPrices } = await axios.get<PriceFeed[] | undefined>(
+			`${API_URL}/price/off-chain-prices`
+		)
+
 		return this.formatOffChainPrices(pythPrices ?? [])
 	}
 
 	public async getPreviousDayPrices(marketAssets: string[], networkId?: NetworkId) {
-		const ratesEndpoint = getRatesEndpoint(networkId || this.sdk.context.networkId)
-		const minTimestamp = Math.floor((Date.now() - PERIOD_IN_SECONDS.ONE_DAY * 1000) / 1000)
+		// const ratesEndpoint = getRatesEndpoint(networkId || this.sdk.context.networkId)
+		// const minTimestamp = Math.floor((Date.now() - PERIOD_IN_SECONDS.ONE_DAY * 1000) / 1000)
 
-		const rateUpdateQueries = marketAssets.map((asset) => {
-			const graphqlSafeAssetName = /^\d/.test(asset) ? `_${asset}` : asset
-			return gql`
-			# last before timestamp
-			${graphqlSafeAssetName}: rateUpdates(
-				first: 1
-				where: { synth: "${getDisplayAsset(asset)?.toUpperCase() ?? asset}", timestamp_gte: $minTimestamp }
-				orderBy: timestamp
-				orderDirection: asc
-			) {
-				synth
-				rate
-			}
-		`
-		})
+		// const rateUpdateQueries = marketAssets.map((asset) => {
+		// 	const graphqlSafeAssetName = /^\d/.test(asset) ? `_${asset}` : asset
+		// 	return gql`
+		// 	# last before timestamp
+		// 	${graphqlSafeAssetName}: rateUpdates(
+		// 		first: 1
+		// 		where: { synth: "${getDisplayAsset(asset)?.toUpperCase() ?? asset}", timestamp_gte: $minTimestamp }
+		// 		orderBy: timestamp
+		// 		orderDirection: asc
+		// 	) {
+		// 		synth
+		// 		rate
+		// 	}
+		// `
+		// })
 
-		const response = await request(
-			ratesEndpoint,
-			gql`
-				query rateUpdates($minTimestamp: BigInt!) {
-					${rateUpdateQueries.reduce((acc: string, curr: string) => {
-						return acc + curr
-					})}
-			}`,
-			{
-				minTimestamp: minTimestamp,
-			}
-		)
+		// const response = await request(
+		// 	ratesEndpoint,
+		// 	gql`
+		// 		query rateUpdates($minTimestamp: BigInt!) {
+		// 			${rateUpdateQueries.reduce((acc: string, curr: string) => {
+		// 				return acc + curr
+		// 			})}
+		// 	}`,
+		// 	{
+		// 		minTimestamp: minTimestamp,
+		// 	}
+		// )
+
+		const { data: response } = await axios.get(`${API_URL}/price/previous-day-prices`)
+
 		return (response ? Object.values(response).flat() : []) as SynthPrice[]
 	}
 

@@ -1,5 +1,6 @@
 import { formatBytes32String } from '@ethersproject/strings'
 import request, { gql } from 'graphql-request'
+import axios from 'axios'
 
 import KwentaSDK from '..'
 import {
@@ -10,6 +11,7 @@ import {
 import { FuturesMarketAsset, FuturesMarketKey } from '../types/futures'
 import { mapMarginTransfers, mapSmartMarginTransfers } from '../utils/futures'
 import { FuturesAccountType, getFuturesPositions, getFuturesTrades } from '../utils/subgraph'
+import { API_URL } from '../constants'
 
 export const queryAccountsFromSubgraph = async (
 	sdk: KwentaSDK,
@@ -200,25 +202,27 @@ export const queryFundingRateHistory = async (
 	minTimestamp: number,
 	period: 'Hourly' | 'Daily' = 'Hourly'
 ) => {
-	const response: any = await request(
-		sdk.futures.futuresGqlEndpoint,
-		gql`
-			query fundingRateUpdate(
-				$marketAsset: Bytes!
-				$minTimestamp: BigInt!
-				$period: FundingRatePeriodType!
-			) {
-				fundingRatePeriods(
-					where: { asset: $marketAsset, timestamp_gt: $minTimestamp, period: $period }
-					first: 2000
-				) {
-					timestamp
-					fundingRate
-				}
-			}
-		`,
-		{ marketAsset: formatBytes32String(marketAsset), minTimestamp, period }
-	)
+	// const response: any = await request(
+	// 	sdk.futures.futuresGqlEndpoint,
+	// 	gql`
+	// 		query fundingRateUpdate(
+	// 			$marketAsset: Bytes!
+	// 			$minTimestamp: BigInt!
+	// 			$period: FundingRatePeriodType!
+	// 		) {
+	// 			fundingRatePeriods(
+	// 				where: { asset: $marketAsset, timestamp_gt: $minTimestamp, period: $period }
+	// 				first: 2000
+	// 			) {
+	// 				timestamp
+	// 				fundingRate
+	// 			}
+	// 		}
+	// 	`,
+	// 	{ marketAsset: formatBytes32String(marketAsset), minTimestamp, period }
+	// )
+
+	const { data: response } = await axios.get(`${API_URL}/futures//market-funding-rates-history`)
 
 	return response.fundingRatePeriods.map((x: any) => ({
 		timestamp: Number(x.timestamp) * 1000,
