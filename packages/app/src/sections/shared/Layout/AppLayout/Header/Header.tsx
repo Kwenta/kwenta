@@ -9,7 +9,7 @@ import Logo from '../../Logo'
 
 import Nav from './Nav'
 import SignInButton from './SignInButton'
-import WalletButtons from './WalletButtons'
+// import WalletButtons from './WalletButtons'
 
 const Header: FC = () => {
 	return (
