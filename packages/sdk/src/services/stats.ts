@@ -1,5 +1,7 @@
 import { wei } from '@synthetixio/wei'
 import request, { gql } from 'graphql-request'
+import { Contract } from 'ethers'
+import axios from 'axios'
 
 import KwentaSDK from '..'
 import { REQUIRES_L2 } from '../common/errors'
@@ -14,7 +16,7 @@ import { EnsInfo, FuturesStat, Leaderboard } from '../types/stats'
 import { mapStat } from '../utils/stats'
 import { truncateAddress } from '../utils/string'
 import { getFuturesStats } from '../utils/subgraph'
-import { Contract } from 'ethers'
+import { API_URL } from '../constants'
 
 type LeaderboardPart = 'top' | 'bottom' | 'wallet' | 'search' | 'all'
 
@@ -31,33 +33,46 @@ export default class StatsService {
 
 	public async getFuturesStats() {
 		try {
-			const response = await getFuturesStats(
-				this.sdk.futures.futuresGqlEndpoint,
-				{
-					first: 10,
-					orderBy: 'pnlWithFeesPaid',
-					orderDirection: 'desc',
-				},
-				{
-					account: true,
-					pnl: true,
-					pnlWithFeesPaid: true,
-					liquidations: true,
-					totalTrades: true,
-					totalVolume: true,
-				}
-			)
+			// const response = await getFuturesStats(
+			// 	this.sdk.futures.futuresGqlEndpoint,
+			// 	{
+			// 		first: 10,
+			// 		orderBy: 'pnlWithFeesPaid',
+			// 		orderDirection: 'desc',
+			// 	},
+			// 	{
+			// 		account: true,
+			// 		pnl: true,
+			// 		pnlWithFeesPaid: true,
+			// 		liquidations: true,
+			// 		totalTrades: true,
+			// 		totalVolume: true,
+			// 	}
+			// )
 
-			const stats = response.map((stat, i) => ({
-				trader: stat.account,
-				traderShort: truncateAddress(stat.account),
-				pnl: stat.pnlWithFeesPaid.div(ETH_UNIT).toString(),
-				totalVolume: stat.totalVolume.div(ETH_UNIT).toString(),
-				totalTrades: stat.totalTrades.toNumber(),
-				liquidations: stat.liquidations.toNumber(),
-				rank: i + 1,
-				rankText: (i + 1).toString(),
-			}))
+			// const stats = response.map((stat, i) => ({
+			// 	trader: stat.account,
+			// 	traderShort: truncateAddress(stat.account),
+			// 	pnl: stat.pnlWithFeesPaid.div(ETH_UNIT).toString(),
+			// 	totalVolume: stat.totalVolume.div(ETH_UNIT).toString(),
+			// 	totalTrades: stat.totalTrades.toNumber(),
+			// 	liquidations: stat.liquidations.toNumber(),
+			// 	rank: i + 1,
+			// 	rankText: (i + 1).toString(),
+			// }))
+
+			type Stats = {
+				trader: string
+				traderShort: string
+				pnl: string
+				totalVolume: string
+				totalTrades: number
+				liquidations: number
+				rank: number
+				rankText: string
+			}
+
+			const { data: stats } = await axios.get<Stats[]>(`${API_URL}/stats/futures-stats`)
 
 			return stats
 		} catch (e) {
