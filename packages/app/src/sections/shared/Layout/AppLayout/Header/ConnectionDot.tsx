@@ -1,4 +1,5 @@
 import { NetworkId, NetworkIdByName } from '@kwenta/sdk/types'
+import { useSession } from 'next-auth/react'
 import React from 'react'
 import styled, { useTheme } from 'styled-components'
 
@@ -11,6 +12,7 @@ type ConnectionDotProps = {
 
 const ConnectionDot: React.FC<ConnectionDotProps> = (props) => {
 	const { network, isWalletConnected } = Connector.useContainer()
+	const { data: session } = useSession()
 	const isL2 = useIsL2()
 
 	const theme = useTheme()
@@ -37,6 +39,9 @@ const ConnectionDot: React.FC<ConnectionDotProps> = (props) => {
 				}
 		}
 	}
+
+	if (session) background = theme.colors.mainnet
+
 	return <Dot {...props} background={background} />
 }
 

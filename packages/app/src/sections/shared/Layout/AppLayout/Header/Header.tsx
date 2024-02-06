@@ -8,6 +8,7 @@ import Banner from '../../HomeLayout/Banner'
 import Logo from '../../Logo'
 
 import Nav from './Nav'
+import SignInButton from './SignInButton'
 import WalletButtons from './WalletButtons'
 
 const Header: FC = () => {
@@ -19,7 +20,8 @@ const Header: FC = () => {
 						<Logo />
 						<Nav />
 					</LogoNav>
-					<WalletButtons />
+					{/* <WalletButtons /> */}
+					<SignInButton />
 				</Container>
 				<Banner />
 			</FlexDivCol>

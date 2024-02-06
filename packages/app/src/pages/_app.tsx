@@ -5,6 +5,7 @@ import { BrowserTracing } from '@sentry/tracing'
 import { NextPage } from 'next'
 import { AppProps } from 'next/app'
 import Head from 'next/head'
+import { SessionProvider } from 'next-auth/react'
 import { FC, ReactElement, ReactNode, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { QueryClientProvider, QueryClient } from 'react-query'
@@ -55,7 +56,7 @@ Sentry.init({
 	ignoreErrors: IGNORE_ERRORS,
 })
 
-const InnerApp: FC<AppPropsWithLayout> = ({ Component, pageProps }) => {
+const InnerApp: FC<AppPropsWithLayout> = ({ Component, pageProps: { session, ...pageProps } }) => {
 	const [isReady, setReady] = useState(false)
 	const { providerReady } = Connector.useContainer()
 
@@ -80,12 +81,14 @@ const InnerApp: FC<AppPropsWithLayout> = ({ Component, pageProps }) => {
 		>
 			<ThemeProvider theme={theme}>
 				<MuiThemeProvider theme={muiTheme}>
-					<Layout>
-						<AcknowledgementModal />
-						<SystemStatus>{getLayout(<Component {...pageProps} />)}</SystemStatus>
-					</Layout>
-					<ErrorNotifier />
-					<ReactQueryDevtools position="top-left" />
+					<SessionProvider session={session}>
+						<Layout>
+							<AcknowledgementModal />
+							<SystemStatus>{getLayout(<Component {...pageProps} />)}</SystemStatus>
+						</Layout>
+						<ErrorNotifier />
+						<ReactQueryDevtools position="top-left" />
+					</SessionProvider>
 				</MuiThemeProvider>
 			</ThemeProvider>
 		</RainbowKitProvider>
