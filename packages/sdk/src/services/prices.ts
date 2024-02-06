@@ -164,11 +164,12 @@ export default class PricesService {
 
 	public async getOffChainPrices() {
 		// const pythPrices = await this.pyth.getLatestPriceFeeds(this.pythIds)
-		const { data: pythPrices } = await axios.get<PriceFeed[] | undefined>(
+		// return this.formatOffChainPrices(pythPrices ?? [])
+
+		const { data: offChainPrices } = await axios.get<Record<string, Wei>>(
 			`${API_URL}/price/off-chain-prices`
 		)
-
-		return this.formatOffChainPrices(pythPrices ?? [])
+		return offChainPrices
 	}
 
 	public async getPreviousDayPrices(marketAssets: string[], networkId?: NetworkId) {
