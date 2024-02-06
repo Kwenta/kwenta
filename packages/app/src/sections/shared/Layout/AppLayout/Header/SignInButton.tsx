@@ -40,7 +40,7 @@ const SignInButton: React.FC = () => {
 			mono
 		>
 			<ConnectionDot />
-			{t('sign in')}
+			{t('homepage.nav.sign-in')}
 		</Button>
 	)
 
@@ -60,7 +60,7 @@ const SignInButton: React.FC = () => {
 							onClick={() => signOut()}
 							data-testid="sign-out"
 						>
-							{t('sign out')}
+							{t('homepage.nav.sign-out')}
 						</Button>
 					</div>
 				</ProfileTabContainer>

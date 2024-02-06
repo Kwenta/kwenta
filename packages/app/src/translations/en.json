@@ -57,6 +57,8 @@
 			"start-trade": "Start Trading",
 			"trade-now": "Trade now",
 			"wallet": "Connect Wallet",
+			"sign-in": "Sign In",
+			"sign-out": "Sign Out",
 			"markets": "Markets",
 			"stats": "Stats",
 			"governance": {
@@ -600,7 +602,7 @@
 					"title": "Migrate to Staking V2",
 					"copy": "Continue earning $KWENTA rewards by migrating your stake & escrow entries now.",
 					"claim": {
-						"title" : "Claim",
+						"title": "Claim",
 						"copy": "Claim any remaining staking rewards",
 						"rewards": "Rewards",
 						"button": "Claim",
@@ -611,7 +613,7 @@
 						}
 					},
 					"migrate": {
-						"title" : "Migrate",
+						"title": "Migrate",
 						"copy": "Migrate V1 Escrow",
 						"countdown": "Your migration window closes in <0>{{ time }}</0>. If you don't complete the process before the deadline you will lose your escrow.",
 						"closed": "Your migration window is closed but you can unstake your v1 liquid $KWENTA. Contact us if you need any help.",
@@ -1336,7 +1338,7 @@
 				"gold": "Gold",
 				"boost": "Boost",
 				"preview": "Preview"
-			}, 
+			},
 			"view-all-rates": "View Tier Details →",
 			"rates": "Rates →",
 			"modal": {
