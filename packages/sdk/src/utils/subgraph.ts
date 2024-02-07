@@ -1,6 +1,7 @@
 import Wei, { WeiSource, wei } from '@synthetixio/wei'
 import axios from 'codegen-graph-ts/build/src/lib/axios'
 import generateGql from 'codegen-graph-ts/build/src/lib/gql'
+import { API_URL } from '../constants'
 export type SingleQueryOptions = {
 	id: string
 	block?:
@@ -2807,9 +2808,14 @@ export const getFuturesTrades = async function <K extends keyof FuturesTradeResu
 	do {
 		if (paginationKey && paginationValue)
 			paginatedOptions.where![paginationKey] = paginationValue as any
-		const res = await axios.post(url, {
-			query: generateGql('futuresTrades', paginatedOptions, args),
-		})
+		// const res = await axios.post(url, {
+		// 	query: generateGql('futuresTrades', paginatedOptions, args),
+		// })
+
+		const res = await axios.get<Pick<FuturesTradeResult, K>[]>(
+			`${API_URL}/utils/subgraph/futures-trades`
+		)
+
 		const r = res.data as any
 		if (r.errors && r.errors.length) {
 			throw new Error(r.errors[0].message)
@@ -2846,6 +2852,7 @@ export const getFuturesTrades = async function <K extends keyof FuturesTradeResu
 			paginationValue = rawResults[rawResults.length - 1][paginatedOptions.orderBy!]
 		}
 	} while (paginationKey && options.first && results.length < options.first)
+
 	return options.first ? results.slice(0, options.first) : results
 }
 export type SmartMarginAccountFilter = {

@@ -222,7 +222,7 @@ export const queryFundingRateHistory = async (
 	// 	{ marketAsset: formatBytes32String(marketAsset), minTimestamp, period }
 	// )
 
-	const { data: response } = await axios.get(`${API_URL}/futures//market-funding-rates-history`)
+	const { data: response } = await axios.get(`${API_URL}/futures/market-funding-rates-history`)
 
 	return response.fundingRatePeriods.map((x: any) => ({
 		timestamp: Number(x.timestamp) * 1000,
